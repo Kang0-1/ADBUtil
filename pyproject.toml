@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "adbutil"
+version = "0.1.0"
+description = ""
+authors = ["KWJ <weijia.kang@changhong.com>"]
+readme = "README.md"
+packages = [
+    { include = "scrcpy" },
+    { include = "scrcpy_ui" },
+]
+
+[tool.poetry.scripts]
+py-scrcpy = "scrcpy_ui:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+av = "^9.0.0"
+opencv-python = "^4.5.0"
+adbutils = "^1.2.15"
+
+# Optional dependencies for ui
+PySide6 = { version = "^6.0.0", optional = true }
+
+[tool.poetry.extras]
+ui = ["PySide6"]
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+isort = "*"
+black = "^22.3.0"
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+Sphinx = "^4.1.2"
+myst-parser = "^0.17.2"
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
