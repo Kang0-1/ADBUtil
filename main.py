@@ -51,7 +51,7 @@ class Window(MSFluentWindow):
 
 
 if __name__ == '__main__':
-    # QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     if not QApplication.instance():
         app = QApplication([])
     else:
