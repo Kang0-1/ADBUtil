@@ -1,10 +1,11 @@
-from typing import Optional
-
+import re
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from argparse import ArgumentParser
-from adbutils import adb
+from adbutils import adb, AdbTimeout
+from qfluentwidgets import MessageBox, MessageDialog, Dialog, InfoBar, InfoBarPosition
+
 import scrcpy
 
 from untitled import Ui_centralwidget
@@ -50,9 +51,7 @@ class ScrcpyInterface(QWidget):
         self.ui.label.mouseMoveEvent = self.on_mouse_event(scrcpy.ACTION_MOVE)
         self.ui.label.mouseReleaseEvent = self.on_mouse_event(scrcpy.ACTION_UP)
 
-        # self.ui.ipInput
-        #
-        # self.ui.button_connect
+        self.ui.button_connect.clicked.connect(lambda: self.click_connect())
 
         self.ui.button_refresh.clicked.connect(lambda: self.click_refresh())
 
@@ -61,6 +60,44 @@ class ScrcpyInterface(QWidget):
         # Keyboard event
         self.keyPressEvent = self.on_key_event(scrcpy.ACTION_DOWN)
         self.keyReleaseEvent = self.on_key_event(scrcpy.ACTION_UP)
+
+    def click_connect(self):
+        ip = self.ui.ipInput.text()
+        print(ip)
+        if not ip:
+            # w = Dialog("Connect Info", "请输入ip:port", self)
+            w = MessageBox("🤣🤣🤣", "请输入 ip:port", self)
+            w.yesButton.setText("下次一定")
+            w.cancelButton.setText("你在教我做事啊?")
+            w.show()
+            return
+        if not re.match(r"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):([0-9]|[1-9]\d{1,"
+                        r"3}|[1-5]\d{4}|6[0-4]\d{4}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$", ip):
+            w = MessageBox("🫵🫵🫵", "ip输错了，检查下", self)
+            w.yesButton.setText("再检查下")
+            w.cancelButton.setText("我没错啊")
+            w.show()
+            print("ip输入有误")
+            return
+        if ip in self.devices:
+            w = MessageBox("👉🤡👈", "已经连接该设备", self)
+            w.yesButton.setText("我忘记了")
+            w.cancelButton.setText("我没忘记")
+            w.show()
+            print("已经连接该设备!")
+            return
+        try:
+            output = adb.connect(ip)
+            if "connected to" in output:
+                print(output)
+                InfoBar.success("Success", "连接成功!", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+                self.devices = self.list_devices()
+                self.ui.ipInput.clear()
+            else:
+                InfoBar.error("Error", "连接失败!", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+                print("连接失败")
+        except AdbTimeout as e:
+            print(e)
 
     def click_refresh(self):
         self.devices = self.list_devices()
@@ -103,6 +140,7 @@ class ScrcpyInterface(QWidget):
 
     def start_scrcpy_client(self):
         if self.device:
+            self.ui.progressRing.setVisible(False)
             # 初始化并启动 scrcpy 客户端
             self.client = scrcpy.Client(
                 device=self.device,
@@ -204,7 +242,7 @@ class ScrcpyInterface(QWidget):
     def on_frame_1(self, frame):
         app.processEvents()
         if frame is not None:
-            image = QImage(frame, frame.shape[1], frame.shape[0], frame.shape[1] * 3, QImage.Format_BGR888,)
+            image = QImage(frame, frame.shape[1], frame.shape[0], frame.shape[1] * 3, QImage.Format_BGR888, )
             pix = QPixmap.fromImage(image)
             scaled_pix = pix.scaled(
                 self.ui.label.size(),
