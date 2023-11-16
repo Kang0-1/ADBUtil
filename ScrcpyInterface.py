@@ -50,6 +50,10 @@ class ScrcpyInterface(QWidget):
         self.ui.label.mouseMoveEvent = self.on_mouse_event(scrcpy.ACTION_MOVE)
         self.ui.label.mouseReleaseEvent = self.on_mouse_event(scrcpy.ACTION_UP)
 
+        # self.ui.ipInput
+        #
+        # self.ui.button_connect
+
         self.ui.button_refresh.clicked.connect(lambda: self.click_refresh())
 
         self.ui.button_start.clicked.connect(lambda: self.click_start())
@@ -61,11 +65,15 @@ class ScrcpyInterface(QWidget):
     def click_refresh(self):
         self.devices = self.list_devices()
         if self.devices:
-            self.device = adb.device(serial=self.devices[0])
-            self.ui.combo_device.setCurrentText(self.device)
+            if self.device:
+                self.ui.combo_device.setCurrentText(self.device)
+            else:
+                self.device = adb.device(serial=self.devices[0])
+                self.ui.combo_device.setCurrentText(self.device)
 
     def click_start(self):
         if self.device:
+            self.ui.progressRing.setVisible(False)
             # Setup client
             self.client = scrcpy.Client(
                 device=self.device,
@@ -79,17 +87,30 @@ class ScrcpyInterface(QWidget):
 
     def choose_device(self, device):
         if device not in self.devices:
-            msgBox = QMessageBox()
-            msgBox.setText(f"Device serial [{device}] not found!")
-            msgBox.exec()
+            QMessageBox.information(self, "Device Not Found", f"Device serial [{device}] not found!")
             return
-
-        # Ensure text
+        # 更新当前选择的设备
+        self.device = adb.device(serial=device)
         self.ui.combo_device.setCurrentText(device)
-        # Restart service
-        if getattr(self, "client", None):
+
+        # 停止当前 scrcpy 客户端，如果它正在运行
+        if self.client:
             self.client.stop()
-            self.client.device = adb.device(serial=device)
+            self.client = None
+
+        # 启动新设备的 scrcpy 客户端
+        self.start_scrcpy_client()
+
+    def start_scrcpy_client(self):
+        if self.device:
+            # 初始化并启动 scrcpy 客户端
+            self.client = scrcpy.Client(
+                device=self.device,
+                flip=self.ui.flip.isChecked(),
+                bitrate=1000000000
+            )
+            self.client.add_listener(scrcpy.EVENT_FRAME, self.on_frame)
+            self.client.start(True, True)
 
     def list_devices(self):
         self.ui.combo_device.clear()
@@ -110,13 +131,22 @@ class ScrcpyInterface(QWidget):
 
     def on_mouse_event(self, action=scrcpy.ACTION_DOWN):
         def handler(evt: QMouseEvent):
-            focused_widget = QApplication.focusWidget()
-            if focused_widget is not None:
-                focused_widget.clearFocus()
-            ratio = self.max_width / max(self.client.resolution)
-            self.client.control.touch(
-                evt.position().x() / ratio, evt.position().y() / ratio, action
-            )
+            label_size = self.ui.label.size()  # QLabel 的当前大小
+            image_size = self.client.resolution  # 实际图像的分辨率
+
+            if image_size is None:
+                return
+
+            # 计算缩放比例
+            x_scale = image_size[0] / label_size.width()
+            y_scale = image_size[1] / label_size.height()
+
+            # 调整点击坐标
+            x = evt.x() * x_scale
+            y = evt.y() * y_scale
+
+            # 处理点击事件
+            self.client.control.touch(x, y, action)
 
         return handler
 
@@ -170,6 +200,18 @@ class ScrcpyInterface(QWidget):
             self.ui.label.setPixmap(pix)
             # 可能需要调整窗口大小以适应新图像大小
             self.adjustSize()
+
+    def on_frame_1(self, frame):
+        app.processEvents()
+        if frame is not None:
+            image = QImage(frame, frame.shape[1], frame.shape[0], frame.shape[1] * 3, QImage.Format_BGR888,)
+            pix = QPixmap.fromImage(image)
+            scaled_pix = pix.scaled(
+                self.ui.label.size(),
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation
+            )
+            self.ui.label.setPixmap(scaled_pix)
 
     def closeEvent(self, _):
         self.client.stop()
