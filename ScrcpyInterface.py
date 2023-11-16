@@ -1,4 +1,7 @@
 import re
+from typing import Optional
+
+import cv2
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -23,6 +26,7 @@ class ScrcpyInterface(QWidget):
         self.ui = Ui_centralwidget()
         self.ui.setupUi(self)
         self.max_width = 800
+        self.ratio = 1
 
         # Setup devices
         self.devices = self.list_devices()
@@ -43,8 +47,8 @@ class ScrcpyInterface(QWidget):
         layout.addWidget(self.ui.label)  # 假设这是显示投屏画面的 QLabel
 
         # 设置 QLabel 的尺寸策略
-        self.ui.label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.ui.label.setScaledContents(True)  # 确保内容缩放以适应 QLabel 的大小
+        self.ui.label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.ui.label.setScaledContents(False)  # 确保内容缩放以适应 QLabel 的大小
 
         # Bind mouse event
         self.ui.label.mousePressEvent = self.on_mouse_event(scrcpy.ACTION_DOWN)
@@ -169,19 +173,14 @@ class ScrcpyInterface(QWidget):
 
     def on_mouse_event(self, action=scrcpy.ACTION_DOWN):
         def handler(evt: QMouseEvent):
-            label_size = self.ui.label.size()  # QLabel 的当前大小
+            focused_widget = QApplication.focusWidget()
+            if focused_widget is not None:
+                focused_widget.clearFocus()
             image_size = self.client.resolution  # 实际图像的分辨率
 
-            if image_size is None:
-                return
-
-            # 计算缩放比例
-            x_scale = image_size[0] / label_size.width()
-            y_scale = image_size[1] / label_size.height()
-
             # 调整点击坐标
-            x = evt.x() * x_scale
-            y = evt.y() * y_scale
+            x = (evt.position().x() - (self.ui.label.width() - image_size[0] * self.ratio) / 2 )/ self.ratio
+            y = (evt.position().y() - (self.ui.label.height() - image_size[1] * self.ratio) / 2 )/ self.ratio
 
             # 处理点击事件
             self.client.control.touch(x, y, action)
@@ -229,27 +228,28 @@ class ScrcpyInterface(QWidget):
         return -1
 
     def on_frame(self, frame):
-        if frame is not None:
-            # 将 frame 转换为 QImage
-            image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_BGR888)
-            pix = QPixmap.fromImage(image)
-
-            # 设置 QLabel 的 QPixmap
-            self.ui.label.setPixmap(pix)
-            # 可能需要调整窗口大小以适应新图像大小
-            self.adjustSize()
-
-    def on_frame_1(self, frame):
         app.processEvents()
         if frame is not None:
-            image = QImage(frame, frame.shape[1], frame.shape[0], frame.shape[1] * 3, QImage.Format_BGR888, )
-            pix = QPixmap.fromImage(image)
-            scaled_pix = pix.scaled(
-                self.ui.label.size(),
-                Qt.AspectRatioMode.KeepAspectRatio,
-                Qt.TransformationMode.SmoothTransformation
+            image = QImage(
+                frame,
+                frame.shape[1],
+                frame.shape[0],
+                frame.shape[1] * 3,
+                QImage.Format.Format_BGR888,
             )
-            self.ui.label.setPixmap(scaled_pix)
+            image_ratio = frame.shape[1] / frame.shape[0]
+            window_ratio = self.ui.label.width() / self.ui.label.height()
+            if frame.shape[1] > self.ui.label.width() or frame.shape[0] > self.ui.label.height():
+                if image_ratio > window_ratio:
+                    self.ratio = self.ui.label.width() / frame.shape[1]
+                else:
+                    self.ratio = self.ui.label.height() / frame.shape[0]
+            else:
+                self.ratio = 1
+
+            pix = QPixmap(image)
+            pix.setDevicePixelRatio(1 / self.ratio)
+            self.ui.label.setPixmap(pix)
 
     def closeEvent(self, _):
         self.client.stop()
