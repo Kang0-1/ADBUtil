@@ -1,4 +1,7 @@
 import re
+from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QIcon
+from PySide6 import QtGui, QtCore
 from typing import Optional
 
 import cv2
@@ -23,6 +26,7 @@ class ScrcpyInterface(QWidget):
     def __init__(self, parent=None):
         super(ScrcpyInterface, self).__init__(parent)
         self.client = None
+        self.device = None
         self.ui = Ui_centralwidget()
         self.ui.setupUi(self)
         self.max_width = 800
@@ -35,8 +39,7 @@ class ScrcpyInterface(QWidget):
         self.alive = True
 
         # Bind controllers
-        self.ui.button_home.clicked.connect(self.on_click_home)
-        self.ui.button_back.clicked.connect(self.on_click_back)
+        self.bindControllers()
 
         # Bind config
         self.ui.combo_device.currentTextChanged.connect(self.choose_device)
@@ -55,11 +58,11 @@ class ScrcpyInterface(QWidget):
         self.ui.label.mouseMoveEvent = self.on_mouse_event(scrcpy.ACTION_MOVE)
         self.ui.label.mouseReleaseEvent = self.on_mouse_event(scrcpy.ACTION_UP)
 
-        self.ui.button_connect.clicked.connect(lambda: self.click_connect())
+        self.ui.button_connect.clicked.connect(self.click_connect)
 
-        self.ui.button_refresh.clicked.connect(lambda: self.click_refresh())
+        self.ui.button_refresh.clicked.connect(self.click_refresh)
 
-        self.ui.button_start.clicked.connect(lambda: self.click_start())
+        self.ui.button_start.clicked.connect(self.click_start)
 
         # Keyboard event
         self.keyPressEvent = self.on_key_event(scrcpy.ACTION_DOWN)
@@ -106,10 +109,10 @@ class ScrcpyInterface(QWidget):
     def click_refresh(self):
         self.devices = self.list_devices()
         if self.devices:
-            if self.device:
+            if self.device is None:
+                self.device = adb.device(serial=self.devices[0])
                 self.ui.combo_device.setCurrentText(self.device)
             else:
-                self.device = adb.device(serial=self.devices[0])
                 self.ui.combo_device.setCurrentText(self.device)
 
     def click_start(self):
@@ -163,13 +166,130 @@ class ScrcpyInterface(QWidget):
     def on_flip(self, _):
         self.client.flip = self.ui.flip.isChecked()
 
+    def bindControllers(self):
+        self.ui.button_home.setIcon(QIcon('resources/主页.png'))
+        self.ui.button_home.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_home.clicked.connect(self.on_click_home)
+
+        self.ui.button_back.setIcon(QIcon('resources/系统返回.png'))
+        self.ui.button_back.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_back.clicked.connect(self.on_click_back)
+
+        self.ui.button_power.setIcon(QIcon('resources/关机.png'))
+        self.ui.button_power.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_power.clicked.connect(self.on_click_power)
+
+        self.ui.button_mute.setIcon(QIcon('resources/静音.png'))
+        self.ui.button_mute.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_mute.clicked.connect(self.on_click_mute)
+
+        self.ui.button_enter.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_CENTER, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_CENTER, scrcpy.ACTION_UP)])
+
+        self.ui.button_up.setIcon(QIcon('resources/向上箭头.png'))
+        self.ui.button_up.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_up.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_UP, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_UP, scrcpy.ACTION_UP)])
+
+        self.ui.button_down.setIcon(QIcon('/resources/向下箭头.png'))
+        self.ui.button_down.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_down.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_DOWN, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_DOWN, scrcpy.ACTION_UP)])
+
+        self.ui.button_left.setIcon(QIcon('/resources/向左箭头.png'))
+        self.ui.button_left.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_left.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_LEFT, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_LEFT, scrcpy.ACTION_UP)])
+
+        self.ui.button_right.setIcon(QIcon('/resources/向右箭头.png'))
+        self.ui.button_right.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_right.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_RIGHT, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_RIGHT, scrcpy.ACTION_UP)])
+
+        self.ui.button_volUp.setIcon(QIcon('/resources/音量加.png'))
+        self.ui.button_volUp.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_volUp.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_VOLUME_UP, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_VOLUME_UP, scrcpy.ACTION_UP)])
+
+        self.ui.button_volDown.setIcon(QIcon('/resources/音量减.png'))
+        self.ui.button_volDown.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_volDown.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_VOLUME_DOWN, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_VOLUME_DOWN, scrcpy.ACTION_UP)])
+
+        self.ui.button_menu.setIcon(QIcon('/resources/菜单.png'))
+        self.ui.button_menu.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_menu.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_MENU, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_MENU, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_0.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_0, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_0, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_1.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_1, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_1, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_2.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_2, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_2, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_3.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_3, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_3, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_4.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_4, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_4, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_5.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_5, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_5, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_6.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_6, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_6, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_7.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_7, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_7, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_8.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_8, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_8, scrcpy.ACTION_UP)])
+
+        self.ui.button_num_9.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_9, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_9, scrcpy.ACTION_UP)])
+
+
+
     def on_click_home(self):
+        # adb.device(serial=self.device).shell("input keyevent", scrcpy.KEYCODE_HOME)
         self.client.control.keycode(scrcpy.KEYCODE_HOME, scrcpy.ACTION_DOWN)
         self.client.control.keycode(scrcpy.KEYCODE_HOME, scrcpy.ACTION_UP)
 
     def on_click_back(self):
         self.client.control.back_or_turn_screen_on(scrcpy.ACTION_DOWN)
         self.client.control.back_or_turn_screen_on(scrcpy.ACTION_UP)
+
+    def on_click_power(self):
+        self.client.control.keycode(scrcpy.KEYCODE_POWER, scrcpy.ACTION_DOWN)
+        self.client.control.keycode(scrcpy.KEYCODE_POWER, scrcpy.ACTION_UP)
+
+    def on_click_mute(self):
+        # d = adb.device(serial="UG0623TEST0017")
+        # print(d.serial)
+        # d.shell(["input keyevent", " 164"])
+        self.client.control.keycode(scrcpy.KEYCODE_VOLUME_MUTE, scrcpy.ACTION_DOWN)
+        self.client.control.keycode(scrcpy.KEYCODE_VOLUME_MUTE, scrcpy.ACTION_UP)
 
     def on_mouse_event(self, action=scrcpy.ACTION_DOWN):
         def handler(evt: QMouseEvent):
