@@ -45,7 +45,7 @@ class Window(MSFluentWindow):
         self.addSubInterface(self.videoInterface, FIF.VIDEO, 'Video library')
 
     def initWindow(self):
-        self.resize(900, 700)
+        self.resize(1100, 600)
         self.setWindowIcon(QIcon(':/qfluentwidgets/images/logo.png'))
         self.setWindowTitle('ADBUtils')
 
