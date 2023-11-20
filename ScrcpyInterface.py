@@ -184,46 +184,52 @@ class ScrcpyInterface(QWidget):
                      self.client.control.keycode(scrcpy.KEYCODE_DPAD_CENTER, scrcpy.ACTION_UP)])
 
         self.ui.button_up.setIcon(QIcon('resources/向上箭头.png'))
-        self.ui.button_up.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_up.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_up.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_UP, scrcpy.ACTION_DOWN),
                      self.client.control.keycode(scrcpy.KEYCODE_DPAD_UP, scrcpy.ACTION_UP)])
 
-        self.ui.button_down.setIcon(QIcon('/resources/向下箭头.png'))
-        self.ui.button_down.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_down.setIcon(QIcon('resources/向下箭头.png'))
+        self.ui.button_down.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_down.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_DOWN, scrcpy.ACTION_DOWN),
                      self.client.control.keycode(scrcpy.KEYCODE_DPAD_DOWN, scrcpy.ACTION_UP)])
 
-        self.ui.button_left.setIcon(QIcon('/resources/向左箭头.png'))
-        self.ui.button_left.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_left.setIcon(QIcon('resources/向左箭头.png'))
+        self.ui.button_left.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_left.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_LEFT, scrcpy.ACTION_DOWN),
                      self.client.control.keycode(scrcpy.KEYCODE_DPAD_LEFT, scrcpy.ACTION_UP)])
 
-        self.ui.button_right.setIcon(QIcon('/resources/向右箭头.png'))
-        self.ui.button_right.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_right.setIcon(QIcon('resources/向右箭头.png'))
+        self.ui.button_right.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_right.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_RIGHT, scrcpy.ACTION_DOWN),
                      self.client.control.keycode(scrcpy.KEYCODE_DPAD_RIGHT, scrcpy.ACTION_UP)])
 
-        self.ui.button_volUp.setIcon(QIcon('/resources/音量加.png'))
+        self.ui.button_volUp.setIcon(QIcon('resources/音量加.png'))
         self.ui.button_volUp.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_volUp.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_VOLUME_UP, scrcpy.ACTION_DOWN),
                      self.client.control.keycode(scrcpy.KEYCODE_VOLUME_UP, scrcpy.ACTION_UP)])
 
-        self.ui.button_volDown.setIcon(QIcon('/resources/音量减.png'))
+        self.ui.button_volDown.setIcon(QIcon('resources/音量减.png'))
         self.ui.button_volDown.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_volDown.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_VOLUME_DOWN, scrcpy.ACTION_DOWN),
                      self.client.control.keycode(scrcpy.KEYCODE_VOLUME_DOWN, scrcpy.ACTION_UP)])
 
-        self.ui.button_menu.setIcon(QIcon('/resources/菜单.png'))
+        self.ui.button_menu.setIcon(QIcon('resources/菜单.png'))
         self.ui.button_menu.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_menu.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_MENU, scrcpy.ACTION_DOWN),
                      self.client.control.keycode(scrcpy.KEYCODE_MENU, scrcpy.ACTION_UP)])
+
+        self.ui.button_delete.setIcon(QIcon('resources/backspace.png'))
+        self.ui.button_delete.setIconSize(QtCore.QSize(25, 25))
+        self.ui.button_delete.clicked.connect(
+            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DEL, scrcpy.ACTION_DOWN),
+                     self.client.control.keycode(scrcpy.KEYCODE_DEL, scrcpy.ACTION_UP)])
 
         self.ui.button_num_0.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_0, scrcpy.ACTION_DOWN),
@@ -264,8 +270,6 @@ class ScrcpyInterface(QWidget):
         self.ui.button_num_9.clicked.connect(
             lambda: [self.client.control.keycode(scrcpy.KEYCODE_9, scrcpy.ACTION_DOWN),
                      self.client.control.keycode(scrcpy.KEYCODE_9, scrcpy.ACTION_UP)])
-
-
 
     def on_click_home(self):
         # adb.device(serial=self.device).shell("input keyevent", scrcpy.KEYCODE_HOME)

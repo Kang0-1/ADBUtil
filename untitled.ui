@@ -304,7 +304,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
-	font-size: 1px;
+	font-size:1px;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -565,6 +565,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -643,6 +644,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -721,6 +723,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -799,6 +802,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -877,6 +881,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -955,6 +960,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -1033,6 +1039,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -1111,6 +1118,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -1189,6 +1197,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -1267,6 +1276,7 @@ ToggleToolButton:checked:disabled {
     border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
+	font-weight:bold;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -1564,97 +1574,6 @@ ToggleToolButton:checked:disabled {
      <string/>
     </property>
    </widget>
-   <widget class="PrimaryPushButton" name="button_test">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>25</y>
-      <width>40</width>
-      <height>40</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>40</width>
-      <height>40</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>40</width>
-      <height>40</height>
-     </size>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">PushButton, ToolButton, ToggleButton, ToggleToolButton {
-    color: black;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.073);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.183);
-    border-radius: 20px;
-    /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
-    padding: 5px 12px 6px 12px;
-	font-size: 1px;
-    outline: none;
-}
-PushButton[hasIcon=false] {
-    padding: 5px 12px 6px 12px;
-}
-PushButton[hasIcon=true] {
-    padding: 5px 12px 6px 36px;
-}
-PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {
-    background: rgba(249, 249, 249, 0.5);
-}
-PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {
-    color: rgba(0, 0, 0, 0.63);
-    background: rgba(249, 249, 249, 0.3);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.073);
-}
-PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {
-    color: rgba(0, 0, 0, 0.36);
-    background: rgba(249, 249, 249, 0.3);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-PrimaryPushButton,
-PrimaryToolButton,
-ToggleButton:checked,
-ToggleToolButton:checked {
-    color: white;
-    background-color: #009faa;
-    border: 1px solid #00a7b3;
-    border-bottom: 1px solid #007780;
-}
-PrimaryPushButton:hover,
-PrimaryToolButton:hover,
-ToggleButton:checked:hover,
-ToggleToolButton:checked:hover {
-    background-color: #00a7b3;
-    border: 1px solid #2daab3;
-    border-bottom: 1px solid #007780;
-}
-PrimaryPushButton:pressed,
-PrimaryToolButton:pressed,
-ToggleButton:checked:pressed,
-ToggleToolButton:checked:pressed {
-    color: rgba(255, 255, 255, 0.63);
-    background-color: #3eabb3;
-    border: 1px solid #3eabb3;
-}
-PrimaryPushButton:disabled,
-PrimaryToolButton:disabled,
-ToggleButton:checked:disabled,
-ToggleToolButton:checked:disabled {
-    color: rgba(255, 255, 255, 0.9);
-    background-color: rgb(205, 205, 205);
-    border: 1px solid rgb(205, 205, 205);
-}</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="PrimaryPushButton" name="button_up">
     <property name="geometry">
      <rect>
@@ -1682,10 +1601,10 @@ ToggleToolButton:checked:disabled {
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(0, 0, 0, 0.073);
     border-bottom: 1px solid rgba(0, 0, 0, 0.183);
-    border-radius: 20px;
+    border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
-	font-size: 1px;
+	font-size:1px;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -1773,10 +1692,10 @@ ToggleToolButton:checked:disabled {
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(0, 0, 0, 0.073);
     border-bottom: 1px solid rgba(0, 0, 0, 0.183);
-    border-radius: 20px;
+    border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
-	font-size: 1px;
+	font-size:1px;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -1864,10 +1783,10 @@ ToggleToolButton:checked:disabled {
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(0, 0, 0, 0.073);
     border-bottom: 1px solid rgba(0, 0, 0, 0.183);
-    border-radius: 20px;
+    border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
-	font-size: 1px;
+	font-size:1px;
     outline: none;
 }
 PushButton[hasIcon=false] {
@@ -1928,7 +1847,7 @@ ToggleToolButton:checked:disabled {
      <string/>
     </property>
    </widget>
-   <widget class="PrimaryPushButton" name="button_up_4">
+   <widget class="PrimaryPushButton" name="button_down">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -1955,10 +1874,10 @@ ToggleToolButton:checked:disabled {
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(0, 0, 0, 0.073);
     border-bottom: 1px solid rgba(0, 0, 0, 0.183);
-    border-radius: 20px;
+    border-radius: 10px;
     /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
     padding: 5px 12px 6px 12px;
-	font-size: 1px;
+	font-size:1px;
     outline: none;
 }
 PushButton[hasIcon=false] {
