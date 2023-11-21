@@ -1,15 +1,17 @@
 # ADB File Explorer
 # Copyright (C) 2022  Azat Aldeshov
-from PyQt5.QtCore import QObject, QEvent
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QToolButton, QMenu, QWidget, QAction, QFileDialog, QInputDialog, QLineEdit, QHBoxLayout
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
-from app.core.configurations import Resources
-from app.core.main import Adb
-from app.core.managers import Global
-from app.data.models import MessageData, MessageType
-from app.data.repositories import FileRepository
-from app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper
+from FileManage.app.core.configurations import Resources
+from FileManage.app.core.main import Adb
+from FileManage.app.core.managers import Global
+from FileManage.app.data.models import MessageData, MessageType
+from FileManage.app.data.repositories import FileRepository
+from FileManage.app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper
+import globals
+from qfluentwidgets import FluentIcon as FIF
 
 
 class UploadTools(QToolButton):
@@ -138,7 +140,7 @@ class PathBar(QWidget):
         super(PathBar, self).__init__(parent)
         self.setLayout(QHBoxLayout(self))
 
-        self.prefix = Adb.manager().get_device().name + ":"
+        self.prefix = globals.CURRENT_DEVICE
         self.value = Adb.manager().path()
 
         self.text = QLineEdit(self)
@@ -156,6 +158,13 @@ class PathBar(QWidget):
         self.go.setDefaultAction(self.action)
         self.layout().addWidget(self.go)
 
+        self.refresh_bt = QToolButton(self)
+        self.refresh_bt.setStyleSheet("padding: 4;")
+        self.refresh_bt.setIcon(FIF.UPDATE.icon())
+        self.refresh_bt.clicked.connect(self._refresh)
+        self.go.setDefaultAction(self.action)
+        self.layout().addWidget(self.refresh_bt)
+
         self.layout().setContentsMargins(0, 0, 0, 0)
         Global().communicate.path_toolbar__refresh.connect(self._clear)
 
@@ -172,6 +181,22 @@ class PathBar(QWidget):
 
     def _update(self, text: str):
         self.value = text
+
+    def _refresh(self):
+        self.prefix = globals.CURRENT_DEVICE
+        if globals.CURRENT_DEVICE.__len__() > 0:
+            if Adb.manager().set_device(Device(id=self.prefix, name=self.prefix, type="device")):
+                Global().communicate.files__refresh.emit()
+            else:
+                Global().communicate.notification.emit(
+                    MessageData(
+                        title='Device',
+                        timeout=10000,
+                        body="Could not open the device %s" % Adb.manager().get_device().name
+                    )
+                )
+        self.value = Adb.manager().path()
+        self.text.setText(self.prefix + self.value)
 
     def _action(self):
         self.text.clearFocus()
@@ -196,3 +221,9 @@ class PathBar(QWidget):
                     body="<span style='color: red; font-weight: 600'> Cannot open location </span>",
                 )
             )
+
+class Device:
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id")
+        self.name = kwargs.get("name")
+        self.type = kwargs.get("type")

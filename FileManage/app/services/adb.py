@@ -1,7 +1,7 @@
 # ADB File Explorer
 # Copyright (C) 2022  Azat Aldeshov
-from app.core.configurations import Settings
-from app.helpers.tools import CommonProcess
+from FileManage.app.core.configurations import Settings
+from FileManage.app.helpers.tools import CommonProcess
 
 ADB_PATH = Settings.adb_path()
 RUN_AS_ROOT = Settings.adb_run_as_root()

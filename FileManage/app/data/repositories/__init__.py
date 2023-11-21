@@ -2,9 +2,9 @@
 # Copyright (C) 2022  Azat Aldeshov
 from typing import List
 
-from app.core.main import Adb
-from app.data.models import Device, File
-from app.data.repositories import android_adb, python_adb
+from FileManage.app.core.main import Adb
+from FileManage.app.data.models import Device, File
+from FileManage.app.data.repositories import android_adb, python_adb
 
 
 class FileRepository:
@@ -18,8 +18,10 @@ class FileRepository:
     @classmethod
     def files(cls) -> (List[File], str):
         if Adb.core == Adb.PYTHON_ADB_SHELL:
+            print("python adb")
             return python_adb.FileRepository.files()
         elif Adb.core == Adb.EXTERNAL_TOOL_ADB:
+            print("android adb")
             return android_adb.FileRepository.files()
 
     @classmethod

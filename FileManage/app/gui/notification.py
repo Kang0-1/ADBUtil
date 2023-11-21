@@ -8,9 +8,9 @@ from PyQt5.QtGui import QIcon, QPaintEvent, QPainter, QMovie
 from PyQt5.QtWidgets import QLabel, QWidget, QHBoxLayout, QPushButton, QStyleOption, QStyle, \
     QGraphicsDropShadowEffect, QVBoxLayout, QScrollArea, QSizePolicy, QFrame, QGraphicsOpacityEffect, QProgressBar
 
-from app.core.configurations import Resources
-from app.data.models import MessageType
-from app.helpers.tools import read_string_from_file
+from FileManage.app.core.configurations import Resources
+from FileManage.app.data.models import MessageType
+from FileManage.app.helpers.tools import read_string_from_file
 
 
 class BaseMessage(QWidget):

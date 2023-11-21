@@ -2,11 +2,11 @@
 # Copyright (C) 2022  Azat Aldeshov
 from typing import List
 
-from app.core.configurations import Settings
-from app.core.managers import ADBManager
-from app.data.models import FileType, Device, File
-from app.helpers.converters import convert_to_devices, convert_to_file, convert_to_file_list_a
-from app.services import adb
+from FileManage.app.core.configurations import Settings
+from FileManage.app.core.managers import ADBManager
+from FileManage.app.data.models import FileType, Device, File
+from FileManage.app.helpers.converters import convert_to_devices, convert_to_file, convert_to_file_list_a
+from FileManage.app.services import adb
 
 
 class FileRepository:
@@ -40,10 +40,13 @@ class FileRepository:
     def files(cls) -> (List[File], str):
         if not ADBManager.get_device():
             return None, "No device selected!"
-
+        print(ADBManager.get_device().id)
         path = ADBManager.path()
+        print(path)
         args = adb.ShellCommand.LS_ALL_LIST + [path.replace(' ', r'\ ')]
+        # print(args)
         response = adb.shell(ADBManager.get_device().id, args)
+        # print(response.IsSuccessful, response.OutputData)
         if not response.IsSuccessful and response.ExitCode != 1:
             return [], response.ErrorData or response.OutputData
 
@@ -51,7 +54,9 @@ class FileRepository:
             return [], response.ErrorData
 
         args = adb.ShellCommand.LS_ALL_DIRS + [path.replace(' ', r'\ ') + "*/"]
+        print(args)
         response_dirs = adb.shell(ADBManager.get_device().id, args)
+        print(response.IsSuccessful, response.OutputData)
         if not response_dirs.IsSuccessful and response_dirs.ExitCode != 1:
             return [], response_dirs.ErrorData or response_dirs.OutputData
 

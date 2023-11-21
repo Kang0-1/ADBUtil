@@ -8,11 +8,11 @@ from typing import List
 
 from usb1 import USBContext
 
-from app.core.configurations import Settings
-from app.core.managers import PythonADBManager
-from app.data.models import Device, File, FileType
-from app.helpers.converters import __converter_to_permissions_default__
-from app.services.adb import ShellCommand
+from FileManage.app.core.configurations import Settings
+from FileManage.app.core.managers import PythonADBManager
+from FileManage.app.data.models import Device, File, FileType
+from FileManage.app.helpers.converters import __converter_to_permissions_default__
+from FileManage.app.services.adb import ShellCommand
 
 
 class FileRepository:
@@ -49,6 +49,7 @@ class FileRepository:
 
     @classmethod
     def files(cls) -> (List[File], str):
+        print("file method")
         if not PythonADBManager.device:
             return None, "No device selected!"
         if not PythonADBManager.device.available:
@@ -56,6 +57,7 @@ class FileRepository:
 
         files = []
         try:
+            print("file method")
             path = PythonADBManager.path()
             response = PythonADBManager.device.list(path)
 

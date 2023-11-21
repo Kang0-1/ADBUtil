@@ -5,10 +5,10 @@ from typing import Union
 
 import adb_shell
 
-from app.core.configurations import Settings
-from app.core.managers import PythonADBManager, ADBManager, WorkersManager
-from app.helpers.tools import Singleton
-from app.services import adb
+from FileManage.app.core.configurations import Settings
+from FileManage.app.core.managers import PythonADBManager, ADBManager, WorkersManager
+from FileManage.app.helpers.tools import Singleton
+from FileManage.app.services import adb
 
 
 class Adb(metaclass=Singleton):
@@ -52,8 +52,10 @@ class Adb(metaclass=Singleton):
     @classmethod
     def manager(cls) -> Union[ADBManager, PythonADBManager]:
         if cls.core == cls.PYTHON_ADB_SHELL:
+            print("python manager")
             return PythonADBManager()
         elif cls.core == cls.EXTERNAL_TOOL_ADB:
+            print("external manager")
             return ADBManager()
 
     @classmethod

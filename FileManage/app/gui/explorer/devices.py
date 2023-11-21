@@ -8,12 +8,12 @@ from PyQt5.QtGui import QPalette, QPixmap, QMovie
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QStyledItemDelegate, QStyleOptionViewItem, QApplication, \
     QStyle, QListView
 
-from app.core.configurations import Resources
-from app.core.main import Adb
-from app.core.managers import Global
-from app.data.models import DeviceType, MessageData
-from app.data.repositories import DeviceRepository
-from app.helpers.tools import AsyncRepositoryWorker, read_string_from_file
+from FileManage.app.core.configurations import Resources
+from FileManage.app.core.main import Adb
+from FileManage.app.core.managers import Global
+from FileManage.app.data.models import DeviceType, MessageData
+from FileManage.app.data.repositories import DeviceRepository
+from FileManage.app.helpers.tools import AsyncRepositoryWorker, read_string_from_file
 
 
 class DeviceItemDelegate(QStyledItemDelegate):

@@ -6,13 +6,13 @@ import os
 import shutil
 import subprocess
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import QThread, QObject, QFile, QIODevice, QTextStream
-from PyQt5.QtWidgets import QWidget
+from PySide6 import QtCore
+from PySide6.QtCore import QObject, QFile, QIODevice, QTextStream, QThread
+from PySide6.QtWidgets import QWidget
 from adb_shell.auth.keygen import keygen
 from adb_shell.auth.sign_pythonrsa import PythonRSASigner
 
-from app.data.models import MessageData
+from FileManage.app.data.models import MessageData
 
 
 class CommonProcess:
@@ -49,8 +49,48 @@ class CommonProcess:
                 self.ErrorData = str(error)
 
 
+# class AsyncRepositoryWorker(QObject):
+#     on_response = QtCore.pyqtSignal(object, object)  # Response : data, error
+#
+#     def __init__(
+#             self, worker_id: int, name: str,
+#             repository_method: callable,
+#             response_callback: callable,
+#             arguments: tuple
+#     ):
+#         super(AsyncRepositoryWorker, self).__init__()
+#         # Communicate().on_response.connect(response_callback)
+#         # self.finished.connect(self.close)
+#         self.__repository_method = repository_method
+#         self.__arguments = arguments
+#         self.loading_widget = None
+#         self.closed = False
+#         self.id = worker_id
+#         self.name = name
+#
+#     def run(self):
+#         print("run method")
+#         # data, error = self.__repository_method(*self.__arguments)
+#         data = ["file1", "fiel2"]
+#         error = None
+#         Communicate().on_response.emit(data, error)
+#         print("signal emit")
+#
+#     def close(self):
+#         print("close")
+#         if self.loading_widget:
+#             self.loading_widget.close()
+#         self.deleteLater()
+#         self.closed = True
+#
+#     def set_loading_widget(self, widget: QWidget):
+#         self.loading_widget = widget
+#
+#     def update_loading_widget(self, path, progress):
+#         if self.loading_widget and not self.closed:
+#             self.loading_widget.update_progress('SOURCE: %s' % path, progress)
 class AsyncRepositoryWorker(QThread):
-    on_response = QtCore.pyqtSignal(object, object)  # Response : data, error
+    on_response = QtCore.Signal(object, object)  # Response : data, error
 
     def __init__(
             self, worker_id: int, name: str,
@@ -87,7 +127,7 @@ class AsyncRepositoryWorker(QThread):
 
 
 class ProgressCallbackHelper(QObject):
-    progress_callback = QtCore.pyqtSignal(str, int)
+    progress_callback = QtCore.Signal(str, int)
 
     def setup(self, parent: QObject, callback: callable):
         self.setParent(parent)
@@ -95,15 +135,16 @@ class ProgressCallbackHelper(QObject):
 
 
 class Communicate(QObject):
-    files = QtCore.pyqtSignal()
-    devices = QtCore.pyqtSignal()
+    files = QtCore.Signal()
+    devices = QtCore.Signal()
+    # on_response = QtCore.pyqtSignal(object, object)  # Response : data, error
 
-    up = QtCore.pyqtSignal()
-    files__refresh = QtCore.pyqtSignal()
-    path_toolbar__refresh = QtCore.pyqtSignal()
+    up = QtCore.Signal()
+    files__refresh = QtCore.Signal()
+    path_toolbar__refresh = QtCore.Signal()
 
-    status_bar = QtCore.pyqtSignal(str, int)  # Message, Duration
-    notification = QtCore.pyqtSignal(MessageData)
+    status_bar = QtCore.Signal(str, int)  # Message, Duration
+    notification = QtCore.Signal(MessageData)
 
 
 class Singleton(type):

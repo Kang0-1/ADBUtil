@@ -3,20 +3,20 @@
 import sys
 from typing import Any
 
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import Qt, QPoint, QModelIndex, QAbstractListModel, QVariant, QRect, QSize, QEvent, QObject
-from PyQt5.QtGui import QPixmap, QColor, QPalette, QMovie, QKeySequence
-from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QFileDialog, QStyle, QWidget, QStyledItemDelegate, \
+from PySide6 import QtCore, QtGui
+from PySide6.QtCore import Qt, QPoint, QModelIndex, QAbstractListModel, QRect, QSize, QEvent, QObject
+from PySide6.QtGui import QPixmap, QColor, QPalette, QMovie, QKeySequence, QAction
+from PySide6.QtWidgets import QMenu, QMessageBox, QFileDialog, QStyle, QWidget, QStyledItemDelegate, \
     QStyleOptionViewItem, QApplication, QListView, QVBoxLayout, QLabel, QSizePolicy, QHBoxLayout, QTextEdit, \
     QMainWindow
-
-from app.core.configurations import Resources
-from app.core.main import Adb
-from app.core.managers import Global
-from app.data.models import FileType, MessageData, MessageType
-from app.data.repositories import FileRepository
-from app.gui.explorer.toolbar import ParentButton, UploadTools, PathBar
-from app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper, read_string_from_file
+from PyQt5.QtCore import QVariant
+from FileManage.app.core.configurations import Resources
+from FileManage.app.core.main import Adb
+from FileManage.app.core.managers import Global
+from FileManage.app.data.models import FileType, MessageData, MessageType
+from FileManage.app.data.repositories import FileRepository
+from FileManage.app.gui.explorer.toolbar import ParentButton, UploadTools, PathBar
+from FileManage.app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper, read_string_from_file
 
 
 class FileHeaderWidget(QWidget):
@@ -198,7 +198,7 @@ class FileListModel(QAbstractListModel):
                         body="<span style='color: red; font-weight: 600'> %s </span>" % error,
                     )
                 )
-            Global.communicate.files__refresh.emit()
+            Global().communicate.files__refresh.emit()
         return super(FileListModel, self).setData(index, value, role)
 
     def data(self, index: QModelIndex, role: int = ...) -> Any:

@@ -6,8 +6,8 @@ import platform
 from PyQt5.QtCore import QFile, QIODevice
 from pkg_resources import resource_filename
 
-from app.data.models import Device
-from app.helpers.tools import Singleton, json_to_dict
+from FileManage.app.data.models import Device
+from FileManage.app.helpers.tools import Singleton, json_to_dict
 
 
 class Application(metaclass=Singleton):
@@ -24,7 +24,7 @@ class Application(metaclass=Singleton):
 
 class Settings(metaclass=Singleton):
     downloads_path = os.path.join(os.path.expanduser('~'), 'Downloads')
-    filename = resource_filename('app', 'settings.json')
+    filename = resource_filename('FileManage', 'app/settings.json')
     data = None
 
     @classmethod

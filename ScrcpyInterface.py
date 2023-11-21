@@ -1,18 +1,13 @@
 import re
-from PySide6.QtWidgets import QApplication
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QMouseEvent, QKeyEvent, QImage, QPixmap
 from PySide6 import QtGui, QtCore
-from typing import Optional
-
-import cv2
-from PySide6.QtCore import *
-from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from argparse import ArgumentParser
 from adbutils import adb, AdbTimeout
-from qfluentwidgets import MessageBox, MessageDialog, Dialog, InfoBar, InfoBarPosition
+from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition
 
 import scrcpy
+import globals
 
 from untitled import Ui_centralwidget
 
@@ -112,8 +107,10 @@ class ScrcpyInterface(QWidget):
             if self.device is None:
                 self.device = adb.device(serial=self.devices[0])
                 self.ui.combo_device.setCurrentText(self.device)
+                globals.CURRENT_DEVICE = self.device.serial
             else:
                 self.ui.combo_device.setCurrentText(self.device)
+                globals.CURRENT_DEVICE = self.device.serial
 
     def click_start(self):
         if self.device:
@@ -126,6 +123,8 @@ class ScrcpyInterface(QWidget):
             )
             self.client.add_listener(scrcpy.EVENT_FRAME, self.on_frame)
             self.client.start(True, True)
+            globals.CURRENT_DEVICE = self.device.serial
+
         else:
             QMessageBox.information(self, "Info", "No Device!")
 

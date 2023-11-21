@@ -3,11 +3,11 @@
 import logging
 import posixpath
 
-from PyQt5.QtCore import QObject
+from PySide6.QtCore import QObject
 from adb_shell.adb_device import AdbDeviceTcp, AdbDeviceUsb
 
-from app.data.models import File, Device
-from app.helpers.tools import Communicate, Singleton, get_python_rsa_keys_signer, AsyncRepositoryWorker
+from FileManage.app.data.models import File, Device
+from FileManage.app.helpers.tools import Communicate, Singleton, get_python_rsa_keys_signer, AsyncRepositoryWorker
 
 
 class ADBManager:
