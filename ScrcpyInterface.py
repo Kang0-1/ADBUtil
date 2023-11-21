@@ -7,6 +7,9 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 from PySide6 import QtGui, QtCore
+from typing import Optional
+import cv2
+from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from argparse import ArgumentParser
@@ -431,7 +434,7 @@ class ScrcpyInterface(QWidget):
             16777248: scrcpy.KEYCODE_SHIFT_LEFT,
             16777220: scrcpy.KEYCODE_ENTER,
             16777217: scrcpy.KEYCODE_TAB,
-            16777249: scrcpy.KEYCODE_CTdRL_LEFT,
+            16777249: scrcpy.KEYCODE_CTRL_LEFT,
         }
         if code in hard_code:
             return hard_code[code]
