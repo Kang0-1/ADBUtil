@@ -1,6 +1,17 @@
+import os
 import re
 from PySide6.QtGui import QIcon, QMouseEvent, QKeyEvent, QImage, QPixmap
+import threading
+import time
+from pathlib import Path
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QIcon
 from PySide6 import QtGui, QtCore
+from typing import Optional
+import cv2
+from PySide6.QtCore import *
+from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 from argparse import ArgumentParser
 from adbutils import adb, AdbTimeout
@@ -10,6 +21,7 @@ import scrcpy
 import globals
 
 from untitled import Ui_centralwidget
+from main_scrcpy import Ui_centralwidget
 
 if not QApplication.instance():
     app = QApplication()
@@ -18,10 +30,28 @@ else:
 
 
 class ScrcpyInterface(QWidget):
+    # 用信号和槽机制来实现线程安全的UI更新
+    recording_finished_signal = Signal(str, str)
+    recording_hide_stop_button_signal = Signal(object)
+    logcat_finished_signal = Signal(str, str)
+    logcat_hide_stop_button_signal = Signal(object)
+
     def __init__(self, parent=None):
         super(ScrcpyInterface, self).__init__(parent)
+
         self.client = None
         self.device = None
+        self.recording_thread = None
+        self.logcat_thread = None
+        self.record_stop_event = threading.Event()  # 用于控制录屏停止的事件
+        self.logcat_stop_event = threading.Event()  # 用于控制log停止的事件
+        self.recording_finished_signal.connect(self.show_info_bar)
+        self.recording_hide_stop_button_signal.connect(self.hide_stop_button)
+        self.logcat_finished_signal.connect(self.show_info_bar)
+        self.logcat_hide_stop_button_signal.connect(self.hide_stop_button)
+        self.logcat = None  # 存储logcat的数据
+        self.logcat_file_path = None  # 存储logcat的log路径
+
         self.ui = Ui_centralwidget()
         self.ui.setupUi(self)
         self.max_width = 800
@@ -69,7 +99,7 @@ class ScrcpyInterface(QWidget):
         if not ip:
             # w = Dialog("Connect Info", "请输入ip:port", self)
             w = MessageBox("🤣🤣🤣", "请输入 ip:port", self)
-            w.yesButton.setText("下次一定")
+            w.yesButton.setText("好的")
             w.cancelButton.setText("你在教我做事啊?")
             w.show()
             return
@@ -103,18 +133,20 @@ class ScrcpyInterface(QWidget):
 
     def click_refresh(self):
         self.devices = self.list_devices()
-        if self.devices:
-            if self.device is None:
-                self.device = adb.device(serial=self.devices[0])
-                self.ui.combo_device.setCurrentText(self.device)
-                globals.CURRENT_DEVICE = self.device.serial
-            else:
-                self.ui.combo_device.setCurrentText(self.device)
-                globals.CURRENT_DEVICE = self.device.serial
+        # print("1", self.ui.combo_device.currentText())
+        # print("1", self.device)
+        if self.ui.combo_device.currentText():
+            self.device = adb.device(serial=self.ui.combo_device.currentText())
+            globals.CURRENT_DEVICE = self.device.serial
 
     def click_start(self):
+        print(self.device)
         if self.device:
             self.ui.progressRing.setVisible(False)
+            # 停止当前 scrcpy 客户端，如果它正在运行
+            if self.client:
+                self.client.stop()
+                self.client = None
             # Setup client
             self.client = scrcpy.Client(
                 device=self.device,
@@ -126,7 +158,7 @@ class ScrcpyInterface(QWidget):
             globals.CURRENT_DEVICE = self.device.serial
 
         else:
-            QMessageBox.information(self, "Info", "No Device!")
+            InfoBar.error("Error", "未找到设备!", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
 
     def choose_device(self, device):
         if device not in self.devices:
@@ -168,127 +200,198 @@ class ScrcpyInterface(QWidget):
     def bindControllers(self):
         self.ui.button_home.setIcon(QIcon('resources/主页.png'))
         self.ui.button_home.setIconSize(QtCore.QSize(30, 30))
-        self.ui.button_home.clicked.connect(self.on_click_home)
+        self.ui.button_home.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_HOME))
+        # 四种方式
+        # adb.device(serial=self.device.serial).shell("input keyevent 3")
+        # adb.device(serial=self.device.serial).shell(['input', 'keyevent', str(scrcpy.KEYCODE_HOME)])
+        # self.client.control.keycode(scrcpy.KEYCODE_HOME, scrcpy.ACTION_DOWN)
+        # self.client.control.keycode(scrcpy.KEYCODE_HOME, scrcpy.ACTION_UP)
 
         self.ui.button_back.setIcon(QIcon('resources/系统返回.png'))
-        self.ui.button_back.setIconSize(QtCore.QSize(30, 30))
-        self.ui.button_back.clicked.connect(self.on_click_back)
+        self.ui.button_back.setIconSize(QtCore.QSize(25, 25))
+        self.ui.button_back.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_BACK))
+        # self.client.control.back_or_turn_screen_on(scrcpy.ACTION_DOWN)
+        # self.client.control.back_or_turn_screen_on(scrcpy.ACTION_UP)
+
+        self.ui.button_logcat.clicked.connect(self.on_click_logcat_start)
+        self.ui.button_logcat_stop.setVisible(False)
+        self.ui.button_logcat_stop.clicked.connect(self.on_click_logcat_stop)
+
+        self.ui.button_snapshot.setIcon(QIcon('resources/截图.png'))
+        self.ui.button_snapshot.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_snapshot.clicked.connect(self.on_click_snapShot)
+
+        self.ui.button_recording.setIcon(QIcon('resources/录像.png'))
+        self.ui.button_recording.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_recording.clicked.connect(self.on_click_recording_start)
+
+        self.ui.button_recording_stop.setVisible(False)
+        self.ui.button_recording_stop.setIcon(QIcon('resources/暂停录像.png'))
+        self.ui.button_recording_stop.setIconSize(QtCore.QSize(25, 25))
+        self.ui.button_recording_stop.clicked.connect(self.on_click_recording_stop)
 
         self.ui.button_power.setIcon(QIcon('resources/关机.png'))
         self.ui.button_power.setIconSize(QtCore.QSize(30, 30))
-        self.ui.button_power.clicked.connect(self.on_click_power)
+        self.ui.button_power.clicked.connect(
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_POWER))
 
         self.ui.button_mute.setIcon(QIcon('resources/静音.png'))
         self.ui.button_mute.setIconSize(QtCore.QSize(30, 30))
-        self.ui.button_mute.clicked.connect(self.on_click_mute)
+        self.ui.button_mute.clicked.connect(
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_VOLUME_MUTE))
 
         self.ui.button_enter.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_CENTER, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_CENTER, scrcpy.ACTION_UP)])
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_DPAD_CENTER))
 
         self.ui.button_up.setIcon(QIcon('resources/向上箭头.png'))
-        self.ui.button_up.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_up.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_up.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_UP, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_UP, scrcpy.ACTION_UP)])
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_DPAD_UP))
 
-        self.ui.button_down.setIcon(QIcon('/resources/向下箭头.png'))
-        self.ui.button_down.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_down.setIcon(QIcon('resources/向下箭头.png'))
+        self.ui.button_down.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_down.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_DOWN, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_DOWN, scrcpy.ACTION_UP)])
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_DPAD_DOWN))
 
-        self.ui.button_left.setIcon(QIcon('/resources/向左箭头.png'))
-        self.ui.button_left.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_left.setIcon(QIcon('resources/向左箭头.png'))
+        self.ui.button_left.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_left.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_LEFT, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_LEFT, scrcpy.ACTION_UP)])
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_DPAD_LEFT))
 
-        self.ui.button_right.setIcon(QIcon('/resources/向右箭头.png'))
-        self.ui.button_right.setIconSize(QtCore.QSize(30, 30))
+        self.ui.button_right.setIcon(QIcon('resources/向右箭头.png'))
+        self.ui.button_right.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_right.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_DPAD_RIGHT, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_DPAD_RIGHT, scrcpy.ACTION_UP)])
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_DPAD_RIGHT))
 
-        self.ui.button_volUp.setIcon(QIcon('/resources/音量加.png'))
+        self.ui.button_volUp.setIcon(QIcon('resources/音量加.png'))
         self.ui.button_volUp.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_volUp.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_VOLUME_UP, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_VOLUME_UP, scrcpy.ACTION_UP)])
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_VOLUME_UP))
 
-        self.ui.button_volDown.setIcon(QIcon('/resources/音量减.png'))
+        self.ui.button_volDown.setIcon(QIcon('resources/音量减.png'))
         self.ui.button_volDown.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_volDown.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_VOLUME_DOWN, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_VOLUME_DOWN, scrcpy.ACTION_UP)])
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_VOLUME_DOWN))
 
-        self.ui.button_menu.setIcon(QIcon('/resources/菜单.png'))
+        self.ui.button_menu.setIcon(QIcon('resources/菜单.png'))
         self.ui.button_menu.setIconSize(QtCore.QSize(30, 30))
-        self.ui.button_menu.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_MENU, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_MENU, scrcpy.ACTION_UP)])
+        self.ui.button_menu.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_MENU))
 
-        self.ui.button_num_0.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_0, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_0, scrcpy.ACTION_UP)])
+        self.ui.button_delete.setIcon(QIcon('resources/删除.png'))
+        self.ui.button_delete.setIconSize(QtCore.QSize(25, 25))
+        self.ui.button_delete.clicked.connect(
+            lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_DEL))
 
-        self.ui.button_num_1.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_1, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_1, scrcpy.ACTION_UP)])
+        self.ui.button_num_0.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_0))
+        self.ui.button_num_1.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_1))
+        self.ui.button_num_2.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_2))
+        self.ui.button_num_3.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_3))
+        self.ui.button_num_4.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_4))
+        self.ui.button_num_5.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_5))
+        self.ui.button_num_6.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_6))
+        self.ui.button_num_7.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_7))
+        self.ui.button_num_8.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_8))
+        self.ui.button_num_9.clicked.connect(lambda: adb.device(serial=self.device.serial).keyevent(scrcpy.KEYCODE_9))
 
-        self.ui.button_num_2.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_2, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_2, scrcpy.ACTION_UP)])
+    def on_click_logcat_start(self):
+        if self.logcat_thread and self.logcat_thread.is_alive():
+            InfoBar.info("Info", "已有Logcat正在进行中", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+            return
+        self.ui.button_logcat_stop.setVisible(True)
+        InfoBar.info("Info", "开始Logcat", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+        self.logcat_stop_event.clear()  # 重置停止事件
+        device = adb.device(serial=self.device.serial)
+        self.logcat_thread = threading.Thread(target=self.perform_logcat, args=(device,))
+        self.logcat_thread.start()
 
-        self.ui.button_num_3.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_3, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_3, scrcpy.ACTION_UP)])
+    def perform_logcat(self, device):
+        try:
+            print(self.logcat_thread.is_alive())
+            folder_name = f"AdbUtilFiles/{self.device.serial}/Logs"
+            desktop_path = Path(
+                os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')) / folder_name
+            desktop_path.mkdir(parents=True, exist_ok=True)
+            logcat_file = desktop_path / f"{time.strftime('%Y_%m_%d-%H_%M_%S')}.log"
+            self.logcat = device.logcat(logcat_file, clear=True, re_filter=None, command="logcat -v time")
+            self.logcat_file_path = logcat_file
+            self.logcat_stop_event.wait(timeout=None)
+            self.logcat.stop(timeout=3)
+            print("logcat完成，文件保存在: " + str(logcat_file))
+            self.logcat_finished_signal.emit("Log保存成功,目录位于:" + str(logcat_file), "success")
+        except Exception as e:
+            self.logcat_finished_signal.emit("Logcat失败," + str(e), "error")
+        finally:
+            self.logcat_thread = None
+            self.logcat_hide_stop_button_signal.emit(self.ui.button_logcat_stop)  # 无论如何都隐藏停止按钮
 
-        self.ui.button_num_4.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_4, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_4, scrcpy.ACTION_UP)])
+    def on_click_logcat_stop(self):
+        self.logcat_stop_event.set()  # 触发停止事件
 
-        self.ui.button_num_5.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_5, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_5, scrcpy.ACTION_UP)])
+    def on_click_snapShot(self):
+        try:
+            device = adb.device(serial=self.device.serial)
+            p = device.screenshot()
+            folder_name = f"AdbUtilFiles/{self.device.serial}/截图"
+            desktop_path = Path(
+                os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')) / folder_name
+            desktop_path.mkdir(parents=True, exist_ok=True)
+            screenshot_file = desktop_path / f"{time.time_ns()}.png"
+            p.save(screenshot_file)
+            print("屏幕截取成功，文件保存在: " + str(screenshot_file))
+            InfoBar.success("Success", "屏幕截取成功，截图保存在: " + str(screenshot_file), self, True, 3000,
+                            InfoBarPosition.BOTTOM, self).show()
+        except Exception as e:
+            print("截图失败: " + str(e))
+            InfoBar.error("Error", "屏幕截取失败!" + str(e), self, True, 2000, InfoBarPosition.BOTTOM, self).show()
 
-        self.ui.button_num_6.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_6, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_6, scrcpy.ACTION_UP)])
+    def on_click_recording_start(self):
+        if self.recording_thread and self.recording_thread.is_alive():
+            InfoBar.info("Info", "已有录屏正在进行中", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+            return
+        self.ui.button_recording_stop.setVisible(True)
+        InfoBar.info("Info", "已开始录制", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+        self.record_stop_event.clear()  # 重置停止事件
+        device = adb.device(serial=self.device.serial)
+        self.recording_thread = threading.Thread(target=self.perform_recording, args=(device,))
+        self.recording_thread.start()
 
-        self.ui.button_num_7.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_7, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_7, scrcpy.ACTION_UP)])
+    def perform_recording(self, device):
+        try:
+            folder_name = f"AdbUtilFiles/{self.device.serial}/录屏"
+            desktop_path = Path(os.path.join(os.environ['USERPROFILE'], 'Desktop')) / folder_name
+            desktop_path.mkdir(parents=True, exist_ok=True)
+            recording_file = desktop_path / f"{time.time_ns()}.mp4"
+            device.start_recording(recording_file)
 
-        self.ui.button_num_8.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_8, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_8, scrcpy.ACTION_UP)])
+            # 等待停止事件或超时（180秒）
+            self.record_stop_event.wait(timeout=180)
 
-        self.ui.button_num_9.clicked.connect(
-            lambda: [self.client.control.keycode(scrcpy.KEYCODE_9, scrcpy.ACTION_DOWN),
-                     self.client.control.keycode(scrcpy.KEYCODE_9, scrcpy.ACTION_UP)])
+            device.stop_recording()
+            print("录屏成功，文件保存在: " + str(recording_file))
+            self.recording_finished_signal.emit("录制完成，视频保存在" + str(recording_file), "success")
+        except Exception as e:
+            self.recording_finished_signal.emit("录制失败," + str(e), "error")
+        finally:
+            self.recording_thread = None
+            self.recording_hide_stop_button_signal.emit(self.ui.button_recording_stop)  # 无论如何都隐藏停止按钮
 
+    def on_click_recording_stop(self):
+        self.record_stop_event.set()  # 触发停止事件
 
+    def show_info_bar(self, message, type):
+        if type == "info":
+            InfoBar.info("Info", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+        elif type == "success":
+            InfoBar.success("Success", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+        elif type == "warning":
+            InfoBar.warning("Warning", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+        elif type == "error":
+            InfoBar.error("Error", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+        else:
+            print("未知的信息类型")
 
-    def on_click_home(self):
-        # adb.device(serial=self.device).shell("input keyevent", scrcpy.KEYCODE_HOME)
-        self.client.control.keycode(scrcpy.KEYCODE_HOME, scrcpy.ACTION_DOWN)
-        self.client.control.keycode(scrcpy.KEYCODE_HOME, scrcpy.ACTION_UP)
-
-    def on_click_back(self):
-        self.client.control.back_or_turn_screen_on(scrcpy.ACTION_DOWN)
-        self.client.control.back_or_turn_screen_on(scrcpy.ACTION_UP)
-
-    def on_click_power(self):
-        self.client.control.keycode(scrcpy.KEYCODE_POWER, scrcpy.ACTION_DOWN)
-        self.client.control.keycode(scrcpy.KEYCODE_POWER, scrcpy.ACTION_UP)
-
-    def on_click_mute(self):
-        # d = adb.device(serial="UG0623TEST0017")
-        # print(d.serial)
-        # d.shell(["input keyevent", " 164"])
-        self.client.control.keycode(scrcpy.KEYCODE_VOLUME_MUTE, scrcpy.ACTION_DOWN)
-        self.client.control.keycode(scrcpy.KEYCODE_VOLUME_MUTE, scrcpy.ACTION_UP)
+    def hide_stop_button(self, button):
+        button.setVisible(False)
 
     def on_mouse_event(self, action=scrcpy.ACTION_DOWN):
         def handler(evt: QMouseEvent):
@@ -298,8 +401,8 @@ class ScrcpyInterface(QWidget):
             image_size = self.client.resolution  # 实际图像的分辨率
 
             # 调整点击坐标
-            x = (evt.position().x() - (self.ui.label.width() - image_size[0] * self.ratio) / 2 )/ self.ratio
-            y = (evt.position().y() - (self.ui.label.height() - image_size[1] * self.ratio) / 2 )/ self.ratio
+            x = (evt.position().x() - (self.ui.label.width() - image_size[0] * self.ratio) / 2) / self.ratio
+            y = (evt.position().y() - (self.ui.label.height() - image_size[1] * self.ratio) / 2) / self.ratio
 
             # 处理点击事件
             self.client.control.touch(x, y, action)

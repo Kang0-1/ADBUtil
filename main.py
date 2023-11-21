@@ -40,7 +40,7 @@ class Window(MSFluentWindow):
         self.addSubInterface(self.FileInterface, FIF.FOLDER, '文件管理')
 
     def initWindow(self):
-        self.resize(1100, 600)
+        self.resize(1100, 630)
         self.setWindowIcon(QIcon(':/qfluentwidgets/images/logo.png'))
         self.setWindowTitle('ADBUtils')
 
