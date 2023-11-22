@@ -20,7 +20,6 @@ from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition
 import scrcpy
 import globals
 
-from untitled import Ui_centralwidget
 from main_scrcpy import Ui_centralwidget
 
 if not QApplication.instance():

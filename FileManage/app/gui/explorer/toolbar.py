@@ -11,16 +11,16 @@ from FileManage.app.data.models import MessageData, MessageType
 from FileManage.app.data.repositories import FileRepository
 from FileManage.app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper
 import globals
-from qfluentwidgets import FluentIcon as FIF
+from qfluentwidgets import FluentIcon as FIF, PrimaryDropDownPushButton
 
 
-class UploadTools(QToolButton):
+class UploadTools(PrimaryDropDownPushButton):
     def __init__(self, parent):
         super(UploadTools, self).__init__(parent)
         self.menu = QMenu(self)
         self.uploader = self.FilesUploader()
 
-        self.show_action = QAction(QIcon(Resources.icon_plus), 'Upload', self)
+        self.show_action = QAction(QIcon(Resources.icon_upload), 'Upload', self)
         self.show_action.triggered.connect(self.showMenu)
         self.setDefaultAction(self.show_action)
 

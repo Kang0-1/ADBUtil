@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QMessageBox, QApplication
+from PySide6.QtWidgets import QWidget
 from FileInterface_ui import Ui_centralwidget
 
 
