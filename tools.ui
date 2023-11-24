@@ -1,0 +1,782 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1018</width>
+    <height>582</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="CardWidget" name="CardWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>371</width>
+     <height>581</height>
+    </rect>
+   </property>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>15</y>
+      <width>113</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Model</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>65</y>
+      <width>113</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Brand</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>115</y>
+      <width>121</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Android Version</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_6">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>265</y>
+      <width>131</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>FingerPrint</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>315</y>
+      <width>131</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ipv4Address</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="model">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>10</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="brand">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>60</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="android_version">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>110</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="fingerprint">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>260</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="ipv4">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>310</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="output_prop">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>460</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="SearchLineEdit" name="search_prop">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>460</y>
+      <width>171</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Prop</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_8">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>165</y>
+      <width>131</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Serial Number</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="sn">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>160</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="mac">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>210</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_9">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>215</y>
+      <width>131</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>MAC</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>365</y>
+      <width>131</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Software Version</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="hw">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>410</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_5">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>415</y>
+      <width>131</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Hardware Version</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="sw">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>360</y>
+      <width>161</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UnKnown</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="PrimaryPushButton" name="button_input">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>520</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">PushButton, ToolButton, ToggleButton, ToggleToolButton {
+    color: black;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.073);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.183);
+    border-radius: 15px;
+    /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
+    padding: 5px 12px 6px 12px;
+	font-size: 13px;
+	font-weight:bold;
+    outline: none;
+}
+PushButton[hasIcon=false] {
+    padding: 5px 12px 6px 12px;
+}
+PushButton[hasIcon=true] {
+    padding: 5px 12px 6px 36px;
+}
+PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {
+    background: rgba(249, 249, 249, 0.5);
+}
+PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {
+    color: rgba(0, 0, 0, 0.63);
+    background: rgba(249, 249, 249, 0.3);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.073);
+}
+PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {
+    color: rgba(0, 0, 0, 0.36);
+    background: rgba(249, 249, 249, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+PrimaryPushButton,
+PrimaryToolButton,
+ToggleButton:checked,
+ToggleToolButton:checked {
+    color: white;
+    background-color: #009faa;
+    border: 1px solid #00a7b3;
+    border-bottom: 1px solid #007780;
+}
+PrimaryPushButton:hover,
+PrimaryToolButton:hover,
+ToggleButton:checked:hover,
+ToggleToolButton:checked:hover {
+    background-color: #00a7b3;
+    border: 1px solid #2daab3;
+    border-bottom: 1px solid #007780;
+}
+PrimaryPushButton:pressed,
+PrimaryToolButton:pressed,
+ToggleButton:checked:pressed,
+ToggleToolButton:checked:pressed {
+    color: rgba(255, 255, 255, 0.63);
+    background-color: #3eabb3;
+    border: 1px solid #3eabb3;
+}
+PrimaryPushButton:disabled,
+PrimaryToolButton:disabled,
+ToggleButton:checked:disabled,
+ToggleToolButton:checked:disabled {
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgb(205, 205, 205);
+    border: 1px solid rgb(205, 205, 205);
+}</string>
+    </property>
+    <property name="text">
+     <string>Input</string>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="input_text">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>520</y>
+      <width>231</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>false</bool>
+    </property>
+    <property name="placeholderText">
+     <string>Input Text</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="CardWidget" name="CardWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>0</y>
+     <width>651</width>
+     <height>581</height>
+    </rect>
+   </property>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_15">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>360</y>
+      <width>71</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight:bold;
+</string>
+    </property>
+    <property name="text">
+     <string>活动堆栈：</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_14">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>290</y>
+      <width>71</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight:bold;
+</string>
+    </property>
+    <property name="text">
+     <string>上次活动：</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_13">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>220</y>
+      <width>71</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight:bold;
+</string>
+    </property>
+    <property name="text">
+     <string>前台活动：</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_12">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>160</y>
+      <width>71</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight:bold;
+</string>
+    </property>
+    <property name="text">
+     <string>启动活动：</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_11">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>71</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight:bold;
+</string>
+    </property>
+    <property name="text">
+     <string>当前进程：</string>
+    </property>
+   </widget>
+   <widget class="StrongBodyLabel" name="StrongBodyLabel_10">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>71</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight:bold;
+</string>
+    </property>
+    <property name="text">
+     <string>当前包名：</string>
+    </property>
+   </widget>
+   <widget class="TextEdit" name="show_6">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>350</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="show_3">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>150</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="show_2">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>90</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="LineEdit" name="show_1">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>30</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="PrimaryPushButton" name="button_refresh">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>510</y>
+      <width>50</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>50</width>
+      <height>50</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">PushButton, ToolButton, ToggleButton, ToggleToolButton {
+    color: black;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.073);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.183);
+    border-radius: 25px;
+    /* font: 14px 'Segoe UI', 'Microsoft YaHei'; */
+    padding: 5px 12px 6px 12px;
+	font-size:1px;
+    outline: none;
+}
+PushButton[hasIcon=false] {
+    padding: 5px 12px 6px 12px;
+}
+PushButton[hasIcon=true] {
+    padding: 5px 12px 6px 36px;
+}
+PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {
+    background: rgba(249, 249, 249, 0.5);
+}
+PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {
+    color: rgba(0, 0, 0, 0.63);
+    background: rgba(249, 249, 249, 0.3);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.073);
+}
+PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {
+    color: rgba(0, 0, 0, 0.36);
+    background: rgba(249, 249, 249, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+PrimaryPushButton,
+PrimaryToolButton,
+ToggleButton:checked,
+ToggleToolButton:checked {
+    color: white;
+    background-color: #009faa;
+    border: 1px solid #00a7b3;
+    border-bottom: 1px solid #007780;
+}
+PrimaryPushButton:hover,
+PrimaryToolButton:hover,
+ToggleButton:checked:hover,
+ToggleToolButton:checked:hover {
+    background-color: #00a7b3;
+    border: 1px solid #2daab3;
+    border-bottom: 1px solid #007780;
+}
+PrimaryPushButton:pressed,
+PrimaryToolButton:pressed,
+ToggleButton:checked:pressed,
+ToggleToolButton:checked:pressed {
+    color: rgba(255, 255, 255, 0.63);
+    background-color: #3eabb3;
+    border: 1px solid #3eabb3;
+}
+PrimaryPushButton:disabled,
+PrimaryToolButton:disabled,
+ToggleButton:checked:disabled,
+ToggleToolButton:checked:disabled {
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgb(205, 205, 205);
+    border: 1px solid rgb(205, 205, 205);
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="TextEdit" name="show_5">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>280</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="TextEdit" name="show_4">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>210</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>PushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>CardWidget</class>
+   <extends>QFrame</extends>
+   <header>qfluentwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StrongBodyLabel</class>
+   <extends>QLabel</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>SearchLineEdit</class>
+   <extends>LineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>TextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
