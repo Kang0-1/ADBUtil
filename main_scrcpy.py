@@ -23,7 +23,7 @@ class Ui_centralwidget(object):
         self.CardWidget.setObjectName("CardWidget")
         self.label = QtWidgets.QLabel(self.CardWidget)
         self.label.setGeometry(QtCore.QRect(0, 0, 800, 450))
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label.setObjectName("label")
         self.progressRing = IndeterminateProgressRing(self.CardWidget)
         self.progressRing.setGeometry(QtCore.QRect(360, 190, 80, 80))

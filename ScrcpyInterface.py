@@ -1,5 +1,6 @@
 import os
 import re
+from PySide6.QtGui import QIcon, QMouseEvent, QKeyEvent, QImage, QPixmap
 import threading
 import time
 import globals
@@ -8,12 +9,14 @@ from pathlib import Path
 from PySide6 import QtCore
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import *
 from PySide6.QtWidgets import QApplication
-from adbutils import adb, AdbTimeout, AdbError
+from argparse import ArgumentParser
+from adbutils import adb, AdbTimeout
 from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition
+
 import scrcpy
+
 from main_scrcpy import Ui_centralwidget
 
 if not QApplication.instance():
@@ -70,7 +73,7 @@ class ScrcpyInterface(QWidget):
         layout.addWidget(self.ui.label)  # 假设这是显示投屏画面的 QLabel
 
         # 设置 QLabel 的尺寸策略
-        self.ui.label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.ui.label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.ui.label.setScaledContents(False)  # 确保内容缩放以适应 QLabel 的大小
 
         # Bind mouse event
