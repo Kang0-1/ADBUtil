@@ -173,7 +173,7 @@ class FileRepository:
                     local_path=destination,
                     progress_callback=helper.call
                 )
-                return "Download successful!\nDest: %s" % destination, None
+                return destination, None
             except BaseException as error:
                 logging.exception("Unexpected error=%s, type(error)=%s" % (error, type(error)))
                 return None, error

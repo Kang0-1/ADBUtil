@@ -14,7 +14,6 @@ from FileManage.app.core.configurations import Resources
 from FileManage.app.core.managers import Global
 from FileManage.app.data.models import FileType, MessageData
 from FileManage.app.data.repositories import FileRepository
-from FileManage.app.gui.explorer.toolbar import UploadTools, PathBar
 
 
 class FileHeaderWidget(QWidget):
@@ -57,27 +56,6 @@ class FileHeaderWidget(QWidget):
         self.layout().addWidget(self.date)
 
         self.setStyleSheet("QWidget { background-color: #E5E5E5; }")
-
-
-class FileExplorerToolbar(QWidget):
-    def __init__(self, parent=None):
-        super(FileExplorerToolbar, self).__init__(parent)
-        self.setLayout(QHBoxLayout(self))
-        policy = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-        policy.setHorizontalStretch(1)
-
-        self.upload_tools = UploadTools(self)
-        self.upload_tools.setSizePolicy(policy)
-        self.layout().addWidget(self.upload_tools)
-
-        self.parent_button = ParentButton(self)
-        self.parent_button.setSizePolicy(policy)
-        self.layout().addWidget(self.parent_button)
-
-        self.path_bar = PathBar(self)
-        policy.setHorizontalStretch(8)
-        self.path_bar.setSizePolicy(policy)
-        self.layout().addWidget(self.path_bar)
 
 
 class FileItemDelegate(QStyledItemDelegate):
