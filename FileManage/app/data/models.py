@@ -83,20 +83,21 @@ class File:
         if not self.raw_date:
             return None
 
-        created = self.raw_date
-        now = datetime.datetime.now()
-        if created.year < now.year:
-            return '%s %s %s' % (created.day, months[created.month][1], created.year)
-        elif created.month < now.month:
-            return '%s %s' % (created.day, months[created.month][1])
-        elif created.day + 7 < now.day:
-            return '%s %s' % (created.day, months[created.month][2])
-        elif created.day + 1 < now.day:
-            return '%s at %s' % (days[created.weekday()][1], str(created.time())[:-3])
-        elif created.day < now.day:
-            return "Yesterday at %s" % str(created.time())[:-3]
-        else:
-            return str(created.time())[:-3]
+        return str(self.raw_date)
+        # created = self.raw_date
+        # now = datetime.datetime.now()
+        # if created.year < now.year:
+        #     return '%s %s %s' % (created.day, months[created.month][1], created.year)
+        # elif created.month < now.month:
+        #     return '%s %s' % (created.day, months[created.month][1])
+        # elif created.day + 7 < now.day:
+        #     return '%s %s' % (created.day, months[created.month][2])
+        # elif created.day + 1 < now.day:
+        #     return '%s at %s' % (days[created.weekday()][1], str(created.time())[:-3])
+        # elif created.day < now.day:
+        #     return "Yesterday at %s" % str(created.time())[:-3]
+        # else:
+        #     return str(created.time())[:-3]
 
     @property
     def location(self):

@@ -5,17 +5,19 @@ from typing import Any
 
 from PySide6 import QtCore, QtGui
 from PySide6.QtCore import Qt, QPoint, QModelIndex, QAbstractListModel, QRect, QSize, QEvent, QObject
-from PySide6.QtGui import QPixmap, QColor, QPalette, QMovie, QKeySequence, QAction
+from PySide6.QtGui import QPixmap, QColor, QPalette, QMovie, QKeySequence, QAction, QFont
 from PySide6.QtWidgets import QMenu, QMessageBox, QFileDialog, QStyle, QWidget, QStyledItemDelegate, \
     QStyleOptionViewItem, QApplication, QListView, QVBoxLayout, QLabel, QSizePolicy, QHBoxLayout, QTextEdit, \
     QMainWindow
 from PyQt5.QtCore import QVariant
+from qfluentwidgets import CaptionLabel
+
 from FileManage.app.core.configurations import Resources
 from FileManage.app.core.main import Adb
 from FileManage.app.core.managers import Global
 from FileManage.app.data.models import FileType, MessageData, MessageType
 from FileManage.app.data.repositories import FileRepository
-from FileManage.app.gui.explorer.toolbar import ParentButton, UploadTools, PathBar
+from FileManage.app.gui.explorer.toolbar import UploadTools, PathBar
 from FileManage.app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper, read_string_from_file
 
 
@@ -24,32 +26,41 @@ class FileHeaderWidget(QWidget):
         super(FileHeaderWidget, self).__init__(parent)
         self.setLayout(QHBoxLayout(self))
         policy = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+        font = QFont()
+        font.setFamily("Microsoft YaHei")
+        font.setPointSize(12)
+        font.setBold(True)
 
-        self.file = QLabel('File', self)
-        self.file.setContentsMargins(45, 0, 0, 0)
+        self.file = CaptionLabel('File', self)
+        self.file.setAlignment(Qt.AlignCenter)
+        # self.file.setContentsMargins(0, 0, 0, 0)
+        self.file.setFont(font)
         policy.setHorizontalStretch(39)
         self.file.setSizePolicy(policy)
         self.layout().addWidget(self.file)
 
-        self.permissions = QLabel('Permissions', self)
+        self.permissions = CaptionLabel('Permissions', self)
         self.permissions.setAlignment(Qt.AlignCenter)
+        self.permissions.setFont(font)
         policy.setHorizontalStretch(18)
         self.permissions.setSizePolicy(policy)
         self.layout().addWidget(self.permissions)
 
-        self.size = QLabel('Size', self)
+        self.size = CaptionLabel('Size', self)
         self.size.setAlignment(Qt.AlignCenter)
+        self.size.setFont(font)
         policy.setHorizontalStretch(21)
         self.size.setSizePolicy(policy)
         self.layout().addWidget(self.size)
 
-        self.date = QLabel('Date', self)
+        self.date = CaptionLabel('Date', self)
         self.date.setAlignment(Qt.AlignCenter)
+        self.date.setFont(font)
         policy.setHorizontalStretch(22)
         self.date.setSizePolicy(policy)
         self.layout().addWidget(self.date)
 
-        self.setStyleSheet("QWidget { background-color: #E5E5E5; font-weight: 500; border: 1px solid #C0C0C0 }")
+        self.setStyleSheet("QWidget { background-color: #E5E5E5; }")
 
 
 class FileExplorerToolbar(QWidget):
@@ -80,7 +91,7 @@ class FileItemDelegate(QStyledItemDelegate):
         return result
 
     def setEditorData(self, editor: QWidget, index: QtCore.QModelIndex):
-        editor.setText(index.model().data(index, Qt.EditRole))
+        (editor.setText(index.model().data(index, Qt.EditRole)))
 
     def updateEditorGeometry(self, editor: QWidget, option: 'QStyleOptionViewItem', index: QtCore.QModelIndex):
         editor.setGeometry(
@@ -98,6 +109,10 @@ class FileItemDelegate(QStyledItemDelegate):
     @staticmethod
     def paint_text(painter: QtGui.QPainter, text: str, color: QColor, options, x, y, w, h):
         painter.setPen(color)
+        font = QFont()
+        font.setFamily("Microsoft YaHei")
+        font.setPointSize(12)
+        painter.setFont(font)
         painter.drawText(QRect(x, y, w, h), options, text)
 
     def paint(self, painter: QtGui.QPainter, option: 'QStyleOptionViewItem', index: QtCore.QModelIndex):
@@ -106,40 +121,39 @@ class FileItemDelegate(QStyledItemDelegate):
 
         self.initStyleOption(option, index)
         style = option.widget.style() if option.widget else QApplication.style()
-        style.drawControl(QStyle.CE_ItemViewItem, option, painter, option.widget)
+        # style.drawControl(QStyle.ControlElement.CE_ItemViewItem, option, painter, option.widget)
+        style.drawPrimitive(QStyle.PrimitiveElement.PE_PanelItemViewItem, option, painter, option.widget)
 
-        line_color = QColor("#CCCCCC")
+        icon = option.icon
+        if not icon.isNull():
+            icon_rect = option.rect.adjusted(0, 0, -900, 0)
+            icon.paint(painter, icon_rect)
+
         text_color = option.palette.color(QPalette.Normal, QPalette.Text)
 
-        top = option.rect.top()
+        top = option.rect.top() + 6
         bottom = option.rect.height()
 
-        first_start = option.rect.left() + 50
+        first_start = option.rect.left() + 70
         second_start = option.rect.left() + int(option.rect.width() / 2.5)
         third_start = option.rect.left() + int(option.rect.width() / 1.75)
         fourth_start = option.rect.left() + int(option.rect.width() / 1.25)
         end = option.rect.width() + option.rect.left()
 
         self.paint_text(
-            painter, index.data().name, text_color, option.displayAlignment,
+            painter, index.data().name, text_color, Qt.AlignmentFlag.AlignLeft | option.displayAlignment,
             first_start, top, second_start - first_start - 4, bottom
         )
-
-        self.paint_line(painter, line_color, second_start - 2, top, second_start - 1, bottom)
 
         self.paint_text(
             painter, index.data().permissions, text_color, Qt.AlignCenter | option.displayAlignment,
             second_start, top, third_start - second_start - 4, bottom
         )
 
-        self.paint_line(painter, line_color, third_start - 2, top, third_start - 1, bottom)
-
         self.paint_text(
             painter, index.data().size, text_color, Qt.AlignCenter | option.displayAlignment,
             third_start, top, fourth_start - third_start - 4, bottom
         )
-
-        self.paint_line(painter, line_color, fourth_start - 2, top, fourth_start - 1, bottom)
 
         self.paint_text(
             painter, index.data().date, text_color, Qt.AlignCenter | option.displayAlignment,
@@ -184,7 +198,6 @@ class FileListModel(QAbstractListModel):
     def flags(self, index: QModelIndex) -> Qt.ItemFlags:
         if not index.isValid():
             return Qt.NoItemFlags
-
         return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def setData(self, index: QModelIndex, value: Any, role: int = ...) -> bool:
@@ -212,293 +225,6 @@ class FileListModel(QAbstractListModel):
         elif role == Qt.DecorationRole:
             return QPixmap(self.icon_path(index)).scaled(32, 32, Qt.KeepAspectRatio)
         return QVariant()
-
-
-class FileExplorerWidget(QWidget):
-    FILES_WORKER_ID = 300
-    DOWNLOAD_WORKER_ID = 399
-
-    def __init__(self, parent=None):
-        super(FileExplorerWidget, self).__init__(parent)
-        self.main_layout = QVBoxLayout(self)
-
-        self.toolbar = FileExplorerToolbar(self)
-        self.main_layout.addWidget(self.toolbar)
-
-        self.header = FileHeaderWidget(self)
-        self.main_layout.addWidget(self.header)
-
-        self.list = QListView(self)
-        self.model = FileListModel(self.list)
-
-        self.list.setSpacing(1)
-        self.list.setModel(self.model)
-        self.list.installEventFilter(self)
-        self.list.doubleClicked.connect(self.open)
-        self.list.setItemDelegate(FileItemDelegate(self.list))
-        self.list.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.list.customContextMenuRequested.connect(self.context_menu)
-        self.list.setStyleSheet(read_string_from_file(Resources.style_file_list))
-        self.list.setSelectionMode(QListView.SelectionMode.ExtendedSelection)
-        self.layout().addWidget(self.list)
-
-        self.loading = QLabel(self)
-        self.loading.setAlignment(Qt.AlignCenter)
-        self.loading_movie = QMovie(Resources.anim_loading, parent=self.loading)
-        self.loading_movie.setScaledSize(QSize(48, 48))
-        self.loading.setMovie(self.loading_movie)
-        self.main_layout.addWidget(self.loading)
-
-        self.empty_label = QLabel("Folder is empty", self)
-        self.empty_label.setAlignment(Qt.AlignCenter)
-        self.empty_label.setStyleSheet("color: #969696; border: 1px solid #969696")
-        self.layout().addWidget(self.empty_label)
-
-        self.main_layout.setStretch(self.layout().count() - 1, 1)
-        self.main_layout.setStretch(self.layout().count() - 2, 1)
-
-        self.text_view_window = None
-        self.setLayout(self.main_layout)
-
-        Global().communicate.files__refresh.connect(self.update)
-
-    @property
-    def file(self):
-        if self.list and self.list.currentIndex():
-            return self.model.items[self.list.currentIndex().row()]
-
-    @property
-    def files(self):
-        if self.list and len(self.list.selectedIndexes()) > 0:
-            return map(lambda index: self.model.items[index.row()], self.list.selectedIndexes())
-
-    def update(self):
-        super(FileExplorerWidget, self).update()
-        worker = AsyncRepositoryWorker(
-            name="Files",
-            worker_id=self.FILES_WORKER_ID,
-            repository_method=FileRepository.files,
-            response_callback=self._async_response,
-            arguments=()
-        )
-        if Adb.worker().work(worker):
-            # First Setup loading view
-            self.model.clear()
-            self.list.setHidden(True)
-            self.loading.setHidden(False)
-            self.empty_label.setHidden(True)
-            self.loading_movie.start()
-
-            # Then start async worker
-            worker.start()
-            Global().communicate.path_toolbar__refresh.emit()
-
-    def close(self) -> bool:
-        Global().communicate.files__refresh.disconnect()
-        return super(FileExplorerWidget, self).close()
-
-    def _async_response(self, files: list, error: str):
-        self.loading_movie.stop()
-        self.loading.setHidden(True)
-
-        if error:
-            print(error, file=sys.stderr)
-            if not files:
-                Global().communicate.notification.emit(
-                    MessageData(
-                        title='Files',
-                        timeout=15000,
-                        body="<span style='color: red; font-weight: 600'> %s </span>" % error
-                    )
-                )
-        if not files:
-            self.empty_label.setHidden(False)
-        else:
-            self.list.setHidden(False)
-            self.model.populate(files)
-            self.list.setFocus()
-
-    def eventFilter(self, obj: 'QObject', event: 'QEvent') -> bool:
-        if obj == self.list and \
-                event.type() == QEvent.KeyPress and \
-                event.matches(QKeySequence.InsertParagraphSeparator) and \
-                not self.list.isPersistentEditorOpen(self.list.currentIndex()):
-            self.open(self.list.currentIndex())
-        return super(FileExplorerWidget, self).eventFilter(obj, event)
-
-    def open(self, index: QModelIndex = ...):
-        if Adb.manager().open(self.model.items[index.row()]):
-            Global().communicate.files__refresh.emit()
-
-    def context_menu(self, pos: QPoint):
-        menu = QMenu()
-        menu.addSection("Actions")
-
-        action_copy = QAction('Copy to...', self)
-        action_copy.setDisabled(True)
-        menu.addAction(action_copy)
-
-        action_move = QAction('Move to...', self)
-        action_move.setDisabled(True)
-        menu.addAction(action_move)
-
-        action_rename = QAction('Rename', self)
-        action_rename.triggered.connect(self.rename)
-        menu.addAction(action_rename)
-
-        action_open_file = QAction('Open', self)
-        action_open_file.triggered.connect(self.open_file)
-        menu.addAction(action_open_file)
-
-        action_delete = QAction('Delete', self)
-        action_delete.triggered.connect(self.delete)
-        menu.addAction(action_delete)
-
-        action_download = QAction('Download', self)
-        action_download.triggered.connect(self.download_files)
-        menu.addAction(action_download)
-
-        action_download_to = QAction('Download to...', self)
-        action_download_to.triggered.connect(self.download_to)
-        menu.addAction(action_download_to)
-
-        menu.addSeparator()
-
-        action_properties = QAction('Properties', self)
-        action_properties.triggered.connect(self.file_properties)
-        menu.addAction(action_properties)
-
-        menu.exec(self.mapToGlobal(pos))
-
-    @staticmethod
-    def default_response(data, error):
-        if error:
-            Global().communicate.notification.emit(
-                MessageData(
-                    title='Download error',
-                    timeout=15000,
-                    body="<span style='color: red; font-weight: 600'> %s </span>" % error
-                )
-            )
-        if data:
-            Global().communicate.notification.emit(
-                MessageData(
-                    title='Downloaded',
-                    timeout=15000,
-                    body=data
-                )
-            )
-
-    def rename(self):
-        self.list.edit(self.list.currentIndex())
-
-    def open_file(self):
-        # QDesktopServices.openUrl(QUrl.fromLocalFile("downloaded_path")) open via external app
-        if not self.file.isdir:
-            data, error = FileRepository.open_file(self.file)
-            if error:
-                Global().communicate.notification.emit(
-                    MessageData(
-                        title='File',
-                        timeout=15000,
-                        body="<span style='color: red; font-weight: 600'> %s </span>" % error
-                    )
-                )
-            else:
-                self.text_view_window = TextView(self.file.name, data)
-                self.text_view_window.show()
-
-    def delete(self):
-        file_names = ', '.join(map(lambda f: f.name, self.files))
-        reply = QMessageBox.critical(
-            self,
-            'Delete',
-            "Do you want to delete '%s'? It cannot be undone!" % file_names,
-            QMessageBox.Yes | QMessageBox.No, QMessageBox.No
-        )
-
-        if reply == QMessageBox.Yes:
-            for file in self.files:
-                data, error = FileRepository.delete(file)
-                if data:
-                    Global().communicate.notification.emit(
-                        MessageData(
-                            timeout=10000,
-                            title="Delete",
-                            body=data,
-                        )
-                    )
-                if error:
-                    Global().communicate.notification.emit(
-                        MessageData(
-                            timeout=10000,
-                            title="Delete",
-                            body="<span style='color: red; font-weight: 600'> %s </span>" % error,
-                        )
-                    )
-            Global.communicate.files__refresh.emit()
-
-    def download_to(self):
-        dir_name = QFileDialog.getExistingDirectory(self, 'Download to', '~')
-        if dir_name:
-            self.download_files(dir_name)
-
-    def download_files(self, destination: str = None):
-        for file in self.files:
-            helper = ProgressCallbackHelper()
-            worker = AsyncRepositoryWorker(
-                worker_id=self.DOWNLOAD_WORKER_ID,
-                name="Download",
-                repository_method=FileRepository.download,
-                response_callback=self.default_response,
-                arguments=(
-                    helper.progress_callback.emit, file.path, destination
-                )
-            )
-            if Adb.worker().work(worker):
-                Global().communicate.notification.emit(
-                    MessageData(
-                        title="Downloading to",
-                        message_type=MessageType.LOADING_MESSAGE,
-                        message_catcher=worker.set_loading_widget
-                    )
-                )
-                helper.setup(worker, worker.update_loading_widget)
-                worker.start()
-
-    def file_properties(self):
-        file, error = FileRepository.file(self.file.path)
-        file = file if file else self.file
-
-        if error:
-            Global().communicate.notification.emit(
-                MessageData(
-                    timeout=10000,
-                    title="Opening folder",
-                    body="<span style='color: red; font-weight: 600'> %s </span>" % error,
-                )
-            )
-
-        info = "<br/><u><b>%s</b></u><br/>" % str(file)
-        info += "<pre>Name:        %s</pre>" % file.name or '-'
-        info += "<pre>Owner:       %s</pre>" % file.owner or '-'
-        info += "<pre>Group:       %s</pre>" % file.group or '-'
-        info += "<pre>Size:        %s</pre>" % file.raw_size or '-'
-        info += "<pre>Permissions: %s</pre>" % file.permissions or '-'
-        info += "<pre>Date:        %s</pre>" % file.raw_date or '-'
-        info += "<pre>Type:        %s</pre>" % file.type or '-'
-
-        if file.type == FileType.LINK:
-            info += "<pre>Links to:    %s</pre>" % file.link or '-'
-
-        properties = QMessageBox(self)
-        properties.setStyleSheet("background-color: #DDDDDD")
-        properties.setIconPixmap(
-            QPixmap(self.model.icon_path(self.list.currentIndex())).scaled(128, 128, Qt.KeepAspectRatio)
-        )
-        properties.setWindowTitle('Properties')
-        properties.setInformativeText(info)
-        properties.exec_()
 
 
 class TextView(QMainWindow):

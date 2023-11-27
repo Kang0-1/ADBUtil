@@ -1,41 +1,98 @@
 # ADB File Explorer
 # Copyright (C) 2022  Azat Aldeshov
+from PySide6 import QtCore
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-
-from FileManage.app.core.configurations import Resources
 from FileManage.app.core.main import Adb
 from FileManage.app.core.managers import Global
 from FileManage.app.data.models import MessageData, MessageType
 from FileManage.app.data.repositories import FileRepository
 from FileManage.app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper
 import globals
-from qfluentwidgets import FluentIcon as FIF, PrimaryDropDownPushButton
+from qfluentwidgets import PrimaryDropDownPushButton, PrimaryPushButton, LineEdit, RoundMenu
 
 
 class UploadTools(PrimaryDropDownPushButton):
     def __init__(self, parent):
         super(UploadTools, self).__init__(parent)
-        self.menu = QMenu(self)
+        self._menu = RoundMenu(self)
         self.uploader = self.FilesUploader()
 
-        self.show_action = QAction(QIcon(Resources.icon_upload), 'Upload', self)
-        self.show_action.triggered.connect(self.showMenu)
-        self.setDefaultAction(self.show_action)
+        self.setIcon(QIcon('./resources/icons/upload.png'))
+        self.setIconSize(QtCore.QSize(32, 32))
+        self.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                     "    color: black;\n"
+                                     "    background: rgba(255, 255, 255, 0.7);\n"
+                                     "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                     "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                     "    border-radius: 10px;\n"
+                                     "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                     "    padding: 5px 12px 6px 12px;\n"
+                                     "    font-size: 1px;\n"
+                                     "    outline: none;\n"
+                                     "}\n"
+                                     "PushButton[hasIcon=false] {\n"
+                                     "    padding: 5px 12px 6px 12px;\n"
+                                     "}\n"
+                                     "PushButton[hasIcon=true] {\n"
+                                     "    padding: 5px 12px 6px 36px;\n"
+                                     "}\n"
+                                     "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                     "    background: rgba(249, 249, 249, 0.5);\n"
+                                     "}\n"
+                                     "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                     "    color: rgba(0, 0, 0, 0.63);\n"
+                                     "    background: rgba(249, 249, 249, 0.3);\n"
+                                     "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                     "}\n"
+                                     "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                     "    color: rgba(0, 0, 0, 0.36);\n"
+                                     "    background: rgba(249, 249, 249, 0.3);\n"
+                                     "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                     "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                     "}\n"
+                                     "PrimaryPushButton,\n"
+                                     "PrimaryToolButton,\n"
+                                     "ToggleButton:checked,\n"
+                                     "ToggleToolButton:checked {\n"
+                                     "    color: white;\n"
+                                     "    background-color: #009faa;\n"
+                                     "    border: 1px solid #00a7b3;\n"
+                                     "    border-bottom: 1px solid #007780;\n"
+                                     "}\n"
+                                     "PrimaryPushButton:hover,\n"
+                                     "PrimaryToolButton:hover,\n"
+                                     "ToggleButton:checked:hover,\n"
+                                     "ToggleToolButton:checked:hover {\n"
+                                     "    background-color: #00a7b3;\n"
+                                     "    border: 1px solid #2daab3;\n"
+                                     "    border-bottom: 1px solid #007780;\n"
+                                     "}\n"
+                                     "ToggleButton:checked:pressed,\n"
+                                     "ToggleToolButton:checked:pressed {\n"
+                                     "    color: rgba(255, 255, 255, 0.63);\n"
+                                     "    background-color: #3eabb3;\n"
+                                     "    border: 1px solid #3eabb3;\n"
+                                     "}")
+        self.setObjectName("upload_button")
+        self.clicked.connect(self._showMenu)
 
-        upload_files = QAction(QIcon(Resources.icon_files_upload), '&Upload files', self)
+        self._menu.addSection("Upload files")
+
+
+        upload_files = QAction(QIcon('./resources/icons/file.png'), 'Upload files', self)
         upload_files.triggered.connect(self.__action_upload_files__)
-        self.menu.addAction(upload_files)
+        self._menu.addAction(upload_files)
 
-        upload_directory = QAction(QIcon(Resources.icon_folder_upload), '&Upload directory', self)
+        upload_directory = QAction(QIcon('./resources/icons/folder.png'), 'Upload directory', self)
         upload_directory.triggered.connect(self.__action_upload_directory__)
-        self.menu.addAction(upload_directory)
+        self._menu.addAction(upload_directory)
 
-        upload_files = QAction(QIcon(Resources.icon_folder_create), '&Create folder', self)
-        upload_files.triggered.connect(self.__action_create_folder__)
-        self.menu.addAction(upload_files)
-        self.setMenu(self.menu)
+        # upload_files = QAction(QIcon(Resources.icon_folder_create), '&Create folder', self)
+        # upload_files.triggered.connect(self.__action_create_folder__)
+        # self.menu.addAction(upload_files)
+        self.setMenu(self._menu)
 
     def __action_upload_files__(self):
         file_names = QFileDialog.getOpenFileNames(self, 'Select files', '~')[0]
@@ -124,48 +181,161 @@ class UploadTools(PrimaryDropDownPushButton):
                 )
 
 
-class ParentButton(QToolButton):
-    def __init__(self, parent):
-        super(ParentButton, self).__init__(parent)
-        self.action = QAction(QIcon(Resources.icon_up), 'Parent', self)
-        self.action.setShortcut('Escape')
-        self.action.triggered.connect(
-            lambda: Global().communicate.files__refresh.emit() if Adb.worker().check(300) and Adb.manager().up() else ''
-        )
-        self.setDefaultAction(self.action)
+# class ParentButton(PrimaryPushButton):
+#     def __init__(self, parent):
+#         super(ParentButton, self).__init__(parent)
+#
+#         # self.action = QAction(QIcon(Resources.icon_back), 'Parent', self)
+#         # self.setIconSize(QtCore.QSize(27, 27))
+#         # self.action.setShortcut('Escape')
+#         # self.action.triggered.connect(
+#         #     lambda: Global().communicate.files__refresh.emit() if Adb.worker().check(300) and Adb.manager().up() else ''
+#         # )
+#         # self.setDefaultAction(self.action)
 
 
 class PathBar(QWidget):
     def __init__(self, parent: QWidget):
         super(PathBar, self).__init__(parent)
-        self.setLayout(QHBoxLayout(self))
+        # self.setLayout(QHBoxLayout(self))
 
         self.prefix = globals.CURRENT_DEVICE
         self.value = Adb.manager().path()
 
-        self.text = QLineEdit(self)
+        self.text = LineEdit(self)
         self.text.installEventFilter(self)
-        self.text.setStyleSheet("padding: 5;")
+        self.text.setGeometry(QtCore.QRect(0, 0, 420, 45))
+        self.text.setMaximumSize(QtCore.QSize(430, 40))
         self.text.setText(self.prefix + self.value)
         self.text.textEdited.connect(self._update)
         self.text.returnPressed.connect(self._action)
-        self.layout().addWidget(self.text)
+        # self.layout().addWidget(self.text)
 
-        self.go = QToolButton(self)
-        self.go.setStyleSheet("padding: 4;")
-        self.action = QAction(QIcon(Resources.icon_arrow), 'Go', self)
-        self.action.triggered.connect(self._action)
-        self.go.setDefaultAction(self.action)
-        self.layout().addWidget(self.go)
+        self.go = PrimaryPushButton(self)
+        self.go.setIcon(QIcon('./resources/icons/go.png'))
+        self.go.setGeometry(QtCore.QRect(450, 0, 57, 40))
+        self.go.setMaximumSize(QtCore.QSize(57, 40))
+        self.go.setIconSize(QtCore.QSize(30, 30))
+        self.go.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                   "    color: black;\n"
+                                   "    background: rgba(255, 255, 255, 0.7);\n"
+                                   "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                   "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                   "    border-radius: 10px;\n"
+                                   "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                   "    padding: 5px 12px 6px 12px;\n"
+                                   "    font-size: 1px;\n"
+                                   "    outline: none;\n"
+                                   "}\n"
+                                   "PushButton[hasIcon=false] {\n"
+                                   "    padding: 5px 12px 6px 12px;\n"
+                                   "}\n"
+                                   "PushButton[hasIcon=true] {\n"
+                                   "    padding: 5px 12px 6px 36px;\n"
+                                   "}\n"
+                                   "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                   "    background: rgba(249, 249, 249, 0.5);\n"
+                                   "}\n"
+                                   "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                   "    color: rgba(0, 0, 0, 0.63);\n"
+                                   "    background: rgba(249, 249, 249, 0.3);\n"
+                                   "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                   "}\n"
+                                   "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                   "    color: rgba(0, 0, 0, 0.36);\n"
+                                   "    background: rgba(249, 249, 249, 0.3);\n"
+                                   "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                   "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                   "}\n"
+                                   "PrimaryPushButton,\n"
+                                   "PrimaryToolButton,\n"
+                                   "ToggleButton:checked,\n"
+                                   "ToggleToolButton:checked {\n"
+                                   "    color: white;\n"
+                                   "    background-color: #009faa;\n"
+                                   "    border: 1px solid #00a7b3;\n"
+                                   "    border-bottom: 1px solid #007780;\n"
+                                   "}\n"
+                                   "PrimaryPushButton:hover,\n"
+                                   "PrimaryToolButton:hover,\n"
+                                   "ToggleButton:checked:hover,\n"
+                                   "ToggleToolButton:checked:hover {\n"
+                                   "    background-color: #00a7b3;\n"
+                                   "    border: 1px solid #2daab3;\n"
+                                   "    border-bottom: 1px solid #007780;\n"
+                                   "}\n"
+                                   "ToggleButton:checked:pressed,\n"
+                                   "ToggleToolButton:checked:pressed {\n"
+                                   "    color: rgba(255, 255, 255, 0.63);\n"
+                                   "    background-color: #3eabb3;\n"
+                                   "    border: 1px solid #3eabb3;\n"
+                                   "}")
+        self.go.clicked.connect(self._action)
+        # self.layout().addWidget(self.go)
 
-        self.refresh_bt = QToolButton(self)
-        self.refresh_bt.setStyleSheet("padding: 4;")
-        self.refresh_bt.setIcon(FIF.UPDATE.icon())
-        self.refresh_bt.clicked.connect(self._refresh)
-        self.go.setDefaultAction(self.action)
-        self.layout().addWidget(self.refresh_bt)
+        self.refresh = PrimaryPushButton(self)
+        self.refresh.setIcon(QIcon('./resources/icons/refresh.png'))
+        self.refresh.setGeometry(QtCore.QRect(550, 0, 57, 40))
+        self.refresh.setMinimumSize(QtCore.QSize(52, 40))
+        self.refresh.setIconSize(QtCore.QSize(32, 32))
+        self.refresh.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                      "    color: black;\n"
+                                      "    background: rgba(255, 255, 255, 0.7);\n"
+                                      "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                      "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                      "    border-radius: 10px;\n"
+                                      "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                      "    padding: 5px 12px 6px 12px;\n"
+                                      "    font-size: 1px;\n"
+                                      "    outline: none;\n"
+                                      "}\n"
+                                      "PushButton[hasIcon=false] {\n"
+                                      "    padding: 5px 12px 6px 12px;\n"
+                                      "}\n"
+                                      "PushButton[hasIcon=true] {\n"
+                                      "    padding: 5px 12px 6px 36px;\n"
+                                      "}\n"
+                                      "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                      "    background: rgba(249, 249, 249, 0.5);\n"
+                                      "}\n"
+                                      "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                      "    color: rgba(0, 0, 0, 0.63);\n"
+                                      "    background: rgba(249, 249, 249, 0.3);\n"
+                                      "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                      "}\n"
+                                      "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                      "    color: rgba(0, 0, 0, 0.36);\n"
+                                      "    background: rgba(249, 249, 249, 0.3);\n"
+                                      "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                      "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                      "}\n"
+                                      "PrimaryPushButton,\n"
+                                      "PrimaryToolButton,\n"
+                                      "ToggleButton:checked,\n"
+                                      "ToggleToolButton:checked {\n"
+                                      "    color: white;\n"
+                                      "    background-color: #009faa;\n"
+                                      "    border: 1px solid #00a7b3;\n"
+                                      "    border-bottom: 1px solid #007780;\n"
+                                      "}\n"
+                                      "PrimaryPushButton:hover,\n"
+                                      "PrimaryToolButton:hover,\n"
+                                      "ToggleButton:checked:hover,\n"
+                                      "ToggleToolButton:checked:hover {\n"
+                                      "    background-color: #00a7b3;\n"
+                                      "    border: 1px solid #2daab3;\n"
+                                      "    border-bottom: 1px solid #007780;\n"
+                                      "}\n"
+                                      "ToggleButton:checked:pressed,\n"
+                                      "ToggleToolButton:checked:pressed {\n"
+                                      "    color: rgba(255, 255, 255, 0.63);\n"
+                                      "    background-color: #3eabb3;\n"
+                                      "    border: 1px solid #3eabb3;\n"
+                                      "}")
+        self.refresh.clicked.connect(self._refresh)
+        # self.layout().addWidget(self.refresh)
 
-        self.layout().setContentsMargins(0, 0, 0, 0)
+        # self.layout().setContentsMargins(0, 0, 0, 0)
         Global().communicate.path_toolbar__refresh.connect(self._clear)
 
     def eventFilter(self, obj: 'QObject', event: 'QEvent') -> bool:
@@ -182,9 +352,9 @@ class PathBar(QWidget):
     def _update(self, text: str):
         self.value = text
 
-    def _refresh(self):
-        self.prefix = globals.CURRENT_DEVICE
-        if globals.CURRENT_DEVICE.__len__() > 0:
+    def _refresh(self, device_serial):
+        self.prefix = device_serial
+        if self.prefix.__len__() > 0:
             if Adb.manager().set_device(Device(id=self.prefix, name=self.prefix, type="device")):
                 Global().communicate.files__refresh.emit()
             else:
