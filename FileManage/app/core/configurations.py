@@ -3,7 +3,7 @@
 import os
 import platform
 
-from PyQt5.QtCore import QFile, QIODevice
+from PySide6.QtCore import QFile, QIODevice
 from pkg_resources import resource_filename
 
 from FileManage.app.data.models import Device
@@ -111,5 +111,6 @@ class Resources:
     icon_folder_upload = resource_filename('resources.icons.files.actions', 'folder_upload.svg')
     icon_folder_create = resource_filename('resources.icons.files.actions', 'folder_create.svg')
     icon_upload = resource_filename('resources.icons', 'upload.png')
+    icon_back = resource_filename('resources.icons', 'back.png')
 
     anim_loading = resource_filename('resources.anim', 'loading.gif')
