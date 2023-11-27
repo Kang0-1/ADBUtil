@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from PySide6 import QtWidgets, QtCore, QtGui
+from PySide6 import QtWidgets, QtCore
 from PySide6.QtCore import Qt, QModelIndex, QPoint, QEvent, QSize, Slot
 from PySide6.QtGui import QKeySequence, QAction, QIcon, QPixmap, QMovie, QCursor
-from PySide6.QtWidgets import QWidget, QListView, QMenu, QInputDialog, QMessageBox, QFileDialog, QLabel
+from PySide6.QtWidgets import QWidget, QListView, QInputDialog, QMessageBox, QFileDialog, QLabel, QVBoxLayout
 
 from FileManage.app.core.configurations import Resources
 from FileManage.app.core.main import Adb
@@ -23,6 +23,7 @@ class Ui_centralwidget(QWidget):
     def setupUi(self, centralwidget):
         centralwidget.setObjectName("FileManager")
         centralwidget.resize(1018, 580)
+        layout = QVBoxLayout()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
                                            QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -40,6 +41,7 @@ class Ui_centralwidget(QWidget):
         self.CardWidget.setSizePolicy(sizePolicy)
         self.CardWidget.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.CardWidget.setObjectName("CardWidget_toolbar")
+        # layout.addWidget(self.CardWidget)
 
         self.upload_tools = UploadTools(self.CardWidget)
         self.upload_tools.setGeometry(QtCore.QRect(30, 10, 78, 40))
@@ -179,8 +181,11 @@ class Ui_centralwidget(QWidget):
 
         self.list = QListView(centralwidget)
         self.model = FileListModel(self.list)
+        # layout.addWidget(self.header)
+        # layout.addWidget(self.list)
+        # self.setLayout(layout)
 
-        # self.list.setSpacing(1)
+        self.list.setSpacing(1)
         self.list.setModel(self.model)
         self.list.installEventFilter(centralwidget)
         self.list.doubleClicked.connect(self.open)

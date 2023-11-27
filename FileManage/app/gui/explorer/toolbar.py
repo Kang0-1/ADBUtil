@@ -9,7 +9,6 @@ from FileManage.app.core.managers import Global
 from FileManage.app.data.models import MessageData, MessageType
 from FileManage.app.data.repositories import FileRepository
 from FileManage.app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper
-import globals
 from qfluentwidgets import PrimaryDropDownPushButton, PrimaryPushButton, LineEdit, RoundMenu
 
 
@@ -199,7 +198,7 @@ class PathBar(QWidget):
         super(PathBar, self).__init__(parent)
         # self.setLayout(QHBoxLayout(self))
 
-        self.prefix = globals.CURRENT_DEVICE
+        self.prefix = ""
         self.value = Adb.manager().path()
 
         self.text = LineEdit(self)
@@ -352,6 +351,7 @@ class PathBar(QWidget):
     def _update(self, text: str):
         self.value = text
 
+    @Slot(str)
     def _refresh(self, device_serial):
         self.prefix = device_serial
         if self.prefix.__len__() > 0:

@@ -3,8 +3,6 @@ import re
 from PySide6.QtGui import QIcon, QMouseEvent, QKeyEvent, QImage, QPixmap
 import threading
 import time
-import globals
-from argparse import ArgumentParser
 from pathlib import Path
 from PySide6 import QtCore
 from PySide6.QtCore import *
@@ -515,3 +513,6 @@ def run():
     scrcpyInterface.client.start()
     while scrcpyInterface.alive:
         scrcpyInterface.client.start()
+
+    def emit_device_serial(self, value):
+        self.device_serial.emit(value)
