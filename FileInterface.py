@@ -5,7 +5,7 @@ from pathlib import Path
 from PySide6.QtCore import Qt, QModelIndex, QPoint, QEvent
 from PySide6.QtGui import QKeySequence, QAction, QIcon, QPixmap, QCursor
 from PySide6.QtWidgets import QWidget, QInputDialog, QMessageBox, QFileDialog
-from qfluentwidgets import InfoBar, InfoBarPosition, RoundMenu, Dialog
+from qfluentwidgets import InfoBar, InfoBarPosition, RoundMenu, Dialog, StateToolTip
 
 from FileInterface_ui import Ui_centralwidget
 from FileManage.app.core.main import Adb
@@ -184,6 +184,7 @@ class FileInterface(QWidget):
         return super(FileInterface, self).eventFilter(obj, event)
 
     def default_response(self, data, error):
+        self.close_state_info()
         if error:
             self.show_info_bar("文件下载失败", "error")
         else:
@@ -257,6 +258,7 @@ class FileInterface(QWidget):
                     )
                 )
                 helper.setup(worker, worker.update_loading_widget)
+                self.show_state_info("正在下载文件···")
                 worker.start()
 
     def file_properties(self):
@@ -294,6 +296,7 @@ class FileInterface(QWidget):
         properties.exec_()
 
     def upload_response(self, data, error):
+        self.close_state_info()
         if error:
             self.show_info_bar("文件上传失败", "error")
         else:
@@ -310,6 +313,17 @@ class FileInterface(QWidget):
             InfoBar.error("Error", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
         else:
             print("未知的信息类型")
+
+    def show_state_info(self, message):
+        self.ui.stateTooltip = StateToolTip(message, "请等待~", self)
+        self.ui.stateTooltip.move(880, 10)
+        self.ui.stateTooltip.show()
+
+    def close_state_info(self):
+        if self.ui.stateTooltip:
+            self.ui.stateTooltip.setState(True)
+            self.ui.stateTooltip = None
+
 
     def setup(self, files: list):
         self.upload_files = []
@@ -334,5 +348,6 @@ class FileInterface(QWidget):
                     )
                 )
                 helper.setup(worker, worker.update_loading_widget)
+                self.show_state_info("正在上传文件···")
                 worker.start()
         Global().communicate.files__refresh.emit()

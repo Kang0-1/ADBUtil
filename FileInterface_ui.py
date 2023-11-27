@@ -245,6 +245,7 @@ class Ui_centralwidget(QWidget):
         self.empty_label.setAlignment(Qt.AlignCenter)
         self.empty_label.setStyleSheet("color: #969696; border: 1px solid #969696")
 
+        self.stateTooltip = None
 
 
         self.retranslateUi(centralwidget)
