@@ -41,7 +41,6 @@ class Ui_centralwidget(QWidget):
         self.CardWidget.setSizePolicy(sizePolicy)
         self.CardWidget.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.CardWidget.setObjectName("CardWidget_toolbar")
-        # layout.addWidget(self.CardWidget)
 
         self.upload_tools = UploadTools(self.CardWidget)
         self.upload_tools.setGeometry(QtCore.QRect(30, 10, 78, 40))
@@ -181,6 +180,7 @@ class Ui_centralwidget(QWidget):
 
         self.list = QListView(centralwidget)
         self.model = FileListModel(self.list)
+        # layout.addWidget(self.CardWidget)
         # layout.addWidget(self.header)
         # layout.addWidget(self.list)
         # self.setLayout(layout)

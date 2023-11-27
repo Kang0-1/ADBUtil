@@ -2,10 +2,10 @@
 # Copyright (C) 2022  Azat Aldeshov
 from typing import Union
 
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtCore import Qt, QTimer, QPoint, QSize, QPropertyAnimation, QAbstractAnimation, QObject
-from PyQt5.QtGui import QIcon, QPaintEvent, QPainter, QMovie
-from PyQt5.QtWidgets import QLabel, QWidget, QHBoxLayout, QPushButton, QStyleOption, QStyle, \
+from PySide6 import QtGui, QtCore
+from PySide6.QtCore import Qt, QTimer, QPoint, QSize, QPropertyAnimation, QAbstractAnimation, QObject
+from PySide6.QtGui import QIcon, QPaintEvent, QPainter, QMovie
+from PySide6.QtWidgets import QLabel, QWidget, QHBoxLayout, QPushButton, QStyleOption, QStyle, \
     QGraphicsDropShadowEffect, QVBoxLayout, QScrollArea, QSizePolicy, QFrame, QGraphicsOpacityEffect, QProgressBar
 
 from FileManage.app.core.configurations import Resources
