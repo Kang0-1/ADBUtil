@@ -1,24 +1,20 @@
 # ADB File Explorer
 # Copyright (C) 2022  Azat Aldeshov
-import sys
 from typing import Any
 
 from PySide6 import QtCore, QtGui
-from PySide6.QtCore import Qt, QPoint, QModelIndex, QAbstractListModel, QRect, QSize, QEvent, QObject
-from PySide6.QtGui import QPixmap, QColor, QPalette, QMovie, QKeySequence, QAction, QFont
-from PySide6.QtWidgets import QMenu, QMessageBox, QFileDialog, QStyle, QWidget, QStyledItemDelegate, \
-    QStyleOptionViewItem, QApplication, QListView, QVBoxLayout, QLabel, QSizePolicy, QHBoxLayout, QTextEdit, \
+from PySide6.QtCore import Qt, QModelIndex, QAbstractListModel, QRect, QSize
+from PySide6.QtGui import QPixmap, QColor, QPalette, QFont
+from PySide6.QtWidgets import QStyle, QWidget, QStyledItemDelegate, \
+    QStyleOptionViewItem, QApplication, QSizePolicy, QHBoxLayout, QTextEdit, \
     QMainWindow
-from PyQt5.QtCore import QVariant
 from qfluentwidgets import CaptionLabel
 
 from FileManage.app.core.configurations import Resources
-from FileManage.app.core.main import Adb
 from FileManage.app.core.managers import Global
-from FileManage.app.data.models import FileType, MessageData, MessageType
+from FileManage.app.data.models import FileType, MessageData
 from FileManage.app.data.repositories import FileRepository
 from FileManage.app.gui.explorer.toolbar import UploadTools, PathBar
-from FileManage.app.helpers.tools import AsyncRepositoryWorker, ProgressCallbackHelper, read_string_from_file
 
 
 class FileHeaderWidget(QWidget):
@@ -216,7 +212,7 @@ class FileListModel(QAbstractListModel):
 
     def data(self, index: QModelIndex, role: int = ...) -> Any:
         if not index.isValid():
-            return QVariant()
+            return None
 
         if role == Qt.DisplayRole:
             return self.items[index.row()]
@@ -224,7 +220,7 @@ class FileListModel(QAbstractListModel):
             return self.items[index.row()].name
         elif role == Qt.DecorationRole:
             return QPixmap(self.icon_path(index)).scaled(32, 32, Qt.KeepAspectRatio)
-        return QVariant()
+        return None
 
 
 class TextView(QMainWindow):
