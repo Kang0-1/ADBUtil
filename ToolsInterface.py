@@ -15,6 +15,7 @@ from tools import Ui_Form
 
 class ToolsInterface(QWidget):
     deviceReady = Signal()
+    updateActivityInfo_signal = Signal(object, object)
 
     @Slot(str)
     def getDeviceFromSignal(self, device_serial):
@@ -35,6 +36,7 @@ class ToolsInterface(QWidget):
         self.ui.button_refresh.setIcon(QIcon('resources/刷新.png'))
         self.ui.button_refresh.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_refresh.clicked.connect(lambda: (self.getActivityInfo(), self.getBaseInfo()))
+        self.updateActivityInfo_signal.connect(self.update_text_edit)
 
     @Slot()
     def onDeviceReady(self):
@@ -93,6 +95,9 @@ class ToolsInterface(QWidget):
             print(e)
 
     def getActivityInfo(self):
+        threading.Thread(target=self._getActivityInfoThread).start()
+
+    def _getActivityInfoThread(self):
         try:
             device = self.device
             package_name = get_package_name(device)
@@ -101,12 +106,12 @@ class ToolsInterface(QWidget):
             resumed_activity = get_resumed_activity(device)
             last_history_activity = get_last_history_activity(device)
             stack_activities = get_stack_activities(device, package_name)
-            self.update_text_edit(package_name, self.ui.show_1)
-            self.update_text_edit(process_name, self.ui.show_2)
-            self.update_text_edit(launch_activity, self.ui.show_3)
-            self.update_text_edit(resumed_activity, self.ui.show_4)
-            self.update_text_edit(last_history_activity, self.ui.show_5)
-            self.update_text_edit(stack_activities, self.ui.show_6)
+            self.updateActivityInfo_signal.emit(package_name, self.ui.show_1)
+            self.updateActivityInfo_signal.emit(process_name, self.ui.show_2)
+            self.updateActivityInfo_signal.emit(launch_activity, self.ui.show_3)
+            self.updateActivityInfo_signal.emit(resumed_activity, self.ui.show_4)
+            self.updateActivityInfo_signal.emit(last_history_activity, self.ui.show_5)
+            self.updateActivityInfo_signal.emit(stack_activities, self.ui.show_6)
         except Exception as e:
             print(e)
 
@@ -122,7 +127,7 @@ class ToolsInterface(QWidget):
         else:
             # 处理单个字符串
             text = text_input
-            line_count = text.count('\n') + 2  # 包含换行符的情况
+            line_count = text.count('\n') + 3  # 包含换行符的情况
 
         text_edit.setText(text)
 
@@ -138,7 +143,7 @@ class ToolsInterface(QWidget):
         new_height = font_metrics.height() * line_count
 
         # 确保高度只增加不减少
-        new_height = max(new_height, text_edit.height())
+        # new_height = max(new_height, text_edit.height())
 
         # 设置QTextEdit的新尺寸
         text_edit.setFixedSize(QSize(text_width, new_height))
@@ -203,14 +208,14 @@ def getIP():
             shell=True, stderr=subprocess.DEVNULL).decode().strip()
         # 如果有线接口有IP，返回这个IP
         if ip_eth0:
-            return f"📶:{ip_eth0}"
+            return f"📶 : {ip_eth0}"
         # 获取无线接口的IP地址
         ip_wlan0 = subprocess.check_output(
             "adb shell \"ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'\"",
             shell=True, stderr=subprocess.DEVNULL).decode().strip()
         # 如果无线接口有IP，返回这个IP
         if ip_wlan0:
-            return f"🛜:{ip_wlan0}"
+            return f"🛜 : {ip_wlan0}"
     except subprocess.CalledProcessError:
         pass
     # 如果两个接口都没有IP，返回“未连接”

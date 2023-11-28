@@ -29,6 +29,7 @@ class ScrcpyInterface(QWidget):
     recording_hide_stop_button_signal = Signal(object)
     logcat_finished_signal = Signal(str, str)
     logcat_hide_stop_button_signal = Signal(object)
+    snapShot_finished_signal = Signal(str, str)
     # 用信号和槽来改变device
     device_serial = Signal(str)
 
@@ -45,6 +46,7 @@ class ScrcpyInterface(QWidget):
         self.recording_hide_stop_button_signal.connect(self.hide_stop_button)
         self.logcat_finished_signal.connect(self.show_info_bar)
         self.logcat_hide_stop_button_signal.connect(self.hide_stop_button)
+        self.snapShot_finished_signal.connect(self.show_info_bar)
         self.logcat = None  # 存储logcat的数据
         self.logcat_file_path = None  # 存储logcat的log路径
 
@@ -337,6 +339,12 @@ class ScrcpyInterface(QWidget):
         self.logcat_stop_event.set()  # 触发停止事件
 
     def on_click_snapShot(self):
+        if not self.device:
+            self.show_info_bar("未连接设备，请检查", "error")
+            return
+        threading.Thread(target=self.perform_snapShot).start()
+
+    def perform_snapShot(self):
         try:
             device = adb.device(serial=self.device.serial)
             p = device.screenshot()
@@ -347,10 +355,12 @@ class ScrcpyInterface(QWidget):
             screenshot_file = desktop_path / f"{time.time_ns()}.png"
             p.save(screenshot_file)
             print("屏幕截取成功，文件保存在: " + str(screenshot_file))
-            self.show_info_bar("屏幕截取成功，截图保存在: " + str(screenshot_file), "success")
+            self.snapShot_finished_signal.emit("屏幕截取成功，截图保存在: " + str(screenshot_file), "success")
+            # self.show_info_bar("屏幕截取成功，截图保存在: " + str(screenshot_file), "success")
         except Exception as e:
             print("截图失败: " + str(e))
-            self.show_info_bar("屏幕截取失败! " + str(e), "error")
+            self.snapShot_finished_signal.emit("屏幕截取失败! " + str(e), "error")
+            # self.show_info_bar("屏幕截取失败! " + str(e), "error")
 
     def on_click_recording_start(self):
         if not self.device:
