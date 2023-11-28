@@ -18,10 +18,8 @@ class FileRepository:
     @classmethod
     def files(cls) -> (List[File], str):
         if Adb.core == Adb.PYTHON_ADB_SHELL:
-            print("python adb")
             return python_adb.FileRepository.files()
         elif Adb.core == Adb.EXTERNAL_TOOL_ADB:
-            print("android adb")
             return android_adb.FileRepository.files()
 
     @classmethod

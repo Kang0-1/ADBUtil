@@ -69,7 +69,7 @@ class File:
     @property
     def size(self):
         if not self.raw_size:
-            return ''
+            return '-'
         count = 0
         result = self.raw_size
         while result >= 1024 and count < len(size_types):

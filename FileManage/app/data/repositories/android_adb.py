@@ -40,9 +40,7 @@ class FileRepository:
     def files(cls) -> (List[File], str):
         if not ADBManager.get_device():
             return None, "No device selected!"
-        print(ADBManager.get_device().id)
         path = ADBManager.path()
-        print(path)
         args = adb.ShellCommand.LS_ALL_LIST + [path.replace(' ', r'\ ')]
         # print(args)
         response = adb.shell(ADBManager.get_device().id, args)
@@ -54,9 +52,7 @@ class FileRepository:
             return [], response.ErrorData
 
         args = adb.ShellCommand.LS_ALL_DIRS + [path.replace(' ', r'\ ') + "*/"]
-        print(args)
         response_dirs = adb.shell(ADBManager.get_device().id, args)
-        print(response.IsSuccessful, response.OutputData)
         if not response_dirs.IsSuccessful and response_dirs.ExitCode != 1:
             return [], response_dirs.ErrorData or response_dirs.OutputData
 
@@ -115,7 +111,7 @@ class FileRepository:
             if not response.IsSuccessful:
                 return None, response.ErrorData or "\n".join(helper.messages)
 
-            return "\n".join(helper.messages), response.ErrorData
+            return destination, response.ErrorData
         return None, None
 
     @classmethod
