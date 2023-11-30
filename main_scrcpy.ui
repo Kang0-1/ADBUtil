@@ -1086,7 +1086,7 @@ PillToolButton:disabled:checked {
      <string>Connect</string>
     </property>
    </widget>
-   <widget class="VerticalSeparator" name="VerticalSeparator">
+   <widget class="VerticalSeparator" name="VerticalSeparator" native="true">
     <property name="geometry">
      <rect>
       <x>360</x>
@@ -1202,7 +1202,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>480</y>
+      <y>450</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -1700,7 +1700,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>380</y>
+      <y>370</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -1779,7 +1779,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>380</y>
+      <y>370</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -1858,7 +1858,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>430</y>
+      <y>410</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -1937,7 +1937,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>430</y>
+      <y>410</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -2016,7 +2016,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>430</y>
+      <y>410</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -2095,7 +2095,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>380</y>
+      <y>370</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -2174,7 +2174,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>480</y>
+      <y>450</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -2253,7 +2253,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>480</y>
+      <y>450</y>
       <width>41</width>
       <height>32</height>
      </rect>
@@ -2580,7 +2580,7 @@ ToggleToolButton:checked:disabled {
    <widget class="PrimaryPushButton" name="button_left">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>40</x>
       <y>135</y>
       <width>40</width>
       <height>40</height>
@@ -2671,7 +2671,7 @@ ToggleToolButton:checked:disabled {
    <widget class="PrimaryPushButton" name="button_right">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>140</x>
       <y>135</y>
       <width>40</width>
       <height>40</height>
@@ -3292,7 +3292,7 @@ ToggleToolButton:checked:disabled {
      <string/>
     </property>
    </widget>
-   <widget class="VerticalSeparator" name="VerticalSeparator_2">
+   <widget class="VerticalSeparator" name="VerticalSeparator_2" native="true">
     <property name="geometry">
      <rect>
       <x>400</x>

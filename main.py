@@ -7,7 +7,6 @@ from PySide6.QtWidgets import QApplication, QWidget, QFrame, QHBoxLayout
 
 from qfluentwidgets import FluentWindow, SubtitleLabel, setFont, SplitFluentWindow, MSFluentWindow
 from qfluentwidgets import FluentIcon as FIF
-
 from AppManageInterface import AppManageInterface
 from FileInterface import FileInterface
 from ScrcpyInterface import ScrcpyInterface
@@ -40,22 +39,23 @@ class Window(MSFluentWindow):
 
         # 创建子界面，实际使用时将 Widget 换成自己的子界面
         self.homeInterface = ScrcpyInterface(self)
+        self.appManageInterface = AppManageInterface(self)
         self.FileInterface = FileInterface(self)
         self.toolsInterface = ToolsInterface(self)
         self.homeInterface.device_serial.connect(self.FileInterface.ui.FilePath._refresh)
         self.homeInterface.device_serial.connect(self.toolsInterface.getDeviceFromSignal)  # 连接信号和槽
+        self.homeInterface.device_serial.connect(self.appManageInterface.getDeviceFromSignal)  # 连接信号和槽
         if self.homeInterface.device:
             self.homeInterface.emit_device_serial(self.homeInterface.device.serial)
-        self.appManageInterface = AppManageInterface(self)
 
         self.initNavigation()
         self.initWindow()
 
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FIF.HOME, '主页')
+        self.addSubInterface(self.toolsInterface, FIF.DEVELOPER_TOOLS, '常用工具')
+        self.addSubInterface(self.appManageInterface, FIF.DOCUMENT, '应用管理')
         self.addSubInterface(self.FileInterface, FIF.FOLDER, '文件管理')
-        self.addSubInterface(self.toolsInterface, FIF.DEVELOPER_TOOLS, '工具')
-        self.addSubInterface(self.appManageInterface, FIF.ACCEPT, "应用管理")
 
     def initWindow(self):
         self.resize(1100, 630)

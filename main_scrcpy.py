@@ -24,7 +24,7 @@ class Ui_centralwidget(QWidget):
         self.CardWidget.setObjectName("CardWidget")
         self.label = QtWidgets.QLabel(self.CardWidget)
         self.label.setGeometry(QtCore.QRect(0, 0, 800, 450))
-        self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.progressRing = IndeterminateProgressRing(self.CardWidget)
         self.progressRing.setGeometry(QtCore.QRect(360, 190, 80, 80))
@@ -1043,7 +1043,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_enter.setObjectName("button_enter")
         self.button_menu = PrimaryPushButton(self.CardWidget_4)
-        self.button_menu.setGeometry(QtCore.QRect(30, 480, 41, 32))
+        self.button_menu.setGeometry(QtCore.QRect(30, 450, 41, 32))
         self.button_menu.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                        "    color: black;\n"
                                        "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1452,7 +1452,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_num_3.setObjectName("button_num_3")
         self.button_num_5 = PrimaryPushButton(self.CardWidget_4)
-        self.button_num_5.setGeometry(QtCore.QRect(90, 380, 41, 32))
+        self.button_num_5.setGeometry(QtCore.QRect(90, 370, 41, 32))
         self.button_num_5.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1519,7 +1519,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_num_5.setObjectName("button_num_5")
         self.button_num_4 = PrimaryPushButton(self.CardWidget_4)
-        self.button_num_4.setGeometry(QtCore.QRect(30, 380, 41, 32))
+        self.button_num_4.setGeometry(QtCore.QRect(30, 370, 41, 32))
         self.button_num_4.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1586,7 +1586,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_num_4.setObjectName("button_num_4")
         self.button_num_9 = PrimaryPushButton(self.CardWidget_4)
-        self.button_num_9.setGeometry(QtCore.QRect(150, 430, 41, 32))
+        self.button_num_9.setGeometry(QtCore.QRect(150, 410, 41, 32))
         self.button_num_9.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1653,7 +1653,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_num_9.setObjectName("button_num_9")
         self.button_num_8 = PrimaryPushButton(self.CardWidget_4)
-        self.button_num_8.setGeometry(QtCore.QRect(90, 430, 41, 32))
+        self.button_num_8.setGeometry(QtCore.QRect(90, 410, 41, 32))
         self.button_num_8.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1720,7 +1720,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_num_8.setObjectName("button_num_8")
         self.button_num_7 = PrimaryPushButton(self.CardWidget_4)
-        self.button_num_7.setGeometry(QtCore.QRect(30, 430, 41, 32))
+        self.button_num_7.setGeometry(QtCore.QRect(30, 410, 41, 32))
         self.button_num_7.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1787,7 +1787,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_num_7.setObjectName("button_num_7")
         self.button_num_6 = PrimaryPushButton(self.CardWidget_4)
-        self.button_num_6.setGeometry(QtCore.QRect(150, 380, 41, 32))
+        self.button_num_6.setGeometry(QtCore.QRect(150, 370, 41, 32))
         self.button_num_6.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1854,7 +1854,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_num_6.setObjectName("button_num_6")
         self.button_num_0 = PrimaryPushButton(self.CardWidget_4)
-        self.button_num_0.setGeometry(QtCore.QRect(90, 480, 41, 32))
+        self.button_num_0.setGeometry(QtCore.QRect(90, 450, 41, 32))
         self.button_num_0.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1921,7 +1921,7 @@ class Ui_centralwidget(QWidget):
                                         "}")
         self.button_num_0.setObjectName("button_num_0")
         self.button_delete = PrimaryPushButton(self.CardWidget_4)
-        self.button_delete.setGeometry(QtCore.QRect(150, 480, 41, 32))
+        self.button_delete.setGeometry(QtCore.QRect(150, 450, 41, 32))
         self.button_delete.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                          "    color: black;\n"
                                          "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2195,7 +2195,7 @@ class Ui_centralwidget(QWidget):
         self.button_up.setText("")
         self.button_up.setObjectName("button_up")
         self.button_left = PrimaryPushButton(self.CardWidget_4)
-        self.button_left.setGeometry(QtCore.QRect(30, 135, 40, 40))
+        self.button_left.setGeometry(QtCore.QRect(40, 135, 40, 40))
         self.button_left.setMinimumSize(QtCore.QSize(40, 40))
         self.button_left.setMaximumSize(QtCore.QSize(40, 40))
         self.button_left.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
@@ -2265,7 +2265,7 @@ class Ui_centralwidget(QWidget):
         self.button_left.setText("")
         self.button_left.setObjectName("button_left")
         self.button_right = PrimaryPushButton(self.CardWidget_4)
-        self.button_right.setGeometry(QtCore.QRect(150, 135, 40, 40))
+        self.button_right.setGeometry(QtCore.QRect(140, 135, 40, 40))
         self.button_right.setMinimumSize(QtCore.QSize(40, 40))
         self.button_right.setMaximumSize(QtCore.QSize(40, 40))
         self.button_right.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"

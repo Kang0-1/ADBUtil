@@ -5,7 +5,7 @@ import logging
 import os
 import shutil
 import subprocess
-
+import chardet
 from PySide6 import QtCore
 from PySide6.QtCore import QObject, QFile, QIODevice, QTextStream, QThread
 from PySide6.QtWidgets import QWidget
@@ -36,14 +36,11 @@ class CommonProcess:
                 if stdout == subprocess.PIPE and stdout_callback:
                     for line in iter(process.stdout.readline, b''):
                         stdout_callback(line.decode(encoding='utf-8'))
-                        # stdout_callback(self.try_decode(line))
                 data, error = process.communicate()
                 self.ExitCode = process.poll()
                 self.IsSuccessful = self.ExitCode == 0
                 self.ErrorData = error.decode(encoding='utf-8') if error else None
                 self.OutputData = data.decode(encoding='utf-8') if data else None
-                # self.ErrorData = self.try_decode(error) if error else None
-                # self.OutputData = self.try_decode(data) if data else None
             except FileNotFoundError:
                 self.ErrorData = "Command '%s' failed! File (command) '%s' not found!" % \
                                  (' '.join(arguments), arguments[0])

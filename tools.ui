@@ -425,7 +425,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>360</y>
+      <y>390</y>
       <width>71</width>
       <height>19</height>
      </rect>
@@ -442,7 +442,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>290</y>
+      <y>320</y>
       <width>71</width>
       <height>19</height>
      </rect>
@@ -459,7 +459,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>220</y>
+      <y>250</y>
       <width>71</width>
       <height>19</height>
      </rect>
@@ -476,7 +476,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>160</y>
+      <y>180</y>
       <width>71</width>
       <height>19</height>
      </rect>
@@ -493,7 +493,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>100</y>
+      <y>110</y>
       <width>71</width>
       <height>19</height>
      </rect>
@@ -527,94 +527,10 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>350</y>
+      <y>380</y>
       <width>391</width>
       <height>41</height>
      </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="LineEdit" name="show_3">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>150</y>
-      <width>391</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>41</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>16777215</width>
-      <height>41</height>
-     </size>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="LineEdit" name="show_2">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>90</y>
-      <width>391</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>41</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>16777215</width>
-      <height>41</height>
-     </size>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="LineEdit" name="show_1">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>30</y>
-      <width>391</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>0</width>
-      <height>41</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>16777215</width>
-      <height>41</height>
-     </size>
-    </property>
-    <property name="text">
-     <string/>
     </property>
     <property name="readOnly">
      <bool>true</bool>
@@ -715,7 +631,7 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>280</y>
+      <y>310</y>
       <width>391</width>
       <height>41</height>
      </rect>
@@ -728,7 +644,46 @@ ToggleToolButton:checked:disabled {
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>210</y>
+      <y>240</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="TextEdit" name="show_1">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>30</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="TextEdit" name="show_2">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>100</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="TextEdit" name="show_3">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>170</y>
       <width>391</width>
       <height>41</height>
      </rect>

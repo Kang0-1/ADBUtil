@@ -15,6 +15,7 @@ from tools import Ui_Form
 
 class ToolsInterface(QWidget):
     deviceReady = Signal()
+    updateActivityInfo_signal = Signal(object, object)
 
     @Slot(str)
     def getDeviceFromSignal(self, device_serial):
@@ -34,7 +35,8 @@ class ToolsInterface(QWidget):
         self.setInputTextUI()
         self.ui.button_refresh.setIcon(QIcon('resources/刷新.png'))
         self.ui.button_refresh.setIconSize(QtCore.QSize(30, 30))
-        self.ui.button_refresh.clicked.connect(self.getActivityInfo)
+        self.ui.button_refresh.clicked.connect(lambda: (self.getActivityInfo(), self.getBaseInfo()))
+        self.updateActivityInfo_signal.connect(self.update_text_edit)
 
     @Slot()
     def onDeviceReady(self):
@@ -69,46 +71,49 @@ class ToolsInterface(QWidget):
         self.ui.hw.setText("UnKnown")
 
     def getBaseInfo(self):
-        if not self.device:
-            self.show_info_bar("当前无设备连接，请检查", "error")
-        device = self.device
-        self.ui.model.setText(device.prop.model)
-        self.ui.brand.setText(device.prop.get("ro.product.brand"))
-        self.ui.android_version.setText(device.prop.get("ro.build.version.release"))
-        self.ui.sn.setText(device.get_serialno())
-        self.ui.mac.setText(device.prop.get("ro.boot.mac"))
-        fingerprint = device.prop.get("ro.build.fingerprint")
-        self.ui.fingerprint.setText(fingerprint)
-        self.ui.ipv4.setText(getIP())
-        build_version = identify_version(fingerprint)
-        print(build_version)
-        if build_version == "user":
-            self.ui.sw.setText("设备不能root")
-            self.ui.hw.setText("设备不能root")
-        else:
-            self.ui.sw.setText(device.prop.get("ro.odm.changhong.sw.ver"))
-            self.ui.hw.setText(device.prop.get("ro.odm.changhong.hw.ver"))
+        try:
+            if not self.device:
+                self.show_info_bar("当前无设备连接，请检查", "error", 2)
+            device = self.device
+            self.ui.model.setText(device.prop.model)
+            self.ui.brand.setText(device.prop.get("ro.product.brand"))
+            self.ui.android_version.setText(device.prop.get("ro.build.version.release"))
+            self.ui.sn.setText(device.prop.get("ro.serialno"))
+            self.ui.mac.setText(device.prop.get("ro.boot.mac"))
+            fingerprint = device.prop.get("ro.build.fingerprint")
+            self.ui.fingerprint.setText(fingerprint)
+            self.ui.ipv4.setText(getIP())
+            build_version = identify_version(fingerprint)
+            print(build_version)
+            if build_version == "user":
+                self.ui.sw.setText("设备不能root")
+                self.ui.hw.setText("设备不能root")
+            else:
+                self.ui.sw.setText(device.prop.get("ro.odm.changhong.sw.ver"))
+                self.ui.hw.setText(device.prop.get("ro.odm.changhong.hw.ver"))
+        except AttributeError as e:
+            print(e)
 
     def getActivityInfo(self):
-        device = self.device
-        package_name = get_package_name(device)
-        process_name = get_process_name(device)
-        launch_activity = get_launch_activity(device)
-        resumed_activity = get_resumed_activity(device)
-        last_history_activity = get_last_history_activity(device)
-        stack_activities = get_stack_activities(device, package_name)
-        print(package_name)
-        print(process_name)
-        print(launch_activity)
-        print(resumed_activity)
-        print(last_history_activity)
-        print(stack_activities)
-        self.update_text_edit(package_name, self.ui.show_1)
-        self.update_text_edit(process_name, self.ui.show_2)
-        self.update_text_edit(launch_activity, self.ui.show_3)
-        self.update_text_edit(resumed_activity, self.ui.show_4)
-        self.update_text_edit(last_history_activity, self.ui.show_5)
-        self.update_text_edit(stack_activities, self.ui.show_6)
+        threading.Thread(target=self._getActivityInfoThread).start()
+
+    def _getActivityInfoThread(self):
+        try:
+            device = self.device
+            package_name = get_package_name(device)
+            process_name = get_process_name(device)
+            launch_activity = get_launch_activity(device)
+            resumed_activity = get_resumed_activity(device)
+            last_history_activity = get_last_history_activity(device)
+            stack_activities = get_stack_activities(device, package_name)
+            self.updateActivityInfo_signal.emit(package_name, self.ui.show_1)
+            self.updateActivityInfo_signal.emit(process_name, self.ui.show_2)
+            self.updateActivityInfo_signal.emit(launch_activity, self.ui.show_3)
+            self.updateActivityInfo_signal.emit(resumed_activity, self.ui.show_4)
+            self.updateActivityInfo_signal.emit(last_history_activity, self.ui.show_5)
+            self.updateActivityInfo_signal.emit(stack_activities, self.ui.show_6)
+        except Exception as e:
+            print(e)
 
     def update_text_edit(self, text_input, text_edit):
         max_width = 540
@@ -118,11 +123,11 @@ class ToolsInterface(QWidget):
             # 处理字符串列表
             text_input.reverse()
             text = '\n'.join(text_input)
-            line_count = len(text_input)
+            line_count = len(text_input) + 2
         else:
             # 处理单个字符串
             text = text_input
-            line_count = text.count('\n') + 2  # 包含换行符的情况
+            line_count = text.count('\n') + 3  # 包含换行符的情况
 
         text_edit.setText(text)
 
@@ -138,7 +143,7 @@ class ToolsInterface(QWidget):
         new_height = font_metrics.height() * line_count
 
         # 确保高度只增加不减少
-        new_height = max(new_height, text_edit.height())
+        # new_height = max(new_height, text_edit.height())
 
         # 设置QTextEdit的新尺寸
         text_edit.setFixedSize(QSize(text_width, new_height))
@@ -150,17 +155,15 @@ class ToolsInterface(QWidget):
 
     def on_getProp(self):
         if not self.device:
-            self.show_info_bar("未连接设备，请检查", "error")
+            self.show_info_bar("未连接设备，请检查", "error", 2)
             return
         search_text = self.ui.search_prop.text().strip()
-        print("text:" + search_text)
         if not search_text:
-            print("请输入文本内容")
-            self.show_info_bar("请输入文本内容", "info")
+            self.show_info_bar("请输入文本内容", "info", 2)
             return
         prop_value = self.device.prop.get(search_text)
         if search_text and not prop_value:
-            self.show_info_bar("获取结果为空", "success")
+            self.show_info_bar("获取结果为空", "success", 2)
         print("prop_value:" + prop_value)
         self.ui.output_prop.setText(prop_value)
 
@@ -169,28 +172,28 @@ class ToolsInterface(QWidget):
 
     def on_input_button_clicked(self):
         if not self.device:
-            self.show_info_bar("未连接设备，请检查", "error")
+            self.show_info_bar("未连接设备，请检查", "error", 2)
             return
         input_text = self.ui.input_text.text().strip()
         if not input_text:
-            self.show_info_bar("请输入文本内容", "info")
+            self.show_info_bar("请输入文本内容", "info", 2)
             return
         try:
             self.device.shell(f"input text '{input_text}'")
-            self.show_info_bar("文本已发送", "success")
+            self.show_info_bar("文本已发送", "success", 2)
             self.ui.input_text.clear()
         except Exception as e:
-            self.show_info_bar("未连接设备，请检查:" + str(e), "error")
+            self.show_info_bar("未连接设备，请检查:" + str(e), "error", 2)
 
-    def show_info_bar(self, message, type):
+    def show_info_bar(self, message, type, second):
         if type == "info":
-            InfoBar.info("Info", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+            InfoBar.info("Info", message, self, True, 1000 * second, InfoBarPosition.BOTTOM, self).show()
         elif type == "success":
-            InfoBar.success("Success", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+            InfoBar.success("Success", message, self, True, 1000 * second, InfoBarPosition.BOTTOM, self).show()
         elif type == "warning":
-            InfoBar.warning("Warning", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+            InfoBar.warning("Warning", message, self, True, 1000 * second, InfoBarPosition.BOTTOM, self).show()
         elif type == "error":
-            InfoBar.error("Error", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+            InfoBar.error("Error", message, self, True, 1000 * second, InfoBarPosition.BOTTOM, self).show()
         else:
             print("未知的信息类型")
 
@@ -205,14 +208,14 @@ def getIP():
             shell=True, stderr=subprocess.DEVNULL).decode().strip()
         # 如果有线接口有IP，返回这个IP
         if ip_eth0:
-            return f"📶:{ip_eth0}"
+            return f"📶 : {ip_eth0}"
         # 获取无线接口的IP地址
         ip_wlan0 = subprocess.check_output(
             "adb shell \"ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'\"",
             shell=True, stderr=subprocess.DEVNULL).decode().strip()
         # 如果无线接口有IP，返回这个IP
         if ip_wlan0:
-            return f"🛜:{ip_wlan0}"
+            return f"🛜 : {ip_wlan0}"
     except subprocess.CalledProcessError:
         pass
     # 如果两个接口都没有IP，返回“未连接”
@@ -239,6 +242,8 @@ def middle(string, start, end):
 
 
 def get_package_name(device):
+    if not device:
+        return "未连接设备，请检查"
     result = device.shell("dumpsys activity activities | grep packageName")
 
     if not result.strip():
@@ -250,6 +255,8 @@ def get_package_name(device):
 
 
 def get_process_name(device):
+    if not device:
+        return "未连接设备，请检查"
     result = device.shell("dumpsys activity activities | grep processName")
 
     if not result.strip():
@@ -261,6 +268,8 @@ def get_process_name(device):
 
 
 def get_launch_activity(device):
+    if not device:
+        return "未连接设备，请检查"
     result = device.shell("dumpsys activity activities | grep mActivityComponent")
 
     if not result.strip():
@@ -273,6 +282,8 @@ def get_launch_activity(device):
 
 
 def get_resumed_activity(device):
+    if not device:
+        return "未连接设备，请检查"
     result = device.shell("dumpsys activity activities | grep mResumedActivity")
 
     if not result.strip():
@@ -285,6 +296,8 @@ def get_resumed_activity(device):
 
 
 def get_last_history_activity(device):
+    if not device:
+        return "未连接设备，请检查"
     result = device.shell("dumpsys activity activities | grep mLastPausedActivity")
 
     if not result.strip():
@@ -297,6 +310,8 @@ def get_last_history_activity(device):
 
 
 def get_stack_activities(device, package_name):
+    if not device:
+        return "未连接设备，请检查"
     command = f"dumpsys activity activities | grep {package_name} | grep Activities"
     result = device.shell(command)
 
