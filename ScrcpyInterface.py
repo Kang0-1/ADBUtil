@@ -11,7 +11,8 @@ from PySide6.QtWidgets import *
 from PySide6.QtWidgets import QApplication
 from argparse import ArgumentParser
 from adbutils import adb, AdbTimeout
-from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition
+from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition, SearchLineEdit, LineEditButton, LineEdit
+from qfluentwidgets import FluentIcon as FIF
 
 import scrcpy
 
@@ -21,6 +22,35 @@ if not QApplication.instance():
     app = QApplication()
 else:
     app = QApplication.instance()
+
+
+class InputLineEdit(LineEdit):
+    """ Search line edit """
+    searchSignal = Signal(str)
+    clearSignal = Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.searchButton = LineEditButton(FIF.RIGHT_ARROW, self)
+
+        self.hBoxLayout.addWidget(self.searchButton, 0, Qt.AlignRight)
+        self.setClearButtonEnabled(True)
+        self.setTextMargins(0, 0, 59, 0)
+
+        self.searchButton.clicked.connect(self.search)
+        self.clearButton.clicked.connect(self.clearSignal)
+
+    def search(self):
+        """ emit search signal """
+        text = self.text().strip()
+        if text:
+            self.searchSignal.emit(text)
+        else:
+            self.clearSignal.emit()
+
+    def setClearButtonEnabled(self, enable: bool):
+        self._isClearButtonEnabled = enable
+        self.setTextMargins(0, 0, 28 * enable + 30, 0)
 
 
 class ScrcpyInterface(QWidget):
@@ -82,6 +112,15 @@ class ScrcpyInterface(QWidget):
         self.ui.label.mouseReleaseEvent = self.on_mouse_event(scrcpy.ACTION_UP)
 
         self.ui.button_connect.clicked.connect(self.click_connect)
+        self.ui.button_connect.setToolTip("注意在同一网络下连接!")
+
+        self.input_keycode = InputLineEdit(self.ui.CardWidget_4)
+        self.input_keycode.setPlaceholderText("输入按键值")
+        self.input_keycode.setGeometry(QtCore.QRect(30, 490, 161, 33))
+        validator = QIntValidator(0, 999, self)
+        self.input_keycode.setValidator(validator)
+        self.input_keycode.returnPressed.connect(self.on_input_keycode)
+        self.input_keycode.searchSignal.connect(self.on_input_keycode)
 
         self.ui.button_refresh.clicked.connect(self.click_refresh)
 
@@ -100,15 +139,15 @@ class ScrcpyInterface(QWidget):
         if not ip:
             # w = Dialog("Connect Info", "请输入ip:port", self)
             w = MessageBox("🤣🤣🤣", "请输入 ip:port", self)
-            w.yesButton.setText("好的")
-            w.cancelButton.setText("你在教我做事啊?")
+            w.yesButton.setText("Yes")
+            w.cancelButton.setText("No")
             w.show()
             return
         if not re.match(r"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):([0-9]|[1-9]\d{1,"
                         r"3}|[1-5]\d{4}|6[0-4]\d{4}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$", ip):
-            w = MessageBox("🫵🫵🫵", "ip输错了，检查下", self)
-            w.yesButton.setText("再检查下")
-            w.cancelButton.setText("我没错啊")
+            w = MessageBox("🫵🫵🫵", "输入格式有误", self)
+            w.yesButton.setText("Yes")
+            w.cancelButton.setText("No")
             w.show()
             return
         if ip in self.devices:
@@ -123,12 +162,14 @@ class ScrcpyInterface(QWidget):
             if "connected to" in output:
                 print(output)
                 InfoBar.success("Success", "连接成功!", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
-                self.devices = self.list_devices()
+                self.click_refresh()
+                # self.devices = self.list_devices()
                 self.ui.ipInput.clear()
             else:
                 InfoBar.error("Error", "连接失败!", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
                 print("连接失败")
         except AdbTimeout as e:
+            InfoBar.error("Error", "连接失败!" + str(e), self, True, 2000, InfoBarPosition.BOTTOM, self).show()
             print(e)
 
     def click_refresh(self):
@@ -300,7 +341,13 @@ class ScrcpyInterface(QWidget):
         if not self.device:
             self.show_info_bar("未连接设备，请检查", "error")
             return
-        adb.device(serial=self.device.serial).keyevent(key_code=keycode)
+        threading.Thread(target=self.device.keyevent, args=(keycode,), daemon=True).start()
+        # self.device.keyevent(keycode)
+
+    def on_input_keycode(self):
+        keycode = self.input_keycode.text()
+        if keycode:
+            self.general_button_handler(keycode)
 
     def on_click_logcat_start(self):
         if not self.device:
@@ -434,7 +481,8 @@ class ScrcpyInterface(QWidget):
         def handler(evt: QKeyEvent):
             code = self.map_code(evt.key())
             if code != -1:
-                self.client.control.keycode(code, action)
+                if self.client:
+                    self.client.control.keycode(code, action)
 
         return handler
 

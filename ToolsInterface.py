@@ -78,7 +78,7 @@ class ToolsInterface(QWidget):
             self.ui.model.setText(device.prop.model)
             self.ui.brand.setText(device.prop.get("ro.product.brand"))
             self.ui.android_version.setText(device.prop.get("ro.build.version.release"))
-            self.ui.sn.setText(device.get_serialno())
+            self.ui.sn.setText(device.prop.get("ro.serialno"))
             self.ui.mac.setText(device.prop.get("ro.boot.mac"))
             fingerprint = device.prop.get("ro.build.fingerprint")
             self.ui.fingerprint.setText(fingerprint)
@@ -123,7 +123,7 @@ class ToolsInterface(QWidget):
             # 处理字符串列表
             text_input.reverse()
             text = '\n'.join(text_input)
-            line_count = len(text_input) + 1
+            line_count = len(text_input) + 2
         else:
             # 处理单个字符串
             text = text_input

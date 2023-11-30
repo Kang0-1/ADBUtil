@@ -5,7 +5,7 @@ import logging
 import os
 import shutil
 import subprocess
-
+import chardet
 from PySide6 import QtCore
 from PySide6.QtCore import QObject, QFile, QIODevice, QTextStream, QThread
 from PySide6.QtWidgets import QWidget
@@ -39,14 +39,31 @@ class CommonProcess:
                 data, error = process.communicate()
                 self.ExitCode = process.poll()
                 self.IsSuccessful = self.ExitCode == 0
-                self.ErrorData = error.decode(encoding='utf-8') if error else None
-                self.OutputData = data.decode(encoding='utf-8') if data else None
+                self.ErrorData = self.try_decode(error) if error else None
+                self.OutputData = self.try_decode(data) if data else None
             except FileNotFoundError:
                 self.ErrorData = "Command '%s' failed! File (command) '%s' not found!" % \
                                  (' '.join(arguments), arguments[0])
             except BaseException as error:
                 logging.exception("Unexpected error=%s, type(error)=%s" % (error, type(error)))
                 self.ErrorData = str(error)
+
+    def try_decode(self, data):
+        if not data:
+            return None
+        for encoding in ['utf-8', 'gbk', 'big5', 'cp1252', 'cp936']:
+            try:
+                return data.decode(encoding)
+            except UnicodeDecodeError:
+                continue
+            # 如果所有预定义的编码都失败了，使用 chardet 检测编码
+        detected_encoding = chardet.detect(data)['encoding']
+        if detected_encoding:
+            try:
+                return data.decode(detected_encoding)
+            except UnicodeDecodeError:
+                pass
+        return data  # 解码失败，返回原始数据
 
 
 class AsyncRepositoryWorker(QThread):
