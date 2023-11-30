@@ -66,10 +66,6 @@ class ScrcpyInterface(QWidget):
         self.ui.combo_device.currentTextChanged.connect(self.choose_device)
         self.ui.flip.stateChanged.connect(self.on_flip)
 
-        # 使用布局管理器
-        layout = QVBoxLayout()
-        layout.addWidget(self.ui.label)  # 假设这是显示投屏画面的 QLabel
-
         # 设置 QLabel 的尺寸策略
         self.ui.label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.ui.label.setScaledContents(False)  # 确保内容缩放以适应 QLabel 的大小
@@ -88,6 +84,7 @@ class ScrcpyInterface(QWidget):
         # Keyboard event
         self.keyPressEvent = self.on_key_event(scrcpy.ACTION_DOWN)
         self.keyReleaseEvent = self.on_key_event(scrcpy.ACTION_UP)
+
 
     def emit_device_serial(self, value):
         self.device_serial.emit(value)
@@ -183,6 +180,7 @@ class ScrcpyInterface(QWidget):
             # 初始化并启动 scrcpy 客户端
             self.client = scrcpy.Client(
                 device=self.device,
+                # max_width=self.ui.label.width(),
                 flip=self.ui.flip.isChecked(),
                 bitrate=1000000000
             )
@@ -470,7 +468,9 @@ class ScrcpyInterface(QWidget):
                 frame.shape[1] * 3,
                 QImage.Format.Format_BGR888,
             )
+            print("image width = ", self.ui.label.width(), "image height = ", self.ui.label.height())
             image_ratio = frame.shape[1] / frame.shape[0]
+            print("width = ", self.ui.label.width(), "height = ", self.ui.label.height())
             window_ratio = self.ui.label.width() / self.ui.label.height()
             if frame.shape[1] > self.ui.label.width() or frame.shape[0] > self.ui.label.height():
                 if image_ratio > window_ratio:

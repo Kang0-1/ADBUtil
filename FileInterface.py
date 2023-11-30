@@ -36,18 +36,37 @@ class FileInterface(QWidget):
         self.ui.list.doubleClicked.connect(self.open)
         self.ui.list.setItemDelegate(FileItemDelegate(self.ui.list))
         self.ui.list.customContextMenuRequested.connect(self.context_menu)
+        self.setAcceptDrops(True)
 
         Global().communicate.files__refresh.connect(self.update)
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        urls = event.mimeData().urls()
+        if urls:
+            file_path = urls[0].toLocalFile()
+            if os.path.isfile(file_path):
+                self.setup([file_path])
+                self.upload()
+            elif os.path.isdir(file_path):
+                self.setup([file_path])
+                self.upload()
+
     def __action_upload_directory__(self):
         dir_name = QFileDialog.getExistingDirectory(self, 'Select directory', '~')
-
+        print(dir_name)
         if dir_name:
             self.setup([dir_name])
             self.upload()
 
     def __action_upload_files__(self):
         file_names = QFileDialog.getOpenFileNames(self, 'Select files', '~')[0]
+        print(file_names)
 
         if file_names:
             self.setup(file_names)
@@ -323,7 +342,6 @@ class FileInterface(QWidget):
         if self.ui.stateTooltip:
             self.ui.stateTooltip.setState(True)
             self.ui.stateTooltip = None
-
 
     def setup(self, files: list):
         self.upload_files = []

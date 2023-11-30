@@ -100,7 +100,7 @@ class FileItemDelegate(QStyledItemDelegate):
 
         icon = option.icon
         if not icon.isNull():
-            icon_rect = option.rect.adjusted(0, 0, -900, 0)
+            icon_rect = option.rect.adjusted(0, 0, -option.rect.width() + 80, 0)
             icon.paint(painter, icon_rect)
 
         text_color = option.palette.color(QPalette.Normal, QPalette.Text)
@@ -115,23 +115,23 @@ class FileItemDelegate(QStyledItemDelegate):
         end = option.rect.width() + option.rect.left()
 
         self.paint_text(
-            painter, index.data().name, text_color, Qt.AlignmentFlag.AlignLeft | option.displayAlignment,
-            first_start, top, second_start - first_start - 4, bottom
+            painter, index.data().name, text_color, Qt.AlignmentFlag.AlignVCenter,
+            first_start, top, second_start - first_start - 4, bottom - 10
         )
 
         self.paint_text(
             painter, index.data().permissions, text_color, Qt.AlignCenter | option.displayAlignment,
-            second_start, top, third_start - second_start - 4, bottom
+            second_start, top, third_start - second_start - 4, bottom - 10
         )
 
         self.paint_text(
             painter, index.data().size, text_color, Qt.AlignCenter | option.displayAlignment,
-            third_start, top, fourth_start - third_start - 4, bottom
+            third_start, top, fourth_start - third_start - 4, bottom - 10
         )
 
         self.paint_text(
             painter, index.data().date, text_color, Qt.AlignCenter | option.displayAlignment,
-            fourth_start, top, end - fourth_start, bottom
+            fourth_start, top, end - fourth_start, bottom - 10
         )
 
 

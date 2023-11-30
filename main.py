@@ -7,6 +7,8 @@ from PySide6.QtWidgets import QApplication, QWidget, QFrame, QHBoxLayout
 
 from qfluentwidgets import FluentWindow, SubtitleLabel, setFont, SplitFluentWindow, MSFluentWindow
 from qfluentwidgets import FluentIcon as FIF
+
+from AppManageInterface import AppManageInterface
 from FileInterface import FileInterface
 from ScrcpyInterface import ScrcpyInterface
 from PySide6.QtCore import Qt
@@ -44,6 +46,7 @@ class Window(MSFluentWindow):
         self.homeInterface.device_serial.connect(self.toolsInterface.getDeviceFromSignal)  # 连接信号和槽
         if self.homeInterface.device:
             self.homeInterface.emit_device_serial(self.homeInterface.device.serial)
+        self.appManageInterface = AppManageInterface(self)
 
         self.initNavigation()
         self.initWindow()
@@ -52,6 +55,7 @@ class Window(MSFluentWindow):
         self.addSubInterface(self.homeInterface, FIF.HOME, '主页')
         self.addSubInterface(self.FileInterface, FIF.FOLDER, '文件管理')
         self.addSubInterface(self.toolsInterface, FIF.DEVELOPER_TOOLS, '工具')
+        self.addSubInterface(self.appManageInterface, FIF.ACCEPT, "应用管理")
 
     def initWindow(self):
         self.resize(1100, 630)

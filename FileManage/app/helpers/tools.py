@@ -36,11 +36,14 @@ class CommonProcess:
                 if stdout == subprocess.PIPE and stdout_callback:
                     for line in iter(process.stdout.readline, b''):
                         stdout_callback(line.decode(encoding='utf-8'))
+                        # stdout_callback(self.try_decode(line))
                 data, error = process.communicate()
                 self.ExitCode = process.poll()
                 self.IsSuccessful = self.ExitCode == 0
                 self.ErrorData = error.decode(encoding='utf-8') if error else None
                 self.OutputData = data.decode(encoding='utf-8') if data else None
+                # self.ErrorData = self.try_decode(error) if error else None
+                # self.OutputData = self.try_decode(data) if data else None
             except FileNotFoundError:
                 self.ErrorData = "Command '%s' failed! File (command) '%s' not found!" % \
                                  (' '.join(arguments), arguments[0])
@@ -48,6 +51,23 @@ class CommonProcess:
                 logging.exception("Unexpected error=%s, type(error)=%s" % (error, type(error)))
                 self.ErrorData = str(error)
 
+    # def try_decode(self, data):
+    #     if not data:
+    #         return None
+    #     for encoding in ['utf-8', 'b64', 'gb18030', 'big5', 'cp1252', 'cp936', 'gbk']:
+    #         try:
+    #             print(encoding + data.decode(encoding))
+    #             return data.decode(encoding)
+    #         except UnicodeDecodeError:
+    #             continue
+    #         # 如果所有预定义的编码都失败了，使用 chardet 检测编码
+    #     detected_encoding = chardet.detect(data)['encoding']
+    #     if detected_encoding:
+    #         try:
+    #             return data.decode(detected_encoding)
+    #         except UnicodeDecodeError:
+    #             pass
+    #     return data  # 解码失败，返回原始数据
 
 class AsyncRepositoryWorker(QThread):
     on_response = QtCore.Signal(object, object)  # Response : data, error

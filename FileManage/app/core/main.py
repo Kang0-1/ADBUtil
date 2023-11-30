@@ -52,10 +52,8 @@ class Adb(metaclass=Singleton):
     @classmethod
     def manager(cls) -> Union[ADBManager, PythonADBManager]:
         if cls.core == cls.PYTHON_ADB_SHELL:
-            print("python manager")
             return PythonADBManager()
         elif cls.core == cls.EXTERNAL_TOOL_ADB:
-            print("external manager")
             return ADBManager()
 
     @classmethod

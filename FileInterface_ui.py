@@ -3,7 +3,7 @@
 from PySide6 import QtWidgets, QtCore
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon, QMovie, QAction
-from PySide6.QtWidgets import QWidget, QListView, QLabel
+from PySide6.QtWidgets import QWidget, QListView, QLabel, QVBoxLayout, QHBoxLayout
 
 from FileManage.app.core.configurations import Resources
 from FileManage.app.gui.explorer.files import FileHeaderWidget
@@ -21,16 +21,20 @@ class Ui_centralwidget(QWidget):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(centralwidget.sizePolicy().hasHeightForWidth())
         centralwidget.setSizePolicy(sizePolicy)
+        layout = QVBoxLayout(centralwidget)
 
         self.CardWidget = CardWidget(centralwidget)
-        self.CardWidget.setGeometry(QtCore.QRect(0, 0, 1000, 61))
+        # subLayout = QHBoxLayout(self.CardWidget)
+        self.CardWidget.resize(1000, 70)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
                                            QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.CardWidget.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(False)
         self.CardWidget.setSizePolicy(sizePolicy)
         self.CardWidget.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
+        # self.CardWidget.setGeometry(QtCore.QRect(30, 30, 900, 61))
+        self.CardWidget.setMaximumHeight(60)
         self.CardWidget.setObjectName("CardWidget_toolbar")
 
         self.upload_tools = PrimaryDropDownPushButton(self.CardWidget)
@@ -39,58 +43,58 @@ class Ui_centralwidget(QWidget):
         self.upload_tools.setIcon(QIcon('./resources/icons/upload.png'))
         self.upload_tools.setIconSize(QtCore.QSize(32, 32))
         self.upload_tools.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
-                           "    color: black;\n"
-                           "    background: rgba(255, 255, 255, 0.7);\n"
-                           "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
-                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
-                           "    border-radius: 10px;\n"
-                           "    padding: 5px 12px 6px 12px;\n"
-                           "    font-size: 1px;\n"
-                           "    outline: none;\n"
-                           "}\n"
-                           "PushButton[hasIcon=false] {\n"
-                           "    padding: 5px 12px 6px 12px;\n"
-                           "}\n"
-                           "PushButton[hasIcon=true] {\n"
-                           "    padding: 2px 12px 6px 50px;\n"
-                           "}\n"
-                           "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
-                           "    background: rgba(249, 249, 249, 0.5);\n"
-                           "}\n"
-                           "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
-                           "    color: rgba(0, 0, 0, 0.63);\n"
-                           "    background: rgba(249, 249, 249, 0.3);\n"
-                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
-                           "}\n"
-                           "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
-                           "    color: rgba(0, 0, 0, 0.36);\n"
-                           "    background: rgba(249, 249, 249, 0.3);\n"
-                           "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
-                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
-                           "}\n"
-                           "PrimaryPushButton,\n"
-                           "PrimaryToolButton,\n"
-                           "ToggleButton:checked,\n"
-                           "ToggleToolButton:checked {\n"
-                           "    color: white;\n"
-                           "    background-color: #009faa;\n"
-                           "    border: 1px solid #00a7b3;\n"
-                           "    border-bottom: 1px solid #007780;\n"
-                           "}\n"
-                           "PrimaryPushButton:hover,\n"
-                           "PrimaryToolButton:hover,\n"
-                           "ToggleButton:checked:hover,\n"
-                           "ToggleToolButton:checked:hover {\n"
-                           "    background-color: #00a7b3;\n"
-                           "    border: 1px solid #2daab3;\n"
-                           "    border-bottom: 1px solid #007780;\n"
-                           "}\n"
-                           "ToggleButton:checked:pressed,\n"
-                           "ToggleToolButton:checked:pressed {\n"
-                           "    color: rgba(255, 255, 255, 0.63);\n"
-                           "    background-color: #3eabb3;\n"
-                           "    border: 1px solid #3eabb3;\n"
-                           "}")
+                                        "    color: black;\n"
+                                        "    background: rgba(255, 255, 255, 0.7);\n"
+                                        "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                        "    border-radius: 10px;\n"
+                                        "    padding: 5px 12px 6px 12px;\n"
+                                        "    font-size: 1px;\n"
+                                        "    outline: none;\n"
+                                        "}\n"
+                                        "PushButton[hasIcon=false] {\n"
+                                        "    padding: 5px 12px 6px 12px;\n"
+                                        "}\n"
+                                        "PushButton[hasIcon=true] {\n"
+                                        "    padding: 2px 12px 6px 50px;\n"
+                                        "}\n"
+                                        "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                        "    background: rgba(249, 249, 249, 0.5);\n"
+                                        "}\n"
+                                        "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                        "    color: rgba(0, 0, 0, 0.63);\n"
+                                        "    background: rgba(249, 249, 249, 0.3);\n"
+                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                        "}\n"
+                                        "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                        "    color: rgba(0, 0, 0, 0.36);\n"
+                                        "    background: rgba(249, 249, 249, 0.3);\n"
+                                        "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                        "}\n"
+                                        "PrimaryPushButton,\n"
+                                        "PrimaryToolButton,\n"
+                                        "ToggleButton:checked,\n"
+                                        "ToggleToolButton:checked {\n"
+                                        "    color: white;\n"
+                                        "    background-color: #009faa;\n"
+                                        "    border: 1px solid #00a7b3;\n"
+                                        "    border-bottom: 1px solid #007780;\n"
+                                        "}\n"
+                                        "PrimaryPushButton:hover,\n"
+                                        "PrimaryToolButton:hover,\n"
+                                        "ToggleButton:checked:hover,\n"
+                                        "ToggleToolButton:checked:hover {\n"
+                                        "    background-color: #00a7b3;\n"
+                                        "    border: 1px solid #2daab3;\n"
+                                        "    border-bottom: 1px solid #007780;\n"
+                                        "}\n"
+                                        "ToggleButton:checked:pressed,\n"
+                                        "ToggleToolButton:checked:pressed {\n"
+                                        "    color: rgba(255, 255, 255, 0.63);\n"
+                                        "    background-color: #3eabb3;\n"
+                                        "    border: 1px solid #3eabb3;\n"
+                                        "}")
         self.setObjectName("upload_button")
         self.upload_tools.clicked.connect(self.upload_tools._showMenu)
         self.upload_tools._menu.addSection("Upload files")
@@ -226,7 +230,8 @@ class Ui_centralwidget(QWidget):
         self.FilePath.setObjectName("FilePath")
 
         self.header = FileHeaderWidget(centralwidget)
-        self.header.setGeometry(QtCore.QRect(20, 70, 1000, 60))
+        self.header.setGeometry(QtCore.QRect(20, 70, 1000, 70))
+        self.header.setMinimumHeight(65)
 
         self.list = QListView(centralwidget)
         self.list.setSpacing(1)
@@ -235,28 +240,31 @@ class Ui_centralwidget(QWidget):
         self.list.setSelectionMode(QListView.SelectionMode.SingleSelection)
         self.list.setGeometry(QtCore.QRect(22, 130, 1000, 450))
 
-        self.loading = QLabel(self)
-        self.loading.setAlignment(Qt.AlignCenter)
+        self.loading = QLabel(centralwidget)
+        self.loading.setGeometry(QtCore.QRect(450, 250, 100, 100))
         self.loading_movie = QMovie(Resources.anim_loading, parent=self.loading)
         self.loading_movie.setScaledSize(QSize(48, 48))
         self.loading.setMovie(self.loading_movie)
 
-        self.empty_label = QLabel("Folder is empty", self)
-        self.empty_label.setAlignment(Qt.AlignCenter)
-        self.empty_label.setStyleSheet("color: #969696; border: 1px solid #969696")
+        self.empty_label = QLabel("Folder is empty", centralwidget)
+        self.empty_label.setGeometry(QtCore.QRect(450, 250, 100, 100))
+        # self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.empty_label.setStyleSheet("color: #969696; border: 0px solid #969696; font-size: 18")
+
+        # layout.addWidget(self.CardWidget)
+        # layout.addWidget(self.header)
+        # layout.addWidget(self.list)
+        # layout.addWidget(self.loading)
+        # layout.addWidget(self.empty_label)
 
         self.stateTooltip = None
-
 
         self.retranslateUi(centralwidget)
         QtCore.QMetaObject.connectSlotsByName(centralwidget)
 
-
     def retranslateUi(self, centralwidget):
         _translate = QtCore.QCoreApplication.translate
         centralwidget.setWindowTitle(_translate("centralwidget", "Form"))
-
-
 
 
 from qfluentwidgets import CardWidget, PrimaryPushButton, PrimaryDropDownPushButton, RoundMenu

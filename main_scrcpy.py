@@ -14,10 +14,11 @@ from PySide6.QtWidgets import *  # type: ignore
 from PySide6 import QtCore, QtWidgets
 
 
-class Ui_centralwidget(object):
+class Ui_centralwidget(QWidget):
     def setupUi(self, centralwidget):
         centralwidget.setObjectName("centralwidget")
         centralwidget.resize(1018, 580)
+
         self.CardWidget = CardWidget(centralwidget)
         self.CardWidget.setGeometry(QtCore.QRect(0, 80, 800, 450))
         self.CardWidget.setObjectName("CardWidget")
@@ -27,6 +28,7 @@ class Ui_centralwidget(object):
         self.label.setObjectName("label")
         self.progressRing = IndeterminateProgressRing(self.CardWidget)
         self.progressRing.setGeometry(QtCore.QRect(360, 190, 80, 80))
+        self.progressRing.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.progressRing.setObjectName("progressRing")
         self.CardWidget_2 = CardWidget(centralwidget)
         self.CardWidget_2.setGeometry(QtCore.QRect(0, 0, 801, 80))
@@ -2896,6 +2898,21 @@ class Ui_centralwidget(object):
                                               "    border: 1px solid rgb(205, 205, 205);\n"
                                               "}")
         self.button_logcat_stop.setObjectName("button_logcat_stop")
+
+        self.CardWidget_2.setFixedHeight(80)
+        self.CardWidget_3.setFixedHeight(50)
+        subLayout = QStackedLayout(self.CardWidget)
+        subLayout.addWidget(self.label)
+
+
+        main_layout = QHBoxLayout(centralwidget)
+        vertical_layout = QVBoxLayout()
+        vertical_layout.addWidget(self.CardWidget_2, 7)
+        vertical_layout.addWidget(self.CardWidget, 46)
+        vertical_layout.addWidget(self.CardWidget_3, 5)
+        main_layout.addLayout(vertical_layout, 4)
+        main_layout.addWidget(self.CardWidget_4, 1)
+        print(self.CardWidget.size())
 
         self.retranslateUi(centralwidget)
         QtCore.QMetaObject.connectSlotsByName(centralwidget)
