@@ -1,3 +1,4 @@
+import os
 import re
 import subprocess
 import threading
@@ -211,11 +212,15 @@ def getIP():
             "shell",
             "ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'"
         ]
+        # 创建一个 STARTUPINFO 对象
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
         # 执行命令
-        process = subprocess.Popen(cmd_getEth, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
+        process_1 = subprocess.run(cmd_getEth, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
         # 获取输出
-        ip_eth0 = stdout.decode().strip()
+        ip_eth0 = process_1.stdout
         # 如果有线接口有IP，返回这个IP
         if ip_eth0:
             return f"📶 : {ip_eth0}"
@@ -226,10 +231,9 @@ def getIP():
             "ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'"
         ]
         # 执行命令
-        process = subprocess.Popen(cmd_getWlan, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
+        process_2 = subprocess.run(cmd_getWlan, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # 获取输出
-        ip_wlan0 = stdout.decode().strip()
+        ip_wlan0 = process_2.stdout
         # ip_wlan0 = subprocess.check_output(
         #     "adb shell \"ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'\"",
         #     shell=True, stderr=subprocess.DEVNULL).decode().strip()
