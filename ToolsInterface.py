@@ -2,14 +2,14 @@ import re
 import subprocess
 import threading
 import time
-
+import resources_rc
 from PySide6 import QtCore
 from PySide6.QtCore import Slot, Signal, QSize
 from PySide6.QtGui import QIcon, QFontMetrics
 from PySide6.QtWidgets import *
 from adbutils import adb
 from qfluentwidgets import InfoBar, InfoBarPosition
-
+import config
 from tools import Ui_Form
 
 
@@ -33,7 +33,7 @@ class ToolsInterface(QWidget):
         self.deviceReady.connect(self.onDeviceReady)
         self.setSearchPropUI()
         self.setInputTextUI()
-        self.ui.button_refresh.setIcon(QIcon('resources/刷新.png'))
+        self.ui.button_refresh.setIcon(QIcon(':/resources/刷新.png'))
         self.ui.button_refresh.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_refresh.clicked.connect(lambda: (self.getActivityInfo(), self.getBaseInfo()))
         self.updateActivityInfo_signal.connect(self.update_text_edit)
@@ -203,16 +203,36 @@ def getIP():
         # 获取有线接口的IP地址
         # ip_wlan1 = adb.device(serial="UG0623TEST0017").shell(
         #     "ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'")
-        ip_eth0 = subprocess.check_output(
-            "adb shell \"ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'\"",
-            shell=True, stderr=subprocess.DEVNULL).decode().strip()
+        # ip_eth0 = subprocess.check_output(
+        #     "adb shell \"ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'\"",
+        #     shell=True, stderr=subprocess.DEVNULL).decode().strip()
+        cmd_getEth = [
+            config.adb_path,
+            "shell",
+            "ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'"
+        ]
+        # 执行命令
+        process = subprocess.Popen(cmd_getEth, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        # 获取输出
+        ip_eth0 = stdout.decode().strip()
         # 如果有线接口有IP，返回这个IP
         if ip_eth0:
             return f"📶 : {ip_eth0}"
         # 获取无线接口的IP地址
-        ip_wlan0 = subprocess.check_output(
-            "adb shell \"ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'\"",
-            shell=True, stderr=subprocess.DEVNULL).decode().strip()
+        cmd_getWlan = [
+            config.adb_path,
+            "shell",
+            "ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'"
+        ]
+        # 执行命令
+        process = subprocess.Popen(cmd_getWlan, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        # 获取输出
+        ip_wlan0 = stdout.decode().strip()
+        # ip_wlan0 = subprocess.check_output(
+        #     "adb shell \"ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'\"",
+        #     shell=True, stderr=subprocess.DEVNULL).decode().strip()
         # 如果无线接口有IP，返回这个IP
         if ip_wlan0:
             return f"🛜 : {ip_wlan0}"

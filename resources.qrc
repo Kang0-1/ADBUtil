@@ -1,0 +1,34 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>resources/向左箭头.png</file>
+    <file>resources/download.png</file>
+
+    <file>resources/菜单.png</file>
+    <file>resources/打开文件.png</file>
+    <file>resources/关机.png</file>
+    <file>resources/截图.png</file>
+    <file>resources/静音.png</file>
+    <file>resources/录像.png</file>
+    <file>resources/清除数据.png</file>
+    <file>resources/删除.png</file>
+    <file>resources/刷新.png</file>
+    <file>resources/刷新_黑.png</file>
+    <file>resources/系统返回.png</file>
+    <file>resources/下载.png</file>
+    <file>resources/向上箭头.png</file>
+    <file>resources/向下箭头.png</file>
+    <file>resources/向右箭头.png</file>
+    <file>resources/卸载.png</file>
+    <file>resources/音量加.png</file>
+    <file>resources/音量减.png</file>
+    <file>resources/暂停录像.png</file>
+    <file>resources/主页.png</file>
+    <file>resources/icons/back.png</file>
+    <file>resources/icons/create_folder.png</file>
+    <file>resources/icons/file.png</file>
+    <file>resources/icons/upload.png</file>
+    <file>resources/icons/folder.png</file>
+    <file>resources/icons/go.png</file>
+    <!-- 添加更多资源文件 -->
+</qresource>
+</RCC>
