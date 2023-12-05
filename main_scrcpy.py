@@ -12,6 +12,9 @@ from PySide6.QtCore import *  # type: ignore
 from PySide6.QtGui import *  # type: ignore
 from PySide6.QtWidgets import *  # type: ignore
 from PySide6 import QtCore, QtWidgets
+from qfluentwidgets import BodyLabel, CardWidget, CheckBox, ComboBox, IndeterminateProgressRing, LineEdit, \
+    PrimaryPushButton, VerticalSeparator, LineEditButton
+from qfluentwidgets import FluentIcon as FIF
 
 
 class Ui_centralwidget(QWidget):
@@ -24,7 +27,8 @@ class Ui_centralwidget(QWidget):
         self.CardWidget.setObjectName("CardWidget")
         self.label = QtWidgets.QLabel(self.CardWidget)
         self.label.setGeometry(QtCore.QRect(0, 0, 800, 450))
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+
         self.label.setObjectName("label")
         self.progressRing = IndeterminateProgressRing(self.CardWidget)
         self.progressRing.setGeometry(QtCore.QRect(360, 190, 80, 80))
@@ -1988,8 +1992,22 @@ class Ui_centralwidget(QWidget):
                                          "}")
         self.button_delete.setText("")
         self.button_delete.setObjectName("button_delete")
+        self.button_num_0.setFixedSize(41, 32)
+        self.button_num_1.setFixedSize(41, 32)
+        self.button_num_2.setFixedSize(41, 32)
+        self.button_num_3.setFixedSize(41, 32)
+        self.button_num_4.setFixedSize(41, 32)
+        self.button_num_5.setFixedSize(41, 32)
+        self.button_num_6.setFixedSize(41, 32)
+        self.button_num_7.setFixedSize(41, 32)
+        self.button_num_8.setFixedSize(41, 32)
+        self.button_num_9.setFixedSize(41, 32)
+        self.button_menu.setFixedSize(41, 32)
+        self.button_delete.setFixedSize(41, 32)
+
         self.button_back = PrimaryPushButton(self.CardWidget_4)
         self.button_back.setGeometry(QtCore.QRect(30, 240, 71, 32))
+        self.button_back.setMinimumSize(71, 32)
         self.button_back.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                        "    color: black;\n"
                                        "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2005,7 +2023,7 @@ class Ui_centralwidget(QWidget):
                                        "    padding: 5px 12px 6px 12px;\n"
                                        "}\n"
                                        "PushButton[hasIcon=true] {\n"
-                                       "    padding: 5px 12px 6px 36px;\n"
+                                       "    padding: 5px 5px 6px 36px;\n"
                                        "}\n"
                                        "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
                                        "    background: rgba(249, 249, 249, 0.5);\n"
@@ -2058,6 +2076,7 @@ class Ui_centralwidget(QWidget):
         self.button_back.setObjectName("button_back")
         self.button_home = PrimaryPushButton(self.CardWidget_4)
         self.button_home.setGeometry(QtCore.QRect(120, 240, 71, 32))
+        self.button_home.setMinimumSize(71, 32)
         self.button_home.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                        "    color: black;\n"
                                        "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2406,6 +2425,7 @@ class Ui_centralwidget(QWidget):
         self.button_down.setObjectName("button_down")
         self.button_volDown = PrimaryPushButton(self.CardWidget_4)
         self.button_volDown.setGeometry(QtCore.QRect(30, 280, 71, 32))
+        self.button_volDown.setMinimumSize(71, 32)
         self.button_volDown.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                           "    color: black;\n"
                                           "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2474,6 +2494,7 @@ class Ui_centralwidget(QWidget):
         self.button_volDown.setObjectName("button_volDown")
         self.button_volUp = PrimaryPushButton(self.CardWidget_4)
         self.button_volUp.setGeometry(QtCore.QRect(120, 280, 71, 32))
+        self.button_volUp.setMinimumSize(71, 32)
         self.button_volUp.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2899,10 +2920,40 @@ class Ui_centralwidget(QWidget):
                                               "}")
         self.button_logcat_stop.setObjectName("button_logcat_stop")
 
+        self.input_keycode = InputLineEdit(self.CardWidget_4)
+        self.input_keycode.setPlaceholderText("输入按键值")
+        self.input_keycode.setGeometry(QtCore.QRect(30, 490, 161, 33))
+
+
         self.CardWidget_2.setFixedHeight(80)
         self.CardWidget_3.setFixedHeight(50)
-        subLayout = QStackedLayout(self.CardWidget)
+        subLayout = QHBoxLayout(self.CardWidget)
         subLayout.addWidget(self.label)
+        card4_layout = QGridLayout(self.CardWidget_4)
+        card4_layout.addWidget(self.button_power, 0, 0)
+        card4_layout.addWidget(self.button_mute, 0, 2)
+        card4_layout.addWidget(self.button_up, 1, 1)
+        card4_layout.addWidget(self.button_left, 2, 0)
+        card4_layout.addWidget(self.button_enter, 2, 1)
+        card4_layout.addWidget(self.button_right, 2, 2)
+        card4_layout.addWidget(self.button_down, 3, 1)
+        card4_layout.addWidget(self.button_back, 4, 0)
+        card4_layout.addWidget(self.button_home, 4, 2)
+        card4_layout.addWidget(self.button_volDown, 5, 0)
+        card4_layout.addWidget(self.button_volUp, 5, 2)
+        card4_layout.addWidget(self.button_num_1, 6, 0)
+        card4_layout.addWidget(self.button_num_2, 6, 1)
+        card4_layout.addWidget(self.button_num_3, 6, 2)
+        card4_layout.addWidget(self.button_num_4, 7, 0)
+        card4_layout.addWidget(self.button_num_5, 7, 1)
+        card4_layout.addWidget(self.button_num_6, 7, 2)
+        card4_layout.addWidget(self.button_num_7, 8, 0)
+        card4_layout.addWidget(self.button_num_8, 8, 1)
+        card4_layout.addWidget(self.button_num_9, 8, 2)
+        card4_layout.addWidget(self.button_menu, 9, 0)
+        card4_layout.addWidget(self.button_num_0, 9, 1)
+        card4_layout.addWidget(self.button_delete, 9, 2)
+        card4_layout.addWidget(self.input_keycode, 10, 0, 1, 3)
 
 
         main_layout = QHBoxLayout(centralwidget)
@@ -2912,7 +2963,7 @@ class Ui_centralwidget(QWidget):
         vertical_layout.addWidget(self.CardWidget_3, 5)
         main_layout.addLayout(vertical_layout, 4)
         main_layout.addWidget(self.CardWidget_4, 1)
-        print(self.CardWidget.size())
+        # main_layout.addLayout(card4_layout, 1)
 
         self.retranslateUi(centralwidget)
         QtCore.QMetaObject.connectSlotsByName(centralwidget)
@@ -2942,6 +2993,33 @@ class Ui_centralwidget(QWidget):
         self.button_logcat.setText(_translate("centralwidget", "LogCat"))
         self.button_logcat_stop.setText(_translate("centralwidget", "Stop"))
 
+class InputLineEdit(LineEdit):
+    """ Search line edit """
+    searchSignal = Signal(str)
+    clearSignal = Signal()
 
-from qfluentwidgets import BodyLabel, CardWidget, CheckBox, ComboBox, IndeterminateProgressRing, LineEdit, \
-    PrimaryPushButton, VerticalSeparator
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.searchButton = LineEditButton(FIF.RIGHT_ARROW, self)
+
+        self.hBoxLayout.addWidget(self.searchButton, 0, Qt.AlignRight)
+        self.setClearButtonEnabled(True)
+        self.setTextMargins(0, 0, 59, 0)
+
+        self.searchButton.clicked.connect(self.search)
+        self.clearButton.clicked.connect(self.clearSignal)
+
+    def search(self):
+        """ emit search signal """
+        text = self.text().strip()
+        if text:
+            self.searchSignal.emit(text)
+        else:
+            self.clearSignal.emit()
+
+    def setClearButtonEnabled(self, enable: bool):
+        self._isClearButtonEnabled = enable
+        self.setTextMargins(0, 0, 28 * enable + 30, 0)
+
+
+

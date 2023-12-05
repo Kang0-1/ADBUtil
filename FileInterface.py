@@ -358,14 +358,6 @@ class FileInterface(QWidget):
                 arguments=(helper.progress_callback.emit, self.upload_files.pop())
             )
             if Adb.worker().work(worker):
-                Global().communicate.notification.emit(
-                    MessageData(
-                        title="Uploading",
-                        message_type=MessageType.LOADING_MESSAGE,
-                        message_catcher=worker.set_loading_widget
-                    )
-                )
-                helper.setup(worker, worker.update_loading_widget)
                 self.show_state_info("正在上传文件···")
                 worker.start()
         Global().communicate.files__refresh.emit()

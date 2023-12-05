@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QApplication
 from argparse import ArgumentParser
 from adbutils import adb, AdbTimeout
 from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition, SearchLineEdit, LineEditButton, LineEdit
-from qfluentwidgets import FluentIcon as FIF
+
 
 import scrcpy
 
@@ -24,33 +24,6 @@ else:
     app = QApplication.instance()
 
 
-class InputLineEdit(LineEdit):
-    """ Search line edit """
-    searchSignal = Signal(str)
-    clearSignal = Signal()
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.searchButton = LineEditButton(FIF.RIGHT_ARROW, self)
-
-        self.hBoxLayout.addWidget(self.searchButton, 0, Qt.AlignRight)
-        self.setClearButtonEnabled(True)
-        self.setTextMargins(0, 0, 59, 0)
-
-        self.searchButton.clicked.connect(self.search)
-        self.clearButton.clicked.connect(self.clearSignal)
-
-    def search(self):
-        """ emit search signal """
-        text = self.text().strip()
-        if text:
-            self.searchSignal.emit(text)
-        else:
-            self.clearSignal.emit()
-
-    def setClearButtonEnabled(self, enable: bool):
-        self._isClearButtonEnabled = enable
-        self.setTextMargins(0, 0, 28 * enable + 30, 0)
 
 
 class ScrcpyInterface(QWidget):
@@ -100,7 +73,8 @@ class ScrcpyInterface(QWidget):
 
         # 设置 QLabel 的尺寸策略
         self.ui.label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.ui.label.setScaledContents(False)  # 确保内容缩放以适应 QLabel 的大小
+        self.ui.label.setScaledContents(True)  # 确保内容缩放以适应 QLabel 的大小
+
 
         # Bind mouse event
         self.ui.label.mousePressEvent = self.on_mouse_event(scrcpy.ACTION_DOWN)
@@ -110,13 +84,10 @@ class ScrcpyInterface(QWidget):
         self.ui.button_connect.clicked.connect(self.click_connect)
         self.ui.button_connect.setToolTip("注意在同一网络下连接!")
 
-        self.input_keycode = InputLineEdit(self.ui.CardWidget_4)
-        self.input_keycode.setPlaceholderText("输入按键值")
-        self.input_keycode.setGeometry(QtCore.QRect(30, 490, 161, 33))
         validator = QIntValidator(0, 999, self)
-        self.input_keycode.setValidator(validator)
-        self.input_keycode.returnPressed.connect(self.on_input_keycode)
-        self.input_keycode.searchSignal.connect(self.on_input_keycode)
+        self.ui.input_keycode.setValidator(validator)
+        self.ui.input_keycode.returnPressed.connect(self.on_input_keycode)
+        self.ui.input_keycode.searchSignal.connect(self.on_input_keycode)
 
         self.ui.button_refresh.clicked.connect(self.click_refresh)
 
@@ -540,6 +511,7 @@ class ScrcpyInterface(QWidget):
 
             pix = QPixmap(image)
             pix.setDevicePixelRatio(1 / self.ratio)
+            # self.ui.label.resize()
             self.ui.label.setPixmap(pix)
 
     def closeEvent(self, _):

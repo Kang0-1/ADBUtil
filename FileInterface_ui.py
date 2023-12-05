@@ -4,7 +4,7 @@ from PySide6 import QtWidgets, QtCore
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon, QMovie, QAction
 from PySide6.QtWidgets import QWidget, QListView, QLabel, QVBoxLayout, QHBoxLayout
-
+import resources_rc
 from FileManage.app.core.configurations import Resources
 from FileManage.app.gui.explorer.files import FileHeaderWidget
 from FileManage.app.gui.explorer.toolbar import PathBar
@@ -21,10 +21,10 @@ class Ui_centralwidget(QWidget):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(centralwidget.sizePolicy().hasHeightForWidth())
         centralwidget.setSizePolicy(sizePolicy)
-        layout = QVBoxLayout(centralwidget)
+
 
         self.CardWidget = CardWidget(centralwidget)
-        # subLayout = QHBoxLayout(self.CardWidget)
+
         self.CardWidget.resize(1000, 70)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
                                            QtWidgets.QSizePolicy.Policy.Expanding)
@@ -40,7 +40,7 @@ class Ui_centralwidget(QWidget):
         self.upload_tools = PrimaryDropDownPushButton(self.CardWidget)
         self.upload_tools.setGeometry(QtCore.QRect(30, 10, 70, 40))
         self.upload_tools._menu = RoundMenu(self.upload_tools)
-        self.upload_tools.setIcon(QIcon('./resources/icons/upload.png'))
+        self.upload_tools.setIcon(QIcon(':/resources/icons/upload.png'))
         self.upload_tools.setIconSize(QtCore.QSize(32, 32))
         self.upload_tools.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
@@ -98,16 +98,16 @@ class Ui_centralwidget(QWidget):
         self.setObjectName("upload_button")
         self.upload_tools.clicked.connect(self.upload_tools._showMenu)
         self.upload_tools._menu.addSection("Upload files")
-        self.upload_tools.upload_files = QAction(QIcon('./resources/icons/file.png'), 'Upload files', self)
+        self.upload_tools.upload_files = QAction(QIcon(':/resources/icons/file.png'), 'Upload files', self)
         self.upload_tools._menu.addAction(self.upload_tools.upload_files)
-        self.upload_tools.upload_directory = QAction(QIcon('./resources/icons/folder.png'), 'Upload directory', self)
+        self.upload_tools.upload_directory = QAction(QIcon(':/resources/icons/folder.png'), 'Upload directory', self)
         self.upload_tools._menu.addAction(self.upload_tools.upload_directory)
         self.upload_tools.setMenu(self.upload_tools._menu)
 
         self.create_folder_bt = PrimaryPushButton(self.CardWidget)
         self.create_folder_bt.setGeometry(QtCore.QRect(150, 10, 57, 40))
         self.create_folder_bt.setMinimumSize(QtCore.QSize(57, 40))
-        self.create_folder_bt.setIcon(QIcon('./resources/icons/create_folder.png'))
+        self.create_folder_bt.setIcon(QIcon(':/resources/icons/create_folder.png'))
         self.create_folder_bt.setIconSize(QtCore.QSize(32, 32))
         self.create_folder_bt.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                             "    color: black;\n"
@@ -167,7 +167,7 @@ class Ui_centralwidget(QWidget):
 
         self.parent_dir_bt = PrimaryPushButton(self.CardWidget)
         self.parent_dir_bt.setGeometry(QtCore.QRect(250, 10, 57, 40))
-        self.parent_dir_bt.setIcon(QIcon('./resources/icons/back.png'))
+        self.parent_dir_bt.setIcon(QIcon(':/resources/icons/back.png'))
         self.parent_dir_bt.setIconSize(QtCore.QSize(30, 30))
         self.parent_dir_bt.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                          "    color: black;\n"
@@ -251,11 +251,13 @@ class Ui_centralwidget(QWidget):
         # self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.empty_label.setStyleSheet("color: #969696; border: 0px solid #969696; font-size: 18")
 
-        # layout.addWidget(self.CardWidget)
-        # layout.addWidget(self.header)
-        # layout.addWidget(self.list)
-        # layout.addWidget(self.loading)
-        # layout.addWidget(self.empty_label)
+        layout = QVBoxLayout(centralwidget)
+        subLayout = QHBoxLayout(self.CardWidget)
+        layout.addWidget(self.CardWidget)
+        layout.addWidget(self.header)
+        layout.addWidget(self.list)
+        layout.addWidget(self.loading)
+        layout.addWidget(self.empty_label)
 
         self.stateTooltip = None
 

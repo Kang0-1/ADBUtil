@@ -28,7 +28,7 @@ class PathBar(QWidget):
         # self.layout().addWidget(self.text)
 
         self.go = PrimaryPushButton(self)
-        self.go.setIcon(QIcon('./resources/icons/go.png'))
+        self.go.setIcon(QIcon(':/resources/icons/go.png'))
         self.go.setGeometry(QtCore.QRect(450, 0, 57, 40))
         self.go.setMaximumSize(QtCore.QSize(57, 40))
         self.go.setIconSize(QtCore.QSize(30, 30))
