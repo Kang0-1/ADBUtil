@@ -124,8 +124,12 @@ class AppManageInterface(QWidget):
             "-r",
             apk_path
         ]
+        # 创建一个 STARTUPINFO 对象
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
         # 执行命令
-        process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # command = f"adb install -r \"{apk_path}\""
         # process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if process.returncode == 0:
@@ -187,8 +191,13 @@ class AppManageInterface(QWidget):
             app_install_path,
             export_apk_name
         ]
+        # 创建一个 STARTUPINFO 对象
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
         # 执行命令
-        process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
 
         # command = f"adb pull {app_install_path} {export_apk_name}"
         # process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -222,8 +231,13 @@ class AppManageInterface(QWidget):
             "uninstall",
             self.currentApp.packageName
         ]
+        # 创建一个 STARTUPINFO 对象
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
         # 执行命令
-        process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(process.stdout)
         # command = f"adb uninstall {self.currentApp.packageName}"
         # process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
