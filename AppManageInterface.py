@@ -3,6 +3,8 @@ import re
 import subprocess
 import threading
 
+import config
+import resources_rc
 from PySide6 import QtCore
 from PySide6.QtCore import Slot, Signal, QSize
 from PySide6.QtGui import QIcon, QFontMetrics
@@ -73,25 +75,25 @@ class AppManageInterface(QWidget):
         self.ui.searchLineEdit.searchSignal.connect(self.search_package)
         self.ui.searchLineEdit.clearSignal.connect(self.clear_search)
 
-        self.ui.button_pull.setIcon(QIcon('resources/下载.png'))
+        self.ui.button_pull.setIcon(QIcon(':/resources/下载.png'))
         self.ui.button_pull.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_pull.clicked.connect(self.pull_app)
         self.ui.button_pull.setToolTip("提取APK")
         self.ui.button_pull.setVisible(False)
-        self.ui.button_uninstall.setIcon(QIcon('resources/卸载.png'))
+        self.ui.button_uninstall.setIcon(QIcon(':/resources/卸载.png'))
         self.ui.button_uninstall.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_uninstall.clicked.connect(self.uninstall_app)
         self.ui.button_uninstall.setToolTip("卸载APP")
         self.ui.button_uninstall.setVisible(False)
-        self.ui.button_clear_data.setIcon(QIcon('resources/清除数据.png'))
+        self.ui.button_clear_data.setIcon(QIcon(':/resources/清除数据.png'))
         self.ui.button_clear_data.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_clear_data.clicked.connect(self.clear_data)
         self.ui.button_clear_data.setToolTip("清除缓存")
         self.ui.button_clear_data.setVisible(False)
-        self.ui.button_fresh.setIcon(QIcon('resources/刷新_黑.png'))
+        self.ui.button_fresh.setIcon(QIcon(':/resources/刷新_黑.png'))
         self.ui.button_fresh.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_fresh.clicked.connect(self.refresh)
-        self.ui.button_install.setIcon(QIcon('resources/打开文件.png'))
+        self.ui.button_install.setIcon(QIcon(':/resources/打开文件.png'))
         self.ui.button_install.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_install.clicked.connect(self.openAndInstall)
         self.ui.button_install.setToolTip("打开文件管理器安装APK或拖动到本页面安装")
@@ -115,8 +117,17 @@ class AppManageInterface(QWidget):
                 self.show_info_bar("请传入APK文件", "warning", 4)
 
     def install_apk(self, apk_path):
-        command = f"adb install -r \"{apk_path}\""
-        process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # 构建命令
+        command = [
+            config.adb_path,
+            "install",
+            "-r",
+            apk_path
+        ]
+        # 执行命令
+        process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # command = f"adb install -r \"{apk_path}\""
+        # process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if process.returncode == 0:
             self.install_app_finished_signal.emit("安装成功!", "success", 2)
         else:
@@ -169,9 +180,18 @@ class AppManageInterface(QWidget):
         desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
         export_apk_name = os.path.join(desktop, f"{self.currentApp.packageName}.apk")
         app_install_path = self.currentApp.installedPath.split('\n')[0]
+        # 构建命令
+        command = [
+            config.adb_path,
+            "pull",
+            app_install_path,
+            export_apk_name
+        ]
+        # 执行命令
+        process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        command = f"adb pull {app_install_path} {export_apk_name}"
-        process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # command = f"adb pull {app_install_path} {export_apk_name}"
+        # process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # result = self.device.sync.pull(app_install_path, export_apk_name)
         if process.returncode == 0:
             success = process.stdout
@@ -196,8 +216,16 @@ class AppManageInterface(QWidget):
         w.show()
 
     def perform_uninstall_app(self):
-        command = f"adb uninstall {self.currentApp.packageName}"
-        process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # 构建命令
+        command = [
+            config.adb_path,
+            "uninstall",
+            self.currentApp.packageName
+        ]
+        # 执行命令
+        process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # command = f"adb uninstall {self.currentApp.packageName}"
+        # process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         success = process.stdout
         error = process.stderr

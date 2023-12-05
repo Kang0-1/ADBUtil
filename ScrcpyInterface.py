@@ -1,5 +1,6 @@
 import os
 import re
+import resources_rc
 from PySide6.QtGui import QIcon, QMouseEvent, QKeyEvent, QImage, QPixmap
 import threading
 import time
@@ -97,7 +98,6 @@ class ScrcpyInterface(QWidget):
         self.keyPressEvent = self.on_key_event(scrcpy.ACTION_DOWN)
         self.keyReleaseEvent = self.on_key_event(scrcpy.ACTION_UP)
 
-
     def emit_device_serial(self, value):
         self.device_serial.emit(value)
 
@@ -194,7 +194,6 @@ class ScrcpyInterface(QWidget):
             # 初始化并启动 scrcpy 客户端
             self.client = scrcpy.Client(
                 device=self.device,
-                # max_width=self.ui.label.width(),
                 flip=self.ui.flip.isChecked(),
                 bitrate=1000000000
             )
@@ -211,7 +210,7 @@ class ScrcpyInterface(QWidget):
         self.client.flip = self.ui.flip.isChecked()
 
     def bindControllers(self):
-        self.ui.button_home.setIcon(QIcon('resources/主页.png'))
+        self.ui.button_home.setIcon(QIcon(':/resources/主页.png'))
         self.ui.button_home.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_home.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_HOME))
         # 四种方式
@@ -220,7 +219,7 @@ class ScrcpyInterface(QWidget):
         # self.client.control.keycode(scrcpy.KEYCODE_HOME, scrcpy.ACTION_DOWN)
         # self.client.control.keycode(scrcpy.KEYCODE_HOME, scrcpy.ACTION_UP)
 
-        self.ui.button_back.setIcon(QIcon('resources/系统返回.png'))
+        self.ui.button_back.setIcon(QIcon(':/resources/系统返回.png'))
         self.ui.button_back.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_back.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_BACK))
         # self.client.control.back_or_turn_screen_on(scrcpy.ACTION_DOWN)
@@ -230,25 +229,25 @@ class ScrcpyInterface(QWidget):
         self.ui.button_logcat_stop.setVisible(False)
         self.ui.button_logcat_stop.clicked.connect(self.on_click_logcat_stop)
 
-        self.ui.button_snapshot.setIcon(QIcon('resources/截图.png'))
+        self.ui.button_snapshot.setIcon(QIcon(':/resources/截图.png'))
         self.ui.button_snapshot.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_snapshot.clicked.connect(self.on_click_snapShot)
 
-        self.ui.button_recording.setIcon(QIcon('resources/录像.png'))
+        self.ui.button_recording.setIcon(QIcon(':/resources/录像.png'))
         self.ui.button_recording.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_recording.clicked.connect(self.on_click_recording_start)
 
         self.ui.button_recording_stop.setVisible(False)
-        self.ui.button_recording_stop.setIcon(QIcon('resources/暂停录像.png'))
+        self.ui.button_recording_stop.setIcon(QIcon(':/resources/暂停录像.png'))
         self.ui.button_recording_stop.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_recording_stop.clicked.connect(self.on_click_recording_stop)
 
-        self.ui.button_power.setIcon(QIcon('resources/关机.png'))
+        self.ui.button_power.setIcon(QIcon(':/resources/关机.png'))
         self.ui.button_power.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_power.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_POWER))
 
-        self.ui.button_mute.setIcon(QIcon('resources/静音.png'))
+        self.ui.button_mute.setIcon(QIcon(':/resources/静音.png'))
         self.ui.button_mute.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_mute.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_VOLUME_MUTE))
@@ -256,41 +255,41 @@ class ScrcpyInterface(QWidget):
         self.ui.button_enter.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_CENTER))
 
-        self.ui.button_up.setIcon(QIcon('resources/向上箭头.png'))
+        self.ui.button_up.setIcon(QIcon(':/resources/向上箭头.png'))
         self.ui.button_up.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_up.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_UP))
 
-        self.ui.button_down.setIcon(QIcon('resources/向下箭头.png'))
+        self.ui.button_down.setIcon(QIcon(':/resources/向下箭头.png'))
         self.ui.button_down.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_down.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_DOWN))
 
-        self.ui.button_left.setIcon(QIcon('resources/向左箭头.png'))
+        self.ui.button_left.setIcon(QIcon(':/resources/向左箭头.png'))
         self.ui.button_left.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_left.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_LEFT))
 
-        self.ui.button_right.setIcon(QIcon('resources/向右箭头.png'))
+        self.ui.button_right.setIcon(QIcon(':/resources/向右箭头.png'))
         self.ui.button_right.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_right.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_RIGHT))
 
-        self.ui.button_volUp.setIcon(QIcon('resources/音量加.png'))
+        self.ui.button_volUp.setIcon(QIcon(':/resources/音量加.png'))
         self.ui.button_volUp.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_volUp.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_VOLUME_UP))
 
-        self.ui.button_volDown.setIcon(QIcon('resources/音量减.png'))
+        self.ui.button_volDown.setIcon(QIcon(':/resources/音量减.png'))
         self.ui.button_volDown.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_volDown.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_VOLUME_DOWN))
 
-        self.ui.button_menu.setIcon(QIcon('resources/菜单.png'))
+        self.ui.button_menu.setIcon(QIcon(':/resources/菜单.png'))
         self.ui.button_menu.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_menu.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_MENU))
 
-        self.ui.button_delete.setIcon(QIcon('resources/删除.png'))
+        self.ui.button_delete.setIcon(QIcon(':/resources/删除.png'))
         self.ui.button_delete.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_delete.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DEL))
@@ -448,6 +447,8 @@ class ScrcpyInterface(QWidget):
 
     def on_key_event(self, action=scrcpy.ACTION_DOWN):
         def handler(evt: QKeyEvent):
+            if QApplication.focusWidget() == self.input_keycode:
+                return
             code = self.map_code(evt.key())
             if code != -1:
                 if self.client:
@@ -543,6 +544,3 @@ def run():
     scrcpyInterface.client.start()
     while scrcpyInterface.alive:
         scrcpyInterface.client.start()
-
-    def emit_device_serial(self, value):
-        self.device_serial.emit(value)

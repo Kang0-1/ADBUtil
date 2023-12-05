@@ -5,7 +5,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QFrame, QHBoxLayout
 
-from qfluentwidgets import FluentWindow, SubtitleLabel, setFont, SplitFluentWindow, MSFluentWindow
+from qfluentwidgets import FluentWindow, SubtitleLabel, setFont, SplitFluentWindow, MSFluentWindow, setTheme, Theme
 from qfluentwidgets import FluentIcon as FIF
 from AppManageInterface import AppManageInterface
 from FileInterface import FileInterface
@@ -36,7 +36,7 @@ class Window(MSFluentWindow):
 
     def __init__(self):
         super().__init__()
-
+        # setTheme(Theme.DARK)
         # 创建子界面，实际使用时将 Widget 换成自己的子界面
         self.homeInterface = ScrcpyInterface(self)
         self.appManageInterface = AppManageInterface(self)
