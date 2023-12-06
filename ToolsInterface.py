@@ -83,7 +83,7 @@ class ToolsInterface(QWidget):
             self.ui.mac.setText(device.prop.get("ro.boot.mac"))
             fingerprint = device.prop.get("ro.build.fingerprint")
             self.ui.fingerprint.setText(fingerprint)
-            self.ui.ipv4.setText(getIP())
+            self.ui.ipv4.setText(getIP(device))
             build_version = identify_version(fingerprint)
             print(build_version)
             if build_version == "user":
@@ -199,7 +199,7 @@ class ToolsInterface(QWidget):
             print("未知的信息类型")
 
 
-def getIP():
+def getIP(device):
     try:
         # 获取有线接口的IP地址
         # ip_wlan1 = adb.device(serial="UG0623TEST0017").shell(
@@ -209,6 +209,7 @@ def getIP():
         #     shell=True, stderr=subprocess.DEVNULL).decode().strip()
         cmd_getEth = [
             config.adb_path,
+            '-s', device.serial,
             "shell",
             "ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'"
         ]
@@ -227,6 +228,7 @@ def getIP():
         # 获取无线接口的IP地址
         cmd_getWlan = [
             config.adb_path,
+            '-s', device.serial,
             "shell",
             "ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'"
         ]
