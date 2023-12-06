@@ -30,15 +30,6 @@ class AppDesc:
         self.length = 0,
 
 
-def convert_string(input_str):
-    if '\n' in input_str:
-        # 字符串包含换行符，将其分割成字符串数组
-        return input_str.split('\n')
-    else:
-        # 字符串不包含换行符，返回原始字符串
-        return input_str
-
-
 class AppManageInterface(QWidget):
     deviceReady = Signal()
     pull_app_finished_signal = Signal(str, str, int)
@@ -67,6 +58,7 @@ class AppManageInterface(QWidget):
         self.deviceReady.connect(self.onDeviceReady)
         self.pull_app_finished_signal.connect(self.show_info_bar)
         self.install_app_finished_signal.connect(self.show_info_bar)
+        self.install_app_finished_signal.connect(self.refreshPackageNameList)
         self.ui.allAppInterface.itemClicked.connect(self.onItemClicked)
         self.ui.sysAppInterface.itemClicked.connect(self.onItemClicked)
         self.ui.userAppInterface.itemClicked.connect(self.onItemClicked)
@@ -120,6 +112,7 @@ class AppManageInterface(QWidget):
         # 构建命令
         command = [
             config.adb_path,
+            '-s', self.device.serial,
             "install",
             "-r",
             apk_path
@@ -129,7 +122,8 @@ class AppManageInterface(QWidget):
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
         # 执行命令
-        process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
         # command = f"adb install -r \"{apk_path}\""
         # process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if process.returncode == 0:
@@ -187,6 +181,7 @@ class AppManageInterface(QWidget):
         # 构建命令
         command = [
             config.adb_path,
+            '-s', self.device.serial,
             "pull",
             app_install_path,
             export_apk_name
@@ -228,6 +223,7 @@ class AppManageInterface(QWidget):
         # 构建命令
         command = [
             config.adb_path,
+            '-s', self.device.serial,
             "uninstall",
             self.currentApp.packageName
         ]
@@ -236,7 +232,8 @@ class AppManageInterface(QWidget):
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
         # 执行命令
-        process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
         print(process.stdout)
         # command = f"adb uninstall {self.currentApp.packageName}"
         # process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -406,6 +403,15 @@ class AppManageInterface(QWidget):
             InfoBar.error("Error", message, self, True, 1000 * second, InfoBarPosition.BOTTOM, self).show()
         else:
             print("未知的信息类型")
+
+
+def convert_string(input_str):
+    if '\n' in input_str:
+        # 字符串包含换行符，将其分割成字符串数组
+        return input_str.split('\n')
+    else:
+        # 字符串不包含换行符，返回原始字符串
+        return input_str
 
 
 def to_file_length(size):
