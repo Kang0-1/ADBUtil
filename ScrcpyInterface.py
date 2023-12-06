@@ -1,5 +1,8 @@
 import os
 import re
+
+import PySide6
+
 import resources_rc
 from PySide6.QtGui import QIcon, QMouseEvent, QKeyEvent, QImage, QPixmap
 import threading
@@ -14,7 +17,6 @@ from argparse import ArgumentParser
 from adbutils import adb, AdbTimeout
 from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition, SearchLineEdit, LineEditButton, LineEdit
 
-
 import scrcpy
 
 from main_scrcpy import Ui_centralwidget
@@ -23,8 +25,6 @@ if not QApplication.instance():
     app = QApplication()
 else:
     app = QApplication.instance()
-
-
 
 
 class ScrcpyInterface(QWidget):
@@ -73,9 +73,7 @@ class ScrcpyInterface(QWidget):
         self.ui.flip.stateChanged.connect(self.on_flip)
 
         # 设置 QLabel 的尺寸策略
-        self.ui.label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.ui.label.setScaledContents(True)  # 确保内容缩放以适应 QLabel 的大小
-
+        # self.ui.label.setScaledContents(True)  # 确保内容缩放以适应 QLabel 的大小
 
         # Bind mouse event
         self.ui.label.mousePressEvent = self.on_mouse_event(scrcpy.ACTION_DOWN)
@@ -313,7 +311,7 @@ class ScrcpyInterface(QWidget):
         # self.device.keyevent(keycode)
 
     def on_input_keycode(self):
-        keycode = self.input_keycode.text()
+        keycode = self.ui.input_keycode.text()
         if keycode:
             self.general_button_handler(keycode)
 
@@ -436,9 +434,23 @@ class ScrcpyInterface(QWidget):
                 focused_widget.clearFocus()
             image_size = self.client.resolution  # 实际图像的分辨率
 
+            # print("image width = ", image_size[0], "image height = ", image_size[1])
+            image_ratio = image_size[0] / image_size[1]
+            # print("width = ", self.ui.label.width(), "height = ", self.ui.label.height())
+            window_ratio = self.ui.label.width() / self.ui.label.height()
+            if image_size[0] > self.ui.label.width() or image_size[1] > self.ui.label.height():
+                if image_ratio > window_ratio:
+                    self.ratio = self.ui.label.width() / image_size[0]
+                else:
+                    self.ratio = self.ui.label.height() / image_size[1]
+            else:
+                self.ratio = 1
+
             # 调整点击坐标
-            x = (evt.position().x() - (self.ui.label.width() - image_size[0] * self.ratio) / 2) / self.ratio
-            y = (evt.position().y() - (self.ui.label.height() - image_size[1] * self.ratio) / 2) / self.ratio
+            # print(evt.position().x(), evt.position().y())
+            x = (evt.position().x() - (self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
+            y = (evt.position().y() - (self.ui.label.height() - self.ui.label.image_label.height()) / 2) / self.ratio
+            # print(x, y)
 
             # 处理点击事件
             self.client.control.touch(x, y, action)
@@ -447,7 +459,7 @@ class ScrcpyInterface(QWidget):
 
     def on_key_event(self, action=scrcpy.ACTION_DOWN):
         def handler(evt: QKeyEvent):
-            if QApplication.focusWidget() == self.input_keycode:
+            if QApplication.focusWidget() == self.ui.input_keycode:
                 return
             code = self.map_code(evt.key())
             if code != -1:
@@ -498,22 +510,8 @@ class ScrcpyInterface(QWidget):
                 frame.shape[1] * 3,
                 QImage.Format.Format_BGR888,
             )
-            print("image width = ", self.ui.label.width(), "image height = ", self.ui.label.height())
-            image_ratio = frame.shape[1] / frame.shape[0]
-            print("width = ", self.ui.label.width(), "height = ", self.ui.label.height())
-            window_ratio = self.ui.label.width() / self.ui.label.height()
-            if frame.shape[1] > self.ui.label.width() or frame.shape[0] > self.ui.label.height():
-                if image_ratio > window_ratio:
-                    self.ratio = self.ui.label.width() / frame.shape[1]
-                else:
-                    self.ratio = self.ui.label.height() / frame.shape[0]
-            else:
-                self.ratio = 1
-
             pix = QPixmap(image)
-            pix.setDevicePixelRatio(1 / self.ratio)
-            # self.ui.label.resize()
-            self.ui.label.setPixmap(pix)
+            self.ui.label.set_image(pix)
 
     def closeEvent(self, _):
         self.client.stop()

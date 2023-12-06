@@ -231,7 +231,7 @@ class Ui_centralwidget(QWidget):
 
         self.header = FileHeaderWidget(centralwidget)
         self.header.setGeometry(QtCore.QRect(20, 70, 1000, 70))
-        self.header.setMinimumHeight(65)
+        self.header.setFixedHeight(65)
 
         self.list = QListView(centralwidget)
         self.list.setSpacing(1)
@@ -245,10 +245,11 @@ class Ui_centralwidget(QWidget):
         self.loading_movie = QMovie(Resources.anim_loading, parent=self.loading)
         self.loading_movie.setScaledSize(QSize(48, 48))
         self.loading.setMovie(self.loading_movie)
+        self.loading.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.empty_label = QLabel("Folder is empty", centralwidget)
         self.empty_label.setGeometry(QtCore.QRect(450, 250, 100, 100))
-        # self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.empty_label.setStyleSheet("color: #969696; border: 0px solid #969696; font-size: 18")
 
         layout = QVBoxLayout(centralwidget)

@@ -19,7 +19,6 @@ class Ui_Form(object):
         Form.setObjectName("Form")
         Form.resize(1018, 582)
         self.CardWidget = CardWidget(Form)
-        layout = QHBoxLayout(Form)
         self.CardWidget.setGeometry(QtCore.QRect(0, 0, 371, 581))
         self.CardWidget.setObjectName("CardWidget")
         self.StrongBodyLabel = StrongBodyLabel(self.CardWidget)
@@ -169,20 +168,6 @@ class Ui_Form(object):
         self.input_text.setReadOnly(False)
         self.input_text.setObjectName("input_text")
 
-        subLayout_1 = QFormLayout(self.CardWidget)
-        subLayout_1.addRow(self.StrongBodyLabel, self.model)
-        subLayout_1.addRow(self.StrongBodyLabel_2, self.brand)
-        subLayout_1.addRow(self.StrongBodyLabel_3, self.android_version)
-        subLayout_1.addRow(self.StrongBodyLabel_8, self.sn)
-        subLayout_1.addRow(self.StrongBodyLabel_9, self.mac)
-        subLayout_1.addRow(self.StrongBodyLabel_6, self.fingerprint)
-        subLayout_1.addRow(self.StrongBodyLabel_7, self.ipv4)
-        subLayout_1.addRow(self.StrongBodyLabel_4, self.sw)
-        subLayout_1.addRow(self.StrongBodyLabel_5, self.hw)
-        subLayout_1.addRow(self.search_prop, self.output_prop)
-        subLayout_1.addRow(self.input_text, self.button_input)
-
-
         self.CardWidget_2 = CardWidget(Form)
         self.CardWidget_2.setGeometry(QtCore.QRect(370, 0, 651, 581))
         self.CardWidget_2.setObjectName("CardWidget_2")
@@ -222,8 +207,7 @@ class Ui_Form(object):
         self.show_6.setObjectName("show_6")
         self.button_refresh = PrimaryPushButton(self.CardWidget_2)
         self.button_refresh.setGeometry(QtCore.QRect(20, 510, 50, 50))
-        self.button_refresh.setMinimumSize(QtCore.QSize(50, 50))
-        self.button_refresh.setMaximumSize(QtCore.QSize(50, 50))
+        self.button_refresh.setFixedSize(QtCore.QSize(50, 50))
         self.button_refresh.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                           "    color: black;\n"
                                           "    background: rgba(255, 255, 255, 0.7);\n"
@@ -310,6 +294,22 @@ class Ui_Form(object):
         self.show_3.setGeometry(QtCore.QRect(100, 170, 391, 41))
         self.show_3.setReadOnly(True)
         self.show_3.setObjectName("show_3")
+
+        layout = QHBoxLayout(Form)
+        subLayout_1 = QFormLayout(self.CardWidget)
+        subLayout_1.addRow(self.StrongBodyLabel, self.model)
+        subLayout_1.addRow(self.StrongBodyLabel_2, self.brand)
+        subLayout_1.addRow(self.StrongBodyLabel_3, self.android_version)
+        subLayout_1.addRow(self.StrongBodyLabel_8, self.sn)
+        subLayout_1.addRow(self.StrongBodyLabel_9, self.mac)
+        subLayout_1.addRow(self.StrongBodyLabel_6, self.fingerprint)
+        subLayout_1.addRow(self.StrongBodyLabel_7, self.ipv4)
+        subLayout_1.addRow(self.StrongBodyLabel_4, self.sw)
+        subLayout_1.addRow(self.StrongBodyLabel_5, self.hw)
+        subLayout_1.addRow(self.search_prop, self.output_prop)
+        subLayout_1.addRow(self.input_text, self.button_input)
+        layout.addWidget(self.CardWidget, 1)
+
         subLayout_2 = QFormLayout(self.CardWidget_2)
         subLayout_2.addRow(self.StrongBodyLabel_10, self.show_1)
         subLayout_2.addRow(self.StrongBodyLabel_11, self.show_2)
@@ -319,10 +319,7 @@ class Ui_Form(object):
         subLayout_2.addRow(self.StrongBodyLabel_15, self.show_6)
         subLayout_2.addRow(self.button_refresh, None)
 
-        layout.addWidget(self.CardWidget)
-        layout.addWidget(self.CardWidget_2)
-        print("CardWidget Size:", self.CardWidget.size())
-        print("CardWidget_2 Size:", self.CardWidget_2.size())
+        layout.addWidget(self.CardWidget_2, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)

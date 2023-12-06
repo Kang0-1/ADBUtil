@@ -25,9 +25,10 @@ class Ui_centralwidget(QWidget):
         self.CardWidget = CardWidget(centralwidget)
         self.CardWidget.setGeometry(QtCore.QRect(0, 80, 800, 450))
         self.CardWidget.setObjectName("CardWidget")
-        self.label = QtWidgets.QLabel(self.CardWidget)
+        # self.label = QtWidgets.QLabel(self.CardWidget)
+        self.label = QFitImage(self.CardWidget)
         self.label.setGeometry(QtCore.QRect(0, 0, 800, 450))
-        self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.label.image_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
         self.label.setObjectName("label")
         self.progressRing = IndeterminateProgressRing(self.CardWidget)
@@ -973,9 +974,11 @@ class Ui_centralwidget(QWidget):
         self.VerticalSeparator = VerticalSeparator(self.CardWidget_2)
         self.VerticalSeparator.setGeometry(QtCore.QRect(360, 10, 3, 61))
         self.VerticalSeparator.setObjectName("VerticalSeparator")
+
         self.CardWidget_4 = CardWidget(centralwidget)
         self.CardWidget_4.setGeometry(QtCore.QRect(800, 0, 221, 581))
         self.CardWidget_4.setObjectName("CardWidget_4")
+        self.CardWidget_4.setMinimumWidth(221)
         self.button_enter = PrimaryPushButton(self.CardWidget_4)
         self.button_enter.setGeometry(QtCore.QRect(85, 130, 50, 50))
         self.button_enter.setMinimumSize(QtCore.QSize(50, 50))
@@ -985,7 +988,7 @@ class Ui_centralwidget(QWidget):
                                         "    background: rgba(255, 255, 255, 0.7);\n"
                                         "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
                                         "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
-                                        "    border-radius: 20px;\n"
+                                        "    border-radius: 15px;\n"
                                         "    font-size:18px;\n"
                                         "    font-weight:bold;\n"
                                         "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
@@ -1112,7 +1115,6 @@ class Ui_centralwidget(QWidget):
                                        "    background-color: rgb(205, 205, 205);\n"
                                        "    border: 1px solid rgb(205, 205, 205);\n"
                                        "}")
-        self.button_menu.setText("")
         self.button_menu.setObjectName("button_menu")
         self.button_power = PrimaryPushButton(self.CardWidget_4)
         self.button_power.setGeometry(QtCore.QRect(30, 25, 40, 40))
@@ -1182,7 +1184,6 @@ class Ui_centralwidget(QWidget):
                                         "    background-color: rgb(205, 205, 205);\n"
                                         "    border: 1px solid rgb(205, 205, 205);\n"
                                         "}")
-        self.button_power.setText("")
         self.button_power.setObjectName("button_power")
         self.button_mute = PrimaryPushButton(self.CardWidget_4)
         self.button_mute.setGeometry(QtCore.QRect(150, 25, 40, 40))
@@ -1252,7 +1253,6 @@ class Ui_centralwidget(QWidget):
                                        "    background-color: rgb(205, 205, 205);\n"
                                        "    border: 1px solid rgb(205, 205, 205);\n"
                                        "}")
-        self.button_mute.setText("")
         self.button_mute.setObjectName("button_mute")
         self.button_num_1 = PrimaryPushButton(self.CardWidget_4)
         self.button_num_1.setGeometry(QtCore.QRect(30, 330, 41, 32))
@@ -1990,7 +1990,6 @@ class Ui_centralwidget(QWidget):
                                          "    background-color: rgb(205, 205, 205);\n"
                                          "    border: 1px solid rgb(205, 205, 205);\n"
                                          "}")
-        self.button_delete.setText("")
         self.button_delete.setObjectName("button_delete")
         self.button_num_0.setFixedSize(41, 32)
         self.button_num_1.setFixedSize(41, 32)
@@ -2007,7 +2006,7 @@ class Ui_centralwidget(QWidget):
 
         self.button_back = PrimaryPushButton(self.CardWidget_4)
         self.button_back.setGeometry(QtCore.QRect(30, 240, 71, 32))
-        self.button_back.setMinimumSize(71, 32)
+        self.button_back.setFixedSize(71, 32)
         self.button_back.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                        "    color: black;\n"
                                        "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2072,11 +2071,10 @@ class Ui_centralwidget(QWidget):
                                        "    background-color: rgb(205, 205, 205);\n"
                                        "    border: 1px solid rgb(205, 205, 205);\n"
                                        "}")
-        self.button_back.setText("")
         self.button_back.setObjectName("button_back")
         self.button_home = PrimaryPushButton(self.CardWidget_4)
         self.button_home.setGeometry(QtCore.QRect(120, 240, 71, 32))
-        self.button_home.setMinimumSize(71, 32)
+        self.button_home.setFixedSize(71, 32)
         self.button_home.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                        "    color: black;\n"
                                        "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2141,12 +2139,10 @@ class Ui_centralwidget(QWidget):
                                        "    background-color: rgb(205, 205, 205);\n"
                                        "    border: 1px solid rgb(205, 205, 205);\n"
                                        "}")
-        self.button_home.setText("")
         self.button_home.setObjectName("button_home")
         self.button_up = PrimaryPushButton(self.CardWidget_4)
         self.button_up.setGeometry(QtCore.QRect(90, 80, 40, 40))
-        self.button_up.setMinimumSize(QtCore.QSize(40, 40))
-        self.button_up.setMaximumSize(QtCore.QSize(40, 40))
+        self.button_up.setFixedSize(QtCore.QSize(40, 40))
         self.button_up.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                      "    color: black;\n"
                                      "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2211,12 +2207,10 @@ class Ui_centralwidget(QWidget):
                                      "    background-color: rgb(205, 205, 205);\n"
                                      "    border: 1px solid rgb(205, 205, 205);\n"
                                      "}")
-        self.button_up.setText("")
         self.button_up.setObjectName("button_up")
         self.button_left = PrimaryPushButton(self.CardWidget_4)
         self.button_left.setGeometry(QtCore.QRect(40, 135, 40, 40))
-        self.button_left.setMinimumSize(QtCore.QSize(40, 40))
-        self.button_left.setMaximumSize(QtCore.QSize(40, 40))
+        self.button_left.setFixedSize(QtCore.QSize(40, 40))
         self.button_left.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                        "    color: black;\n"
                                        "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2281,12 +2275,10 @@ class Ui_centralwidget(QWidget):
                                        "    background-color: rgb(205, 205, 205);\n"
                                        "    border: 1px solid rgb(205, 205, 205);\n"
                                        "}")
-        self.button_left.setText("")
         self.button_left.setObjectName("button_left")
         self.button_right = PrimaryPushButton(self.CardWidget_4)
         self.button_right.setGeometry(QtCore.QRect(140, 135, 40, 40))
-        self.button_right.setMinimumSize(QtCore.QSize(40, 40))
-        self.button_right.setMaximumSize(QtCore.QSize(40, 40))
+        self.button_right.setFixedSize(QtCore.QSize(40, 40))
         self.button_right.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2351,12 +2343,10 @@ class Ui_centralwidget(QWidget):
                                         "    background-color: rgb(205, 205, 205);\n"
                                         "    border: 1px solid rgb(205, 205, 205);\n"
                                         "}")
-        self.button_right.setText("")
         self.button_right.setObjectName("button_right")
         self.button_down = PrimaryPushButton(self.CardWidget_4)
         self.button_down.setGeometry(QtCore.QRect(90, 190, 40, 40))
-        self.button_down.setMinimumSize(QtCore.QSize(40, 40))
-        self.button_down.setMaximumSize(QtCore.QSize(40, 40))
+        self.button_down.setFixedSize(QtCore.QSize(40, 40))
         self.button_down.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                        "    color: black;\n"
                                        "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2421,11 +2411,10 @@ class Ui_centralwidget(QWidget):
                                        "    background-color: rgb(205, 205, 205);\n"
                                        "    border: 1px solid rgb(205, 205, 205);\n"
                                        "}")
-        self.button_down.setText("")
         self.button_down.setObjectName("button_down")
         self.button_volDown = PrimaryPushButton(self.CardWidget_4)
         self.button_volDown.setGeometry(QtCore.QRect(30, 280, 71, 32))
-        self.button_volDown.setMinimumSize(71, 32)
+        self.button_volDown.setFixedSize(71, 32)
         self.button_volDown.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                           "    color: black;\n"
                                           "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2490,11 +2479,10 @@ class Ui_centralwidget(QWidget):
                                           "    background-color: rgb(205, 205, 205);\n"
                                           "    border: 1px solid rgb(205, 205, 205);\n"
                                           "}")
-        self.button_volDown.setText("")
         self.button_volDown.setObjectName("button_volDown")
         self.button_volUp = PrimaryPushButton(self.CardWidget_4)
         self.button_volUp.setGeometry(QtCore.QRect(120, 280, 71, 32))
-        self.button_volUp.setMinimumSize(71, 32)
+        self.button_volUp.setFixedSize(71, 32)
         self.button_volUp.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2559,7 +2547,6 @@ class Ui_centralwidget(QWidget):
                                         "    background-color: rgb(205, 205, 205);\n"
                                         "    border: 1px solid rgb(205, 205, 205);\n"
                                         "}")
-        self.button_volUp.setText("")
         self.button_volUp.setObjectName("button_volUp")
         self.CardWidget_3 = CardWidget(centralwidget)
         self.CardWidget_3.setGeometry(QtCore.QRect(0, 530, 801, 51))
@@ -2926,34 +2913,56 @@ class Ui_centralwidget(QWidget):
 
 
         self.CardWidget_2.setFixedHeight(80)
+        self.CardWidget_2.setMinimumWidth(800)
         self.CardWidget_3.setFixedHeight(50)
-        subLayout = QHBoxLayout(self.CardWidget)
-        subLayout.addWidget(self.label)
-        card4_layout = QGridLayout(self.CardWidget_4)
-        card4_layout.addWidget(self.button_power, 0, 0)
-        card4_layout.addWidget(self.button_mute, 0, 2)
-        card4_layout.addWidget(self.button_up, 1, 1)
-        card4_layout.addWidget(self.button_left, 2, 0)
-        card4_layout.addWidget(self.button_enter, 2, 1)
-        card4_layout.addWidget(self.button_right, 2, 2)
-        card4_layout.addWidget(self.button_down, 3, 1)
-        card4_layout.addWidget(self.button_back, 4, 0)
-        card4_layout.addWidget(self.button_home, 4, 2)
-        card4_layout.addWidget(self.button_volDown, 5, 0)
-        card4_layout.addWidget(self.button_volUp, 5, 2)
-        card4_layout.addWidget(self.button_num_1, 6, 0)
-        card4_layout.addWidget(self.button_num_2, 6, 1)
-        card4_layout.addWidget(self.button_num_3, 6, 2)
-        card4_layout.addWidget(self.button_num_4, 7, 0)
-        card4_layout.addWidget(self.button_num_5, 7, 1)
-        card4_layout.addWidget(self.button_num_6, 7, 2)
-        card4_layout.addWidget(self.button_num_7, 8, 0)
-        card4_layout.addWidget(self.button_num_8, 8, 1)
-        card4_layout.addWidget(self.button_num_9, 8, 2)
-        card4_layout.addWidget(self.button_menu, 9, 0)
-        card4_layout.addWidget(self.button_num_0, 9, 1)
-        card4_layout.addWidget(self.button_delete, 9, 2)
-        card4_layout.addWidget(self.input_keycode, 10, 0, 1, 3)
+        self.CardWidget_3.setMinimumWidth(800)
+
+
+        card_layout = QHBoxLayout(self.CardWidget)
+        card_layout.addWidget(self.label)
+
+        # card4_layout_main.addItem(QSpacerItem(5, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+
+        card4_layout = QVBoxLayout(self.CardWidget_4)
+        card4_layout.setContentsMargins(0, 0, 0, 0)
+        card4_layout.addItem(QSpacerItem(20, 50, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.MinimumExpanding))
+
+        # card4_layout_main.addItem(QSpacerItem(5, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+
+        card4_layout_1 = QGridLayout()
+        card4_layout_1.addWidget(self.button_power, 0, 0)
+        card4_layout_1.addWidget(self.button_mute, 0, 2)
+        card4_layout_1.addWidget(self.button_up, 1, 1)
+        card4_layout_1.addWidget(self.button_left, 2, 0)
+        card4_layout_1.addWidget(self.button_enter, 2, 1)
+        card4_layout_1.addWidget(self.button_right, 2, 2)
+        card4_layout_1.addWidget(self.button_down, 3, 1)
+        card4_layout.addLayout(card4_layout_1)
+
+        card4_layout_2 = QGridLayout()
+        card4_layout_2.addWidget(self.button_back, 0, 0)
+        card4_layout_2.addWidget(self.button_home, 0, 2)
+        card4_layout_2.addWidget(self.button_volDown, 1, 0)
+        card4_layout_2.addWidget(self.button_volUp, 1, 2)
+        card4_layout.addLayout(card4_layout_2)
+
+        card4_layout_3 = QGridLayout()
+        # card4_layout_3.setContentsMargins(5, 0, 5, 0)
+        card4_layout_3.addWidget(self.button_num_1, 0, 0)
+        card4_layout_3.addWidget(self.button_num_2, 0, 1)
+        card4_layout_3.addWidget(self.button_num_3, 0, 2)
+        card4_layout_3.addWidget(self.button_num_4, 1, 0)
+        card4_layout_3.addWidget(self.button_num_5, 1, 1)
+        card4_layout_3.addWidget(self.button_num_6, 1, 2)
+        card4_layout_3.addWidget(self.button_num_7, 2, 0)
+        card4_layout_3.addWidget(self.button_num_8, 2, 1)
+        card4_layout_3.addWidget(self.button_num_9, 2, 2)
+        card4_layout_3.addWidget(self.button_menu, 3, 0)
+        card4_layout_3.addWidget(self.button_num_0, 3, 1)
+        card4_layout_3.addWidget(self.button_delete, 3, 2)
+        card4_layout_3.addWidget(self.input_keycode, 4, 0, 1, 3)
+        card4_layout.addLayout(card4_layout_3)
+        card4_layout.addItem(QSpacerItem(20, 50, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.MinimumExpanding))
 
 
         main_layout = QHBoxLayout(centralwidget)
@@ -2971,7 +2980,7 @@ class Ui_centralwidget(QWidget):
     def retranslateUi(self, centralwidget):
         _translate = QtCore.QCoreApplication.translate
         centralwidget.setWindowTitle(_translate("centralwidget", "Form"))
-        self.label.setText(_translate("centralwidget", "Loading"))
+        self.label.image_label.setText(_translate("centralwidget", "Loading"))
         self.button_refresh.setText(_translate("centralwidget", "Refresh"))
         self.BodyLabel.setText(_translate("centralwidget", "Devices："))
         self.flip.setText(_translate("centralwidget", "Reverse"))
@@ -3021,5 +3030,40 @@ class InputLineEdit(LineEdit):
         self._isClearButtonEnabled = enable
         self.setTextMargins(0, 0, 28 * enable + 30, 0)
 
+class QFitImage(QFrame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
+        self.image_label = QLabel(self)
+        self.image_label.setScaledContents(True)
+
+        self.image_rate = None
+
+    def set_image(self, pix_map):
+        try:
+            self.image_rate = pix_map.width() / pix_map.height()
+            self.image_label.setPixmap(pix_map)
+            self.compute_size()
+        except:
+            pass
+
+    def compute_size(self):
+        if self.image_rate is not None:
+            w = self.size().width()
+            h = self.size().height()
+            scale_w = int(h * self.image_rate)
+
+            if scale_w <= w:
+                self.image_label.resize(QSize(scale_w, h))
+                self.image_label.setProperty("pos", QPoint(int((w - scale_w) / 2), 0))
+            else:
+                scale_h = int(w / self.image_rate)
+                self.image_label.resize(QSize(w, scale_h))
+                self.image_label.setProperty("pos", QPoint(0, int((h - scale_h) / 2)))
+        else:
+            self.image_label.resize(self.size())
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.compute_size()
 
