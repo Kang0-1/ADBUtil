@@ -10,18 +10,6 @@ from FileManage.app.data.models import Device
 from FileManage.app.helpers.tools import Singleton, json_to_dict
 
 
-class Application(metaclass=Singleton):
-    __version__ = '1.3.0'
-    __author__ = 'Azat Aldeshov'
-
-    def __init__(self):
-        print('─────────────────────────────────')
-        print('ADB File Explorer v%s' % self.__version__)
-        print('Copyright (C) 2022 %s' % self.__author__)
-        print('─────────────────────────────────')
-        print('Platform %s' % platform.platform())
-
-
 class Settings(metaclass=Singleton):
     downloads_path = os.path.join(os.path.expanduser('~'), 'Downloads')
     filename = resource_filename('FileManage', 'app/settings.json')

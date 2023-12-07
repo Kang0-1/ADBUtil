@@ -88,29 +88,29 @@ class FileInterface(QWidget):
         # action_move.setDisabled(True)
         # menu.addAction(action_move)
 
-        action_rename = QAction(QIcon('./resources/icons/rename.png'), 'Rename', self)
+        action_rename = QAction(QIcon(':/resources/icons/rename.png'), 'Rename', self)
         action_rename.triggered.connect(self.rename)
         menu.addAction(action_rename)
 
-        action_open_file = QAction(QIcon('./resources/icons/open.png'), 'Open', self)
+        action_open_file = QAction(QIcon(':/resources/icons/open.png'), 'Open', self)
         action_open_file.triggered.connect(self.open_file)
         menu.addAction(action_open_file)
 
-        action_delete = QAction(QIcon('./resources/icons/delete.png'), 'Delete', self)
+        action_delete = QAction(QIcon(':/resources/icons/delete.png'), 'Delete', self)
         action_delete.triggered.connect(self.delete)
         menu.addAction(action_delete)
 
-        action_download = QAction(QIcon('./resources/icons/download.png'), 'Download', self)
+        action_download = QAction(QIcon(':/resources/icons/download.png'), 'Download', self)
         action_download.triggered.connect(self.download_files)
         menu.addAction(action_download)
 
-        action_download_to = QAction(QIcon('./resources/icons/download.png'), 'Download to...', self)
+        action_download_to = QAction(QIcon(':/resources/icons/download.png'), 'Download to...', self)
         action_download_to.triggered.connect(self.download_to)
         menu.addAction(action_download_to)
 
         menu.addSeparator()
 
-        action_properties = QAction(QIcon('./resources/icons/properties.png'), 'Properties', self)
+        action_properties = QAction(QIcon(':/resources/icons/properties.png'), 'Properties', self)
         action_properties.triggered.connect(self.file_properties)
         menu.addAction(action_properties)
         self.setFocus()
@@ -123,21 +123,9 @@ class FileInterface(QWidget):
         if ok and text:
             data, error = FileRepository.new_folder(text)
             if error:
-                Global().communicate.notification.emit(
-                    MessageData(
-                        timeout=15000,
-                        title="Creating folder",
-                        body="<span style='color: red; font-weight: 600'> %s </span>" % error,
-                    )
-                )
+                self.show_info_bar("创建文件夹失败", "error")
             if data:
-                Global().communicate.notification.emit(
-                    MessageData(
-                        title="Creating folder",
-                        timeout=15000,
-                        body=data,
-                    )
-                )
+                self.show_info_bar("创建文件夹成功","success")
             Global().communicate.files__refresh.emit()
 
     @property
@@ -220,13 +208,7 @@ class FileInterface(QWidget):
         if not self.file.isdir:
             data, error = FileRepository.open_file(self.file)
             if error:
-                Global().communicate.notification.emit(
-                    MessageData(
-                        title='File',
-                        timeout=15000,
-                        body="<span style='color: red; font-weight: 600'> %s </span>" % error
-                    )
-                )
+                self.show_info_bar("文件打开错误", "error")
             else:
                 self.text_view_window = TextView(self.file.name, data)
                 self.text_view_window.show()

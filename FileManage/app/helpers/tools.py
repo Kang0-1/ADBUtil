@@ -32,7 +32,13 @@ class CommonProcess:
         self.IsSuccessful = False
         if arguments:
             try:
-                process = subprocess.Popen(arguments, stdout=stdout, stderr=subprocess.PIPE)
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+                # process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
+                #                          stderr=subprocess.PIPE)
+                # print(arguments)
+                process = subprocess.Popen(arguments, startupinfo=startupinfo, stdout=stdout, stderr=subprocess.PIPE)
                 if stdout == subprocess.PIPE and stdout_callback:
                     for line in iter(process.stdout.readline, b''):
                         stdout_callback(line.decode(encoding='utf-8'))

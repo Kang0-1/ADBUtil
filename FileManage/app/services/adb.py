@@ -2,8 +2,9 @@
 # Copyright (C) 2022  Azat Aldeshov
 from FileManage.app.core.configurations import Settings
 from FileManage.app.helpers.tools import CommonProcess
+import config
 
-ADB_PATH = Settings.adb_path()
+ADB_PATH = config.adb_path
 RUN_AS_ROOT = Settings.adb_run_as_root()
 PRESERVE_TIMESTAMP = Settings.preserve_timestamp()
 

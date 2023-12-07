@@ -26,7 +26,7 @@ class Adb(metaclass=Singleton):
             print('Using Python "adb-shell" version %s' % adb_shell.__version__)
 
         elif cls.core == cls.EXTERNAL_TOOL_ADB and adb.validate():
-            print(adb.version().OutputData)
+            print("adb version", adb.version().OutputData)
 
             adb_server = adb.start_server()
             if adb_server.ErrorData:
