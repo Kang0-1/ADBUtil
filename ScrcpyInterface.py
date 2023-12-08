@@ -1,8 +1,5 @@
 import os
 import re
-
-import PySide6
-
 import resources_rc
 from PySide6.QtGui import QIcon, QMouseEvent, QKeyEvent, QImage, QPixmap
 import threading
@@ -36,6 +33,10 @@ class ScrcpyInterface(QWidget):
     snapShot_finished_signal = Signal(str, str)
     # 用信号和槽来改变device
     device_serial = Signal(str)
+
+    @Slot()
+    def onDeviceRoot(self, message, type):
+        self.show_info_bar(message, type)
 
     def __init__(self, parent=None):
         super(ScrcpyInterface, self).__init__(parent)
@@ -482,35 +483,38 @@ class ScrcpyInterface(QWidget):
             if focused_widget is not None:
                 focused_widget.clearFocus()
             if evt.button() == Qt.LeftButton:
-                image_size = self.client.resolution  # 实际图像的分辨率
-
-                # print("image width = ", image_size[0], "image height = ", image_size[1])
-                image_ratio = image_size[0] / image_size[1]
-                # print("width = ", self.ui.label.width(), "height = ", self.ui.label.height())
-                window_ratio = self.ui.label.width() / self.ui.label.height()
-                if image_size[0] > self.ui.label.width() or image_size[1] > self.ui.label.height():
-                    if image_ratio > window_ratio:
-                        self.ratio = self.ui.label.width() / image_size[0]
+                if self.client:
+                    image_size = self.client.resolution  # 实际图像的分辨率
+                    # print("image width = ", image_size[0], "image height = ", image_size[1])
+                    image_ratio = image_size[0] / image_size[1]
+                    # print("width = ", self.ui.label.width(), "height = ", self.ui.label.height())
+                    window_ratio = self.ui.label.width() / self.ui.label.height()
+                    if image_size[0] > self.ui.label.width() or image_size[1] > self.ui.label.height():
+                        if image_ratio > window_ratio:
+                            self.ratio = self.ui.label.width() / image_size[0]
+                        else:
+                            self.ratio = self.ui.label.height() / image_size[1]
                     else:
-                        self.ratio = self.ui.label.height() / image_size[1]
+                        self.ratio = 1
+
+                    # 调整点击坐标
+                    # print(evt.position().x(), evt.position().y())
+                    x = (evt.position().x() - (
+                                self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
+                    y = (evt.position().y() - (
+                            self.ui.label.height() - self.ui.label.image_label.height()) / 2) / self.ratio
+                    # print(x, y)
+
+                    # 处理点击事件
+                    self.client.control.touch(x, y, action)
                 else:
-                    self.ratio = 1
-
-                # 调整点击坐标
-                # print(evt.position().x(), evt.position().y())
-                x = (evt.position().x() - (self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
-                y = (evt.position().y() - (self.ui.label.height() - self.ui.label.image_label.height()) / 2) / self.ratio
-                # print(x, y)
-
-                # 处理点击事件
-                self.client.control.touch(x, y, action)
+                    self.show_info_bar("点击start开始投屏", "info")
             elif evt.button() == Qt.RightButton:
                 # 处理鼠标右键点击（返回操作）
                 if action == scrcpy.ACTION_DOWN:
                     # 发送返回命令
                     self.client.control.keycode(scrcpy.KEYCODE_BACK, scrcpy.ACTION_DOWN)
                     self.client.control.keycode(scrcpy.KEYCODE_BACK, scrcpy.ACTION_UP)
-
 
         return handler
 

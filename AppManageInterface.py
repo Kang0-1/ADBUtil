@@ -38,7 +38,6 @@ class AppManageInterface(QWidget):
     @Slot(str)
     def getDeviceFromSignal(self, device_serial):
         if device_serial:
-            # threading.Thread(target=self.initDevice, args=(device_serial,)).start()
             print("应用管理：" + device_serial)
             self.device = adb.device(serial=device_serial)
             self.deviceReady.emit()

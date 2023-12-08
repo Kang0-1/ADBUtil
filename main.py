@@ -42,6 +42,7 @@ class Window(MSFluentWindow):
         self.homeInterface.device_serial.connect(self.FileInterface.ui.FilePath._refresh)
         self.homeInterface.device_serial.connect(self.toolsInterface.getDeviceFromSignal)  # 连接信号和槽
         self.homeInterface.device_serial.connect(self.appManageInterface.getDeviceFromSignal)  # 连接信号和槽
+        self.toolsInterface.deviceRoot.connect(self.homeInterface.onDeviceRoot)  # 连接信号和槽
         if self.homeInterface.device:
             self.homeInterface.emit_device_serial(self.homeInterface.device.serial)
 
