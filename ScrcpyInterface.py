@@ -75,6 +75,8 @@ class ScrcpyInterface(QWidget):
         # 设置 QLabel 的尺寸策略
         # self.ui.label.setScaledContents(True)  # 确保内容缩放以适应 QLabel 的大小
 
+        self.is_swiping = False
+
         # Bind mouse event
         self.ui.label.mousePressEvent = self.on_mouse_event(scrcpy.ACTION_DOWN)
         self.ui.label.mouseMoveEvent = self.on_mouse_event(scrcpy.ACTION_MOVE)
@@ -98,6 +100,51 @@ class ScrcpyInterface(QWidget):
 
     def emit_device_serial(self, value):
         self.device_serial.emit(value)
+
+    def wheelEvent(self, event):
+        # TODO 不能滑动设置页，YouTube滑动会触发点击
+        self.is_swiping = True
+        # 获取滚轮事件的垂直滚动值
+        delta = event.angleDelta().y()
+
+        # 获取设备屏幕的分辨率
+        image_size = self.client.resolution
+        image_ratio = image_size[0] / image_size[1]  # 设备屏幕的宽高比
+
+        # 获取窗口中用于显示设备屏幕的标签(Label)的宽高比
+        window_ratio = self.ui.label.width() / self.ui.label.height()
+
+        # 计算显示比例：根据设备屏幕和显示窗口的宽高比，确定按宽度或高度缩放
+        if image_ratio > window_ratio:
+            # 如果设备的宽高比大于窗口的宽高比，则按宽度缩放
+            ratio = self.ui.label.width() / image_size[0]
+        else:
+            # 否则，按高度缩放
+            ratio = self.ui.label.height() / image_size[1]
+
+        # 动态计算滑动距离：根据滚轮滚动的幅度(delta)和显示比例(ratio)来计算
+        swipe_distance = int(abs(delta) / ratio / 4)
+
+        # 计算滑动的起点：屏幕中心
+        x = image_size[0] // 2
+        y = image_size[1] // 2
+        start_x = int(x)
+        start_y = int(y)
+
+        # 计算滑动的终点：根据滚轮方向向上或向下滑动
+        end_x = start_x
+        end_y = start_y - swipe_distance if delta < 0 else start_y + swipe_distance
+
+        # 在滑动之前短暂延迟，以区分点击和滑动
+        QtCore.QThread.msleep(100)
+
+        # 打印滑动的起始和结束坐标（调试用）
+        print(start_x, start_y, end_x, end_y)
+
+        # 发送滑动命令到设备
+        self.device.swipe(start_x, start_y, end_x, end_y, 0.1)
+
+        self.is_swiping = False
 
     def click_connect(self):
         ip = self.ui.ipInput.text()
@@ -429,31 +476,41 @@ class ScrcpyInterface(QWidget):
 
     def on_mouse_event(self, action=scrcpy.ACTION_DOWN):
         def handler(evt: QMouseEvent):
+            if self.is_swiping:
+                return
             focused_widget = QApplication.focusWidget()
             if focused_widget is not None:
                 focused_widget.clearFocus()
-            image_size = self.client.resolution  # 实际图像的分辨率
+            if evt.button() == Qt.LeftButton:
+                image_size = self.client.resolution  # 实际图像的分辨率
 
-            # print("image width = ", image_size[0], "image height = ", image_size[1])
-            image_ratio = image_size[0] / image_size[1]
-            # print("width = ", self.ui.label.width(), "height = ", self.ui.label.height())
-            window_ratio = self.ui.label.width() / self.ui.label.height()
-            if image_size[0] > self.ui.label.width() or image_size[1] > self.ui.label.height():
-                if image_ratio > window_ratio:
-                    self.ratio = self.ui.label.width() / image_size[0]
+                # print("image width = ", image_size[0], "image height = ", image_size[1])
+                image_ratio = image_size[0] / image_size[1]
+                # print("width = ", self.ui.label.width(), "height = ", self.ui.label.height())
+                window_ratio = self.ui.label.width() / self.ui.label.height()
+                if image_size[0] > self.ui.label.width() or image_size[1] > self.ui.label.height():
+                    if image_ratio > window_ratio:
+                        self.ratio = self.ui.label.width() / image_size[0]
+                    else:
+                        self.ratio = self.ui.label.height() / image_size[1]
                 else:
-                    self.ratio = self.ui.label.height() / image_size[1]
-            else:
-                self.ratio = 1
+                    self.ratio = 1
 
-            # 调整点击坐标
-            # print(evt.position().x(), evt.position().y())
-            x = (evt.position().x() - (self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
-            y = (evt.position().y() - (self.ui.label.height() - self.ui.label.image_label.height()) / 2) / self.ratio
-            # print(x, y)
+                # 调整点击坐标
+                # print(evt.position().x(), evt.position().y())
+                x = (evt.position().x() - (self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
+                y = (evt.position().y() - (self.ui.label.height() - self.ui.label.image_label.height()) / 2) / self.ratio
+                # print(x, y)
 
-            # 处理点击事件
-            self.client.control.touch(x, y, action)
+                # 处理点击事件
+                self.client.control.touch(x, y, action)
+            elif evt.button() == Qt.RightButton:
+                # 处理鼠标右键点击（返回操作）
+                if action == scrcpy.ACTION_DOWN:
+                    # 发送返回命令
+                    self.client.control.keycode(scrcpy.KEYCODE_BACK, scrcpy.ACTION_DOWN)
+                    self.client.control.keycode(scrcpy.KEYCODE_BACK, scrcpy.ACTION_UP)
+
 
         return handler
 

@@ -224,7 +224,7 @@ def getIP(device):
         ip_eth0 = process_1.stdout
         # 如果有线接口有IP，返回这个IP
         if ip_eth0:
-            return f"📶 : {ip_eth0}"
+            return f"ETH : {ip_eth0}"
         # 获取无线接口的IP地址
         cmd_getWlan = [
             config.adb_path,
@@ -241,7 +241,7 @@ def getIP(device):
         #     shell=True, stderr=subprocess.DEVNULL).decode().strip()
         # 如果无线接口有IP，返回这个IP
         if ip_wlan0:
-            return f"🛜 : {ip_wlan0}"
+            return f"WIFI : {ip_wlan0}"
     except subprocess.CalledProcessError:
         pass
     # 如果两个接口都没有IP，返回“未连接”

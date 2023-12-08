@@ -6,7 +6,7 @@ import threading
 import config
 import resources_rc
 from PySide6 import QtCore
-from PySide6.QtCore import Slot, Signal, QSize
+from PySide6.QtCore import Slot, Signal, QSize, Qt
 from PySide6.QtGui import QIcon, QFontMetrics
 from PySide6.QtWidgets import *
 from adbutils import adb
@@ -160,6 +160,9 @@ class AppManageInterface(QWidget):
 
     def clear_search(self):
         print(1)
+        search_text = self.ui.searchLineEdit.text().strip()
+        if not search_text:
+            self.show_info_bar("请输入文本内容", "info", 2)
         self.ui.allAppInterface.clear()
         self.ui.SegmentedWidget.widget('All_App').setText('全部')
         for packageName in self.AllPackageNameList:
@@ -356,6 +359,13 @@ class AppManageInterface(QWidget):
         for packageName in self.UserPackageNameList:
             self.ui.userAppInterface.addItem(QListWidgetItem(packageName))
 
+        stands = self.AllPackageNameList
+        completer = QCompleter(stands, self.ui.searchLineEdit)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        completer.setFilterMode(Qt.MatchContains)  # 设置过滤模式为MatchContains
+        completer.setMaxVisibleItems(10)
+        self.ui.searchLineEdit.setCompleter(completer)
+
     def refreshPackageNameList(self):
         self.ui.allAppInterface.clear()
         self.ui.sysAppInterface.clear()
@@ -374,6 +384,12 @@ class AppManageInterface(QWidget):
         self.ui.button_uninstall.setVisible(False)
         self.ui.button_pull.setVisible(False)
         self.ui.button_clear_data.setVisible(False)
+        stands = self.AllPackageNameList
+        completer = QCompleter(stands, self.ui.searchLineEdit)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        completer.setFilterMode(Qt.MatchContains)  # 设置过滤模式为MatchContains
+        completer.setMaxVisibleItems(10)
+        self.ui.searchLineEdit.setCompleter(completer)
 
     def loadPackageNames(self, type):
         if type == 0:
