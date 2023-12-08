@@ -16,6 +16,7 @@ from tools import Ui_Form
 
 class ToolsInterface(QWidget):
     deviceReady = Signal()
+    deviceRoot = Signal(str, str)
     updateActivityInfo_signal = Signal(object, object)
 
     @Slot(str)
@@ -29,11 +30,15 @@ class ToolsInterface(QWidget):
     def __init__(self, parent=None):
         super(ToolsInterface, self).__init__(parent)
         self.device = None
+        self.last_clicked = 0
+        self.click_interval = 3  # 间隔时间设为3秒
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.deviceReady.connect(self.onDeviceReady)
         self.setSearchPropUI()
         self.setInputTextUI()
+        self.ui.button_cmd.clicked.connect(self.on_openCMD)
+        self.ui.button_remount.clicked.connect(self.on_remount)
         self.ui.button_refresh.setIcon(QIcon(':/resources/刷新.png'))
         self.ui.button_refresh.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_refresh.clicked.connect(lambda: (self.getActivityInfo(), self.getBaseInfo()))
@@ -52,10 +57,15 @@ class ToolsInterface(QWidget):
         build_version = identify_version(fingerprint)
         if build_version == "userdebug":
             try:
-                ro = self.device.root()
-                print(ro)
-                time.sleep(2)
-                print("设备已root")
+                is_root = check_root_status(self.device)
+                if is_root == 1:
+                    self.deviceRoot.emit("设备已root", "info")
+                    print("设备已root")
+                elif is_root == 0:
+                    ro = self.device.root()
+                    print(ro)
+                    time.sleep(2)
+                    self.deviceRoot.emit(str(ro), "info")
             except Exception as e:
                 print(f"root失败: {e}")
         self.deviceReady.emit()
@@ -170,6 +180,7 @@ class ToolsInterface(QWidget):
 
     def setInputTextUI(self):
         self.ui.button_input.clicked.connect(self.on_input_button_clicked)
+        self.ui.input_text.returnPressed.connect(self.on_input_button_clicked)
 
     def on_input_button_clicked(self):
         if not self.device:
@@ -185,6 +196,68 @@ class ToolsInterface(QWidget):
             self.ui.input_text.clear()
         except Exception as e:
             self.show_info_bar("未连接设备，请检查:" + str(e), "error", 2)
+
+    def on_openCMD(self):
+        current_time = time.time()
+        if current_time - self.last_clicked >= self.click_interval:
+            subprocess.Popen("start cmd", shell=True)
+            self.last_clicked = current_time
+        else:
+            self.show_info_bar("点击过快，请3s后再试", "info", 1)
+            print("Please wait before opening another CMD window.")
+
+    def on_remount(self):
+        # TODO remount 功能
+        if self.device:
+            is_root = check_root_status(self.device)
+            if is_root == 1:
+                print(1)
+                self.show_info_bar("开始remount", "info", 2)
+                # Step 1: Reboot to bootloader
+                cmd = [config.adb_path, '-s', self.device.serial, 'reboot', 'bootloader']
+                _, error = execute_command(cmd)
+                if error:
+                    return "Failed to reboot to bootloader: " + error
+                print(2)
+                # Step 2: Fastboot commands
+                fastboot_commands = [
+                    ['fastboot', 'devices'],
+                    ['fastboot', 'flashing', 'unlock_critical'],
+                    ['fastboot', 'flashing', 'unlock'],
+                    ['fastboot', 'reboot']
+                ]
+                for cmd in fastboot_commands:
+                    _, error = execute_command(cmd)
+                    if error:
+                        return "Failed at fastboot command '{}': {}".format(' '.join(cmd), error)
+                print(3)
+                # Step 3: Disable AVB
+                adb_commands = [
+                    [config.adb_path, '-s', self.device.serial, 'root'],
+                    [config.adb_path, '-s', self.device.serial, 'disable-verity'],
+                    [config.adb_path, '-s', self.device.serial, 'reboot']
+                ]
+                for cmd in adb_commands:
+                    _, error = execute_command(cmd)
+                    if error:
+                        return "Failed at adb command '{}': {}".format(' '.join(cmd), error)
+
+                # Step 4: Remount
+                remount_cmds = [
+                    [config.adb_path, '-s', self.device.serial, 'root'],
+                    [config.adb_path, '-s', self.device.serial, 'remount']
+                ]
+                for cmd in remount_cmds:
+                    _, error = execute_command(cmd)
+                    if error:
+                        return "Failed at adb command '{}': {}".format(' '.join(cmd), error)
+                print(1)
+            elif is_root == 0:
+                self.show_info_bar("当前设备未root", "warning", 2)
+                return
+        else:
+            self.show_info_bar("当前无设备连接，请检查", "error", 2)
+            return
 
     def show_info_bar(self, message, type, second):
         if type == "info":
@@ -233,7 +306,8 @@ def getIP(device):
             "ifconfig wlan0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'"
         ]
         # 执行命令
-        process_2 = subprocess.run(cmd_getWlan, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process_2 = subprocess.run(cmd_getWlan, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
         # 获取输出
         ip_wlan0 = process_2.stdout
         # ip_wlan0 = subprocess.check_output(
@@ -355,3 +429,26 @@ def get_stack_activities(device, package_name):
             stack_activities.append(activity_component)
 
     return stack_activities
+
+
+def check_root_status(device):
+    try:
+        # 执行一个需要root权限的命令
+        output = device.shell("id")
+        if 'uid=0(root)' in output:
+            return 1
+        else:
+            return 0
+    except Exception as e:
+        return str(e)
+
+
+def execute_command(command):
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
+
+    process = subprocess.run(command, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+
+    return process.stdout.strip(), process.stderr.strip()
