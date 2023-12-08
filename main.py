@@ -1,7 +1,4 @@
-from PySide6.QtGui import QIcon
 import sys
-
-from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QFrame, QHBoxLayout
 
@@ -53,7 +50,7 @@ class Window(MSFluentWindow):
 
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FIF.HOME, '主页')
-        self.addSubInterface(self.toolsInterface, FIF.DEVELOPER_TOOLS, '常用工具')
+        self.addSubInterface(self.toolsInterface, FIF.DEVELOPER_TOOLS, '设备信息')
         self.addSubInterface(self.appManageInterface, FIF.DOCUMENT, '应用管理')
         self.addSubInterface(self.FileInterface, FIF.FOLDER, '文件管理')
 
