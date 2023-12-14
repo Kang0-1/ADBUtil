@@ -25,7 +25,6 @@ class Ui_centralwidget(QWidget):
         self.CardWidget = CardWidget(centralwidget)
         self.CardWidget.setGeometry(QtCore.QRect(0, 80, 800, 450))
         self.CardWidget.setObjectName("CardWidget")
-        # self.label = QtWidgets.QLabel(self.CardWidget)
         self.label = QFitImage(self.CardWidget)
         self.label.setGeometry(QtCore.QRect(0, 0, 800, 450))
         self.label.image_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -41,6 +40,7 @@ class Ui_centralwidget(QWidget):
         self.button_refresh = PrimaryPushButton(self.CardWidget_2)
         self.button_refresh.setEnabled(True)
         self.button_refresh.setGeometry(QtCore.QRect(390, 20, 81, 32))
+        self.button_refresh.setFixedSize(81, 32)
         self.button_refresh.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                           "    color: black;\n"
                                           "    background: rgba(255, 255, 255, 0.7);\n"
@@ -349,12 +349,14 @@ class Ui_centralwidget(QWidget):
         self.BodyLabel.setObjectName("BodyLabel")
         self.combo_device = ComboBox(self.CardWidget_2)
         self.combo_device.setGeometry(QtCore.QRect(570, 20, 111, 32))
+        self.combo_device.setFixedSize(111, 32)
         self.combo_device.setObjectName("combo_device")
         self.flip = CheckBox(self.CardWidget_2)
         self.flip.setGeometry(QtCore.QRect(490, 50, 77, 22))
         self.flip.setObjectName("flip")
         self.button_start = PrimaryPushButton(self.CardWidget_2)
         self.button_start.setGeometry(QtCore.QRect(700, 20, 81, 32))
+        self.button_start.setFixedSize(81, 32)
         self.button_start.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -659,8 +661,8 @@ class Ui_centralwidget(QWidget):
         self.button_start.setObjectName("button_start")
         self.ipInput = LineEdit(self.CardWidget_2)
         self.ipInput.setGeometry(QtCore.QRect(90, 20, 141, 33))
+        self.ipInput.setFixedSize(141, 33)
         self.ipInput.setInputMask("")
-        self.ipInput.setText("")
         self.ipInput.setObjectName("ipInput")
         self.BodyLabel_2 = BodyLabel(self.CardWidget_2)
         self.BodyLabel_2.setGeometry(QtCore.QRect(10, 30, 71, 19))
@@ -669,6 +671,7 @@ class Ui_centralwidget(QWidget):
         self.BodyLabel_2.setObjectName("BodyLabel_2")
         self.button_connect = PrimaryPushButton(self.CardWidget_2)
         self.button_connect.setGeometry(QtCore.QRect(250, 20, 91, 31))
+        self.button_connect.setFixedSize(91, 31)
         self.button_connect.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                           "    color: black;\n"
                                           "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2912,8 +2915,8 @@ class Ui_centralwidget(QWidget):
         self.input_keycode.setGeometry(QtCore.QRect(30, 490, 161, 33))
 
 
-        self.CardWidget_2.setFixedHeight(80)
-        self.CardWidget_2.setMinimumWidth(800)
+        self.CardWidget_2.setFixedHeight(75)
+        self.CardWidget_2.setMinimumWidth(810)
         self.CardWidget_3.setFixedHeight(50)
         self.CardWidget_3.setMinimumWidth(800)
 
@@ -2964,6 +2967,33 @@ class Ui_centralwidget(QWidget):
         card4_layout.addLayout(card4_layout_3)
         card4_layout.addItem(QSpacerItem(20, 50, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.MinimumExpanding))
 
+        card2_layout = QHBoxLayout(self.CardWidget_2)
+        card2_layout.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        card2_layout.addWidget(self.BodyLabel_2)
+        card2_layout.addWidget(self.ipInput)
+        card2_layout.addWidget(self.button_connect)
+        card2_layout.addWidget(self.VerticalSeparator)
+        card2_layout.addWidget(self.button_refresh)
+        card2_layout.addWidget(self.BodyLabel)
+        card2_layout.addWidget(self.combo_device)
+        card2_layout.addWidget(self.button_start)
+        card2_layout.addWidget(self.flip)
+        card2_layout.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+
+        card3_layout = QHBoxLayout(self.CardWidget_3)
+        card3_layout.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        card3_layout.addWidget(self.button_logcat_stop)
+        card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card3_layout.addWidget(self.button_logcat)
+        card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card3_layout.addWidget(self.VerticalSeparator_2)
+        card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card3_layout.addWidget(self.button_snapshot)
+        card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card3_layout.addWidget(self.button_recording)
+        card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card3_layout.addWidget(self.button_recording_stop)
+        card3_layout.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
 
         main_layout = QHBoxLayout(centralwidget)
         vertical_layout = QVBoxLayout()
@@ -2972,7 +3002,7 @@ class Ui_centralwidget(QWidget):
         vertical_layout.addWidget(self.CardWidget_3, 5)
         main_layout.addLayout(vertical_layout, 4)
         main_layout.addWidget(self.CardWidget_4, 1)
-        # main_layout.addLayout(card4_layout, 1)
+
 
         self.retranslateUi(centralwidget)
         QtCore.QMetaObject.connectSlotsByName(centralwidget)

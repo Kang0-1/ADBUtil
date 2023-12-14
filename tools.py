@@ -169,6 +169,7 @@ class Ui_Form(object):
         self.input_text.setObjectName("input_text")
         self.button_cmd = PrimaryPushButton(self.CardWidget)
         self.button_cmd.setGeometry(QtCore.QRect(100, 550, 91, 31))
+        self.button_cmd.setFixedSize(91, 31)
         self.button_cmd.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                       "    color: black;\n"
                                       "    background: rgba(255, 255, 255, 0.7);\n"
@@ -237,6 +238,7 @@ class Ui_Form(object):
         self.button_cmd.setObjectName("button_cmd")
         self.button_remount = PrimaryPushButton(self.CardWidget)
         self.button_remount.setGeometry(QtCore.QRect(220, 550, 91, 31))
+        self.button_remount.setFixedSize(91, 31)
         self.button_remount.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                           "    color: black;\n"
                                           "    background: rgba(255, 255, 255, 0.7);\n"
@@ -455,12 +457,18 @@ class Ui_Form(object):
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         vsubLayout.addRow(self.search_prop, self.output_prop)
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-        hsubLayout = QHBoxLayout()
-        hsubLayout.addWidget(self.input_text)
-        hsubLayout.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
-        hsubLayout.addWidget(self.button_input)
+        vsubLayout.addRow(self.input_text, self.button_input)
+        vsubLayout.setAlignment(self.button_input, Qt.AlignmentFlag.AlignCenter)
+        vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+
+        hsubLayout2 = QHBoxLayout()
+        hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        hsubLayout2.addWidget(self.button_cmd)
+        hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        hsubLayout2.addWidget(self.button_remount)
+        hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         subLayout_1.addLayout(vsubLayout)
-        subLayout_1.addLayout(hsubLayout)
+        subLayout_1.addLayout(hsubLayout2)
         layout.addWidget(self.CardWidget, 1)
 
         subLayout_2 = QFormLayout(self.CardWidget_2)
@@ -470,7 +478,7 @@ class Ui_Form(object):
         subLayout_2.addRow(self.StrongBodyLabel_13, self.show_4)
         subLayout_2.addRow(self.StrongBodyLabel_14, self.show_5)
         subLayout_2.addRow(self.StrongBodyLabel_15, self.show_6)
-        subLayout_2.addRow(self.button_refresh, None)
+        subLayout_2.addRow(self.button_refresh)
 
         layout.addWidget(self.CardWidget_2, 1)
 
