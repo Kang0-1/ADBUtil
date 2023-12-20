@@ -55,7 +55,6 @@ class ScrcpyInterface(QWidget):
         self.logcat_hide_stop_button_signal.connect(self.hide_stop_button)
         self.snapShot_finished_signal.connect(self.show_info_bar)
         self.adb_connect_finished_signal.connect(self.show_info_bar)
-        self.adb_connect_finished_signal.connect(self.clear_ipInput)
         self.adb_connect_showMsg_signal.connect(self.show_message)
         self.logcat = None  # 存储logcat的数据
         self.logcat_file_path = None  # 存储logcat的log路径
@@ -172,6 +171,7 @@ class ScrcpyInterface(QWidget):
     def click_connect(self):
         ip = self.ui.ipInput.text()
         threading.Thread(target=self.perform_connect, args=(ip,)).start()
+        self.ui.ipInput.clear()
 
     def perform_connect(self, ip):
         print(ip)
@@ -205,9 +205,6 @@ class ScrcpyInterface(QWidget):
         w.yesButton.setText("Yes")
         w.cancelButton.setText("No")
         w.show()
-
-    def clear_ipInput(self):
-        self.ui.ipInput.clear()
 
     def click_refresh(self):
         self.devices = self.list_devices()
