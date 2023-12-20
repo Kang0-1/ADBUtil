@@ -38,7 +38,7 @@ class ToolsInterface(QWidget):
         self.setSearchPropUI()
         self.setInputTextUI()
         self.ui.button_cmd.clicked.connect(self.on_openCMD)
-        self.ui.button_remount.clicked.connect(self.on_remount)
+        # self.ui.button_remount.clicked.connect(self.on_remount)
         self.ui.button_refresh.setIcon(QIcon(':/resources/刷新.png'))
         self.ui.button_refresh.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_refresh.clicked.connect(lambda: (self.getActivityInfo(), self.getBaseInfo()))

@@ -31,6 +31,8 @@ class ScrcpyInterface(QWidget):
     logcat_finished_signal = Signal(str, str)
     logcat_hide_stop_button_signal = Signal(object)
     snapShot_finished_signal = Signal(str, str)
+    adb_connect_finished_signal = Signal(str, str)
+    adb_connect_showMsg_signal = Signal(str, str)
     # 用信号和槽来改变device
     device_serial = Signal(str)
 
@@ -52,6 +54,9 @@ class ScrcpyInterface(QWidget):
         self.logcat_finished_signal.connect(self.show_info_bar)
         self.logcat_hide_stop_button_signal.connect(self.hide_stop_button)
         self.snapShot_finished_signal.connect(self.show_info_bar)
+        self.adb_connect_finished_signal.connect(self.show_info_bar)
+        self.adb_connect_finished_signal.connect(self.clear_ipInput)
+        self.adb_connect_showMsg_signal.connect(self.show_message)
         self.logcat = None  # 存储logcat的数据
         self.logcat_file_path = None  # 存储logcat的log路径
 
@@ -84,6 +89,8 @@ class ScrcpyInterface(QWidget):
         self.ui.label.mouseReleaseEvent = self.on_mouse_event(scrcpy.ACTION_UP)
 
         self.ui.button_connect.clicked.connect(self.click_connect)
+        self.ui.button_disconnect.clicked.connect(self.click_disconnect)
+        self.ui.button_disconnect.setVisible(False)
         self.ui.button_connect.setToolTip("注意在同一网络下连接!")
 
         validator = QIntValidator(0, 999, self)
@@ -147,44 +154,60 @@ class ScrcpyInterface(QWidget):
 
         self.is_swiping = False
 
+    def click_disconnect(self):
+        ip = self.ui.combo_device.currentText()
+        pattern = r'^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$'
+        try:
+            if re.match(pattern, ip):
+                output = adb.disconnect(ip)
+                if "disconnected" in output:
+                    self.click_refresh()
+        except AdbTimeout as e:
+            print(e)
+        if re.match(pattern, self.ui.combo_device.currentText()):
+            self.ui.button_disconnect.setVisible(True)
+        else:
+            self.ui.button_disconnect.setVisible(False)
+
     def click_connect(self):
         ip = self.ui.ipInput.text()
+        threading.Thread(target=self.perform_connect, args=(ip,)).start()
+
+    def perform_connect(self, ip):
         print(ip)
         if not ip:
             # w = Dialog("Connect Info", "请输入ip:port", self)
-            w = MessageBox("🤣🤣🤣", "请输入 ip:port", self)
-            w.yesButton.setText("Yes")
-            w.cancelButton.setText("No")
-            w.show()
+            self.adb_connect_showMsg_signal.emit("Tips", "请输入 ip:port！")
             return
-        if not re.match(r"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):([0-9]|[1-9]\d{1,"
-                        r"3}|[1-5]\d{4}|6[0-4]\d{4}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$", ip):
-            w = MessageBox("🫵🫵🫵", "输入格式有误", self)
-            w.yesButton.setText("Yes")
-            w.cancelButton.setText("No")
-            w.show()
+        pattern = r'^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$'
+        if not re.match(pattern, ip):
+            self.adb_connect_showMsg_signal.emit("Tips", "输入格式有误！")
             return
         if ip in self.devices:
-            w = MessageBox("👉🤡👈", "已经连接该设备", self)
-            w.yesButton.setText("我忘记了")
-            w.cancelButton.setText("我没忘记")
-            w.show()
+            self.adb_connect_showMsg_signal.emit("Tips", "已经连接该设备！")
             print("已经连接该设备!")
             return
         try:
             output = adb.connect(ip)
             if "connected to" in output:
                 print(output)
-                InfoBar.success("Success", "连接成功!", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+                self.adb_connect_finished_signal.emit("连接成功!", "success")
                 self.click_refresh()
-                # self.devices = self.list_devices()
-                self.ui.ipInput.clear()
             else:
-                InfoBar.error("Error", "连接失败!", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+                self.adb_connect_finished_signal.emit("连接失败!", "error")
                 print("连接失败")
         except AdbTimeout as e:
-            InfoBar.error("Error", "连接失败!" + str(e), self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+            self.logcat_finished_signal.emit("连接过程出现错误:" + str(e), "success")
             print(e)
+
+    def show_message(self, title, message):
+        w = MessageBox(title, message, self)
+        w.yesButton.setText("Yes")
+        w.cancelButton.setText("No")
+        w.show()
+
+    def clear_ipInput(self):
+        self.ui.ipInput.clear()
 
     def click_refresh(self):
         self.devices = self.list_devices()
@@ -200,6 +223,7 @@ class ScrcpyInterface(QWidget):
         # print("click_start" + self.device.serial)
         if self.device:
             self.ui.progressRing.setVisible(False)
+            self.ui.label.setVisible(True)
             self.device_serial.emit(self.device.serial)
             # 停止当前 scrcpy 客户端，如果它正在运行
             if self.client:
@@ -212,10 +236,21 @@ class ScrcpyInterface(QWidget):
                 bitrate=1000000000
             )
             self.client.add_listener(scrcpy.EVENT_FRAME, self.on_frame)
+            self.client.add_listener(scrcpy.EVENT_DISCONNECT, self.on_disconnect)
             self.client.start(True, True)
+            pattern = r'^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$'
+            if re.match(pattern, self.device.serial):
+                self.ui.button_disconnect.setVisible(True)
         else:
             self.device_serial.emit(None)
             InfoBar.error("Error", "未找到设备!", self, True, 2000, InfoBarPosition.BOTTOM, self).show()
+
+    def on_disconnect(self):
+        self.ui.label.setVisible(False)
+        self.ui.progressRing.setVisible(True)
+        self.click_refresh()
+        # print(1)
+        # self.show_info_bar("设备断连~","error")
 
     def choose_device(self, device):
         if device not in self.devices:
@@ -233,6 +268,13 @@ class ScrcpyInterface(QWidget):
 
         # 启动新设备的 scrcpy 客户端
         self.start_scrcpy_client()
+        self.ui.label.setVisible(True)
+        self.ui.progressRing.setVisible(False)
+        if re.match(r"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):([0-9]|[1-9]\d{1,"
+                    r"3}|[1-5]\d{4}|6[0-4]\d{4}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$", device):
+            self.ui.button_disconnect.setVisible(True)
+        else:
+            self.ui.button_disconnect.setVisible(False)
 
     def start_scrcpy_client(self):
         if self.device:
@@ -244,6 +286,7 @@ class ScrcpyInterface(QWidget):
                 bitrate=1000000000
             )
             self.client.add_listener(scrcpy.EVENT_FRAME, self.on_frame)
+            self.client.add_listener(scrcpy.EVENT_DISCONNECT, self.on_disconnect)
             self.client.start(True, True)
 
     def list_devices(self):
@@ -485,9 +528,7 @@ class ScrcpyInterface(QWidget):
             if evt.button() == Qt.LeftButton:
                 if self.client:
                     image_size = self.client.resolution  # 实际图像的分辨率
-                    # print("image width = ", image_size[0], "image height = ", image_size[1])
                     image_ratio = image_size[0] / image_size[1]
-                    # print("width = ", self.ui.label.width(), "height = ", self.ui.label.height())
                     window_ratio = self.ui.label.width() / self.ui.label.height()
                     if image_size[0] > self.ui.label.width() or image_size[1] > self.ui.label.height():
                         if image_ratio > window_ratio:
@@ -498,9 +539,8 @@ class ScrcpyInterface(QWidget):
                         self.ratio = 1
 
                     # 调整点击坐标
-                    # print(evt.position().x(), evt.position().y())
                     x = (evt.position().x() - (
-                                self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
+                            self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
                     y = (evt.position().y() - (
                             self.ui.label.height() - self.ui.label.image_label.height()) / 2) / self.ratio
                     # print(x, y)

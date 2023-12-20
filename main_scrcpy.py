@@ -39,8 +39,8 @@ class Ui_centralwidget(QWidget):
         self.CardWidget_2.setObjectName("CardWidget_2")
         self.button_refresh = PrimaryPushButton(self.CardWidget_2)
         self.button_refresh.setEnabled(True)
-        self.button_refresh.setGeometry(QtCore.QRect(390, 20, 81, 32))
-        self.button_refresh.setFixedSize(81, 32)
+        self.button_refresh.setGeometry(QtCore.QRect(390, 20, 60, 32))
+        self.button_refresh.setFixedSize(78, 32)
         self.button_refresh.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                           "    color: black;\n"
                                           "    background: rgba(255, 255, 255, 0.7);\n"
@@ -355,8 +355,8 @@ class Ui_centralwidget(QWidget):
         self.flip.setGeometry(QtCore.QRect(490, 50, 77, 22))
         self.flip.setObjectName("flip")
         self.button_start = PrimaryPushButton(self.CardWidget_2)
-        self.button_start.setGeometry(QtCore.QRect(700, 20, 81, 32))
-        self.button_start.setFixedSize(81, 32)
+        self.button_start.setGeometry(QtCore.QRect(700, 20, 60, 32))
+        self.button_start.setFixedSize(60, 32)
         self.button_start.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
@@ -659,6 +659,75 @@ class Ui_centralwidget(QWidget):
                                         "}\n"
                                         "")
         self.button_start.setObjectName("button_start")
+        self.button_disconnect = PrimaryPushButton(self.CardWidget_2)
+        self.button_disconnect.setGeometry(QtCore.QRect(780, 20, 40, 32))
+        self.button_disconnect.setFixedSize(40, 32)
+        self.button_disconnect.setIcon(QIcon(':/resources/disconnect.png'))
+        self.button_disconnect.setIconSize(QtCore.QSize(20, 20))
+        self.button_disconnect.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                       "    color: black;\n"
+                                       "    background: rgba(255, 255, 255, 0.7);\n"
+                                       "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                       "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                       "    border-radius: 10px;\n"
+                                       "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                       "    padding: 5px 12px 6px 12px;\n"
+                                       "    font-size:1px;\n"
+                                       "    outline: none;\n"
+                                       "}\n"
+                                       "PushButton[hasIcon=false] {\n"
+                                       "    padding: 5px 12px 6px 12px;\n"
+                                       "}\n"
+                                       "PushButton[hasIcon=true] {\n"
+                                       "    padding: 5px 12px 6px 26px;\n"
+                                       "}\n"
+                                       "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                       "    background: rgba(249, 249, 249, 0.5);\n"
+                                       "}\n"
+                                       "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                       "    color: rgba(0, 0, 0, 0.63);\n"
+                                       "    background: rgba(249, 249, 249, 0.3);\n"
+                                       "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                       "}\n"
+                                       "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                       "    color: rgba(0, 0, 0, 0.36);\n"
+                                       "    background: rgba(249, 249, 249, 0.3);\n"
+                                       "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                       "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                       "}\n"
+                                       "PrimaryPushButton,\n"
+                                       "PrimaryToolButton,\n"
+                                       "ToggleButton:checked,\n"
+                                       "ToggleToolButton:checked {\n"
+                                       "    color: white;\n"
+                                       "    background-color: #009faa;\n"
+                                       "    border: 1px solid #00a7b3;\n"
+                                       "    border-bottom: 1px solid #007780;\n"
+                                       "}\n"
+                                       "PrimaryPushButton:hover,\n"
+                                       "PrimaryToolButton:hover,\n"
+                                       "ToggleButton:checked:hover,\n"
+                                       "ToggleToolButton:checked:hover {\n"
+                                       "    background-color: #00a7b3;\n"
+                                       "    border: 1px solid #2daab3;\n"
+                                       "    border-bottom: 1px solid #007780;\n"
+                                       "}\n"
+                                       "PrimaryPushButton:pressed,\n"
+                                       "PrimaryToolButton:pressed,\n"
+                                       "ToggleButton:checked:pressed,\n"
+                                       "ToggleToolButton:checked:pressed {\n"
+                                       "    color: rgba(255, 255, 255, 0.63);\n"
+                                       "    background-color: #3eabb3;\n"
+                                       "    border: 1px solid #3eabb3;\n"
+                                       "}\n"
+                                       "PrimaryPushButton:disabled,\n"
+                                       "PrimaryToolButton:disabled,\n"
+                                       "ToggleButton:checked:disabled,\n"
+                                       "ToggleToolButton:checked:disabled {\n"
+                                       "    color: rgba(255, 255, 255, 0.9);\n"
+                                       "    background-color: rgb(205, 205, 205);\n"
+                                       "    border: 1px solid rgb(205, 205, 205);\n"
+                                       "}")
         self.ipInput = LineEdit(self.CardWidget_2)
         self.ipInput.setGeometry(QtCore.QRect(90, 20, 141, 33))
         self.ipInput.setFixedSize(141, 33)
@@ -670,8 +739,8 @@ class Ui_centralwidget(QWidget):
         self.BodyLabel_2.setProperty("pixelFontSize", 16)
         self.BodyLabel_2.setObjectName("BodyLabel_2")
         self.button_connect = PrimaryPushButton(self.CardWidget_2)
-        self.button_connect.setGeometry(QtCore.QRect(250, 20, 91, 31))
-        self.button_connect.setFixedSize(91, 31)
+        self.button_connect.setGeometry(QtCore.QRect(250, 20, 60, 31))
+        self.button_connect.setFixedSize(82, 31)
         self.button_connect.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                           "    color: black;\n"
                                           "    background: rgba(255, 255, 255, 0.7);\n"
@@ -2914,15 +2983,15 @@ class Ui_centralwidget(QWidget):
         self.input_keycode.setPlaceholderText("输入按键值")
         self.input_keycode.setGeometry(QtCore.QRect(30, 490, 161, 33))
 
-
         self.CardWidget_2.setFixedHeight(75)
         self.CardWidget_2.setMinimumWidth(810)
         self.CardWidget_3.setFixedHeight(50)
         self.CardWidget_3.setMinimumWidth(800)
 
-
         card_layout = QHBoxLayout(self.CardWidget)
         card_layout.addWidget(self.label)
+        card_layout.addWidget(self.progressRing)
+        self.label.setVisible(False)
 
         # card4_layout_main.addItem(QSpacerItem(5, 40, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
 
@@ -2940,7 +3009,13 @@ class Ui_centralwidget(QWidget):
         card4_layout_1.addWidget(self.button_enter, 2, 1)
         card4_layout_1.addWidget(self.button_right, 2, 2)
         card4_layout_1.addWidget(self.button_down, 3, 1)
+        card4_layout_1.setAlignment(self.button_up, Qt.AlignmentFlag.AlignCenter)
+        card4_layout_1.setAlignment(self.button_down, Qt.AlignmentFlag.AlignCenter)
+        card4_layout_1.setAlignment(self.button_left, Qt.AlignmentFlag.AlignCenter)
+        card4_layout_1.setAlignment(self.button_right, Qt.AlignmentFlag.AlignCenter)
+
         card4_layout.addLayout(card4_layout_1)
+        card4_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
 
         card4_layout_2 = QGridLayout()
         card4_layout_2.addWidget(self.button_back, 0, 0)
@@ -2963,8 +3038,11 @@ class Ui_centralwidget(QWidget):
         card4_layout_3.addWidget(self.button_menu, 3, 0)
         card4_layout_3.addWidget(self.button_num_0, 3, 1)
         card4_layout_3.addWidget(self.button_delete, 3, 2)
-        card4_layout_3.addWidget(self.input_keycode, 4, 0, 1, 3)
+        # card4_layout_3.addWidget(self.input_keycode, 4, 0, 1, 3)
         card4_layout.addLayout(card4_layout_3)
+        card4_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card4_layout.addWidget(self.input_keycode)
+        card4_layout.setAlignment(self.input_keycode, Qt.AlignmentFlag.AlignCenter)
         card4_layout.addItem(QSpacerItem(20, 50, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.MinimumExpanding))
 
         card2_layout = QHBoxLayout(self.CardWidget_2)
@@ -2978,6 +3056,7 @@ class Ui_centralwidget(QWidget):
         card2_layout.addWidget(self.combo_device)
         card2_layout.addWidget(self.button_start)
         card2_layout.addWidget(self.flip)
+        card2_layout.addWidget(self.button_disconnect)
         card2_layout.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
 
         card3_layout = QHBoxLayout(self.CardWidget_3)
@@ -3002,7 +3081,6 @@ class Ui_centralwidget(QWidget):
         vertical_layout.addWidget(self.CardWidget_3, 5)
         main_layout.addLayout(vertical_layout, 4)
         main_layout.addWidget(self.CardWidget_4, 1)
-
 
         self.retranslateUi(centralwidget)
         QtCore.QMetaObject.connectSlotsByName(centralwidget)
@@ -3032,6 +3110,7 @@ class Ui_centralwidget(QWidget):
         self.button_logcat.setText(_translate("centralwidget", "LogCat"))
         self.button_logcat_stop.setText(_translate("centralwidget", "Stop"))
 
+
 class InputLineEdit(LineEdit):
     """ Search line edit """
     searchSignal = Signal(str)
@@ -3059,6 +3138,7 @@ class InputLineEdit(LineEdit):
     def setClearButtonEnabled(self, enable: bool):
         self._isClearButtonEnabled = enable
         self.setTextMargins(0, 0, 28 * enable + 30, 0)
+
 
 class QFitImage(QFrame):
     def __init__(self, *args, **kwargs):
@@ -3096,4 +3176,3 @@ class QFitImage(QFrame):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.compute_size()
-

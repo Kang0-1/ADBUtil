@@ -34,6 +34,7 @@
     <file>resources/icons/delete.png</file>
     <file>resources/icons/download.png</file>
     <file>resources/icons/properties.png</file>
+    <file>resources/disconnect.png</file>
     <!-- 添加更多资源文件 -->
 </qresource>
 </RCC>
