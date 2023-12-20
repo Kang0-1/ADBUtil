@@ -730,10 +730,12 @@ class Ui_manage(object):
                                        "    border: none;\n"
                                        "}\n"
                                        "")
+        self.button_pull.setFixedSize(30, 30)
         self.button_pull.setText("")
         self.button_pull.setObjectName("button_pull")
         self.button_uninstall = TransparentPushButton(self.CardWidget_2)
         self.button_uninstall.setGeometry(QtCore.QRect(520, 20, 31, 30))
+        self.button_uninstall.setFixedSize(30, 30)
         self.button_uninstall.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                             "    color: black;\n"
                                             "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1039,6 +1041,7 @@ class Ui_manage(object):
         self.button_uninstall.setObjectName("button_uninstall")
         self.button_clear_data = TransparentPushButton(self.CardWidget_2)
         self.button_clear_data.setGeometry(QtCore.QRect(560, 20, 31, 30))
+        self.button_clear_data.setFixedSize(30, 30)
         self.button_clear_data.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                              "    color: black;\n"
                                              "    background: rgba(255, 255, 255, 0.7);\n"
@@ -1409,6 +1412,7 @@ class Ui_manage(object):
                                           "    border: 1px solid rgb(205, 205, 205);\n"
                                           "}")
         self.button_install.setText("")
+        self.button_install.setFixedSize(40, 40)
         self.button_install.setObjectName("button_install")
 
         main_layout = QHBoxLayout(manage)
@@ -1435,7 +1439,23 @@ class Ui_manage(object):
         sublayout2.addRow(self.StrongBodyLabel_7, self.LineEdit_7)
         sublayout2.addRow(self.StrongBodyLabel_8, self.LineEdit_8)
         sublayout2.addRow(self.StrongBodyLabel_9, self.TextEdit)
+        sublayout3 = QVBoxLayout()
+        sublayout3.addWidget(self.button_clear_data)
+        sublayout3.addItem(QSpacerItem(5, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
+        sublayout3.addWidget(self.button_uninstall)
+        sublayout3.addItem(QSpacerItem(5, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
+        sublayout3.addWidget(self.button_pull)
+        sublayout3.addItem(QSpacerItem(5, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
+        sublayout3.addWidget(self.button_install)
+        sublayout3.addItem(QSpacerItem(5, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        sublayout3.setAlignment(self.button_clear_data, Qt.AlignmentFlag.AlignCenter)
+        sublayout3.setAlignment(self.button_uninstall, Qt.AlignmentFlag.AlignCenter)
+        sublayout3.setAlignment(self.button_pull, Qt.AlignmentFlag.AlignCenter)
+        sublayout3.setAlignment(self.button_install, Qt.AlignmentFlag.AlignCenter)
+
+
         right_layout.addLayout(sublayout2)
+        right_layout.addLayout(sublayout3)
 
         main_layout.addWidget(self.CardWidget, 1)
         main_layout.addWidget(self.CardWidget_2, 2)
