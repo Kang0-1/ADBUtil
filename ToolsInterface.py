@@ -36,7 +36,6 @@ class ToolsInterface(QWidget):
         self.ui.setupUi(self)
         self.deviceReady.connect(self.onDeviceReady)
         self.setSearchPropUI()
-        # self.setInputTextUI()
         self.ui.button_cmd.clicked.connect(self.on_openCMD)
         # self.ui.button_remount.clicked.connect(self.on_remount)
         self.ui.button_refresh.setIcon(QIcon(':/resources/刷新.png'))
@@ -59,7 +58,7 @@ class ToolsInterface(QWidget):
             try:
                 is_root = check_root_status(self.device)
                 if is_root == 1:
-                    self.deviceRoot.emit("设备已root", "info")
+                    self.deviceRoot.emit("设备已root", "success")
                     print("设备已root")
                 elif is_root == 0:
                     ro = self.device.root()
@@ -89,11 +88,12 @@ class ToolsInterface(QWidget):
                 self.show_info_bar("当前无设备连接，请检查", "error", 2)
             device = self.device
             self.ui.model.setText(device.prop.model)
+            self.ui.product.setText((device.prop.get("ro.build.product")))
             self.ui.brand.setText(device.prop.get("ro.product.brand"))
             self.ui.android_version.setText(device.prop.get("ro.build.version.release"))
             self.ui.sn.setText(device.prop.get("ro.serialno"))
             self.ui.mac.setText(device.prop.get("ro.boot.mac"))
-            self.ui.product.setText((device.prop.get("ro.build.product")))
+            self.ui.wlanMac.setText(device.shell("ip addr show wlan0 | grep ether | awk '{print $2}'"))
             fingerprint = device.prop.get("ro.build.fingerprint")
             self.ui.fingerprint.setText(fingerprint)
             self.ui.ipv4.setText(getIP(device))
@@ -203,8 +203,14 @@ class ToolsInterface(QWidget):
     def on_openCMD(self):
         current_time = time.time()
         if current_time - self.last_clicked >= self.click_interval:
-            subprocess.Popen("start cmd", shell=True)
-            self.last_clicked = current_time
+            if self.device:
+                # /k 参数使得CMD窗口在执行完adb shell命令后保持开启状态
+                cmd = f"start cmd /k adb -s {self.device.serial} shell"
+                subprocess.Popen(cmd, shell=True)
+                # subprocess.Popen("start cmd", shell=True)
+                self.last_clicked = current_time
+            else:
+                self.show_info_bar("无adb设备,请检查连接", "error", 1)
         else:
             self.show_info_bar("点击过快，请3s后再试", "info", 1)
             print("Please wait before opening another CMD window.")
