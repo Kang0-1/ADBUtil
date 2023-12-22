@@ -36,6 +36,8 @@ class Ui_Form(object):
         self.StrongBodyLabel_7 = StrongBodyLabel(self.CardWidget)
         self.StrongBodyLabel_7.setGeometry(QtCore.QRect(10, 315, 131, 19))
         self.StrongBodyLabel_7.setObjectName("StrongBodyLabel_7")
+        self.StrongBodyLabel_16 = StrongBodyLabel(self.CardWidget)
+        self.StrongBodyLabel_16.setObjectName("Label_Wlan0Mac")
         self.model = LineEdit(self.CardWidget)
         self.model.setGeometry(QtCore.QRect(200, 10, 161, 33))
         self.model.setReadOnly(True)
@@ -75,6 +77,9 @@ class Ui_Form(object):
         self.mac.setGeometry(QtCore.QRect(200, 210, 161, 33))
         self.mac.setReadOnly(True)
         self.mac.setObjectName("mac")
+        self.wlanMac = LineEdit(self.CardWidget)
+        self.wlanMac.setReadOnly(True)
+        self.wlanMac.setObjectName("wlanMac")
         self.StrongBodyLabel_9 = StrongBodyLabel(self.CardWidget)
         self.StrongBodyLabel_9.setGeometry(QtCore.QRect(10, 215, 131, 19))
         self.StrongBodyLabel_9.setObjectName("StrongBodyLabel_9")
@@ -92,81 +97,12 @@ class Ui_Form(object):
         self.sw.setGeometry(QtCore.QRect(200, 360, 161, 33))
         self.sw.setReadOnly(True)
         self.sw.setObjectName("sw")
-        self.button_input = PrimaryPushButton(self.CardWidget)
-        self.button_input.setGeometry(QtCore.QRect(270, 520, 91, 31))
-        self.button_input.setFixedSize(91, 31)
-        self.button_input.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
-                                        "    color: black;\n"
-                                        "    background: rgba(255, 255, 255, 0.7);\n"
-                                        "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
-                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
-                                        "    border-radius: 15px;\n"
-                                        "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
-                                        "    padding: 5px 12px 6px 12px;\n"
-                                        "    font-size: 13px;\n"
-                                        "    font-weight:bold;\n"
-                                        "    outline: none;\n"
-                                        "}\n"
-                                        "PushButton[hasIcon=false] {\n"
-                                        "    padding: 5px 12px 6px 12px;\n"
-                                        "}\n"
-                                        "PushButton[hasIcon=true] {\n"
-                                        "    padding: 5px 12px 6px 36px;\n"
-                                        "}\n"
-                                        "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
-                                        "    background: rgba(249, 249, 249, 0.5);\n"
-                                        "}\n"
-                                        "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
-                                        "    color: rgba(0, 0, 0, 0.63);\n"
-                                        "    background: rgba(249, 249, 249, 0.3);\n"
-                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
-                                        "}\n"
-                                        "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
-                                        "    color: rgba(0, 0, 0, 0.36);\n"
-                                        "    background: rgba(249, 249, 249, 0.3);\n"
-                                        "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
-                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
-                                        "}\n"
-                                        "PrimaryPushButton,\n"
-                                        "PrimaryToolButton,\n"
-                                        "ToggleButton:checked,\n"
-                                        "ToggleToolButton:checked {\n"
-                                        "    color: white;\n"
-                                        "    background-color: #009faa;\n"
-                                        "    border: 1px solid #00a7b3;\n"
-                                        "    border-bottom: 1px solid #007780;\n"
-                                        "}\n"
-                                        "PrimaryPushButton:hover,\n"
-                                        "PrimaryToolButton:hover,\n"
-                                        "ToggleButton:checked:hover,\n"
-                                        "ToggleToolButton:checked:hover {\n"
-                                        "    background-color: #00a7b3;\n"
-                                        "    border: 1px solid #2daab3;\n"
-                                        "    border-bottom: 1px solid #007780;\n"
-                                        "}\n"
-                                        "PrimaryPushButton:pressed,\n"
-                                        "PrimaryToolButton:pressed,\n"
-                                        "ToggleButton:checked:pressed,\n"
-                                        "ToggleToolButton:checked:pressed {\n"
-                                        "    color: rgba(255, 255, 255, 0.63);\n"
-                                        "    background-color: #3eabb3;\n"
-                                        "    border: 1px solid #3eabb3;\n"
-                                        "}\n"
-                                        "PrimaryPushButton:disabled,\n"
-                                        "PrimaryToolButton:disabled,\n"
-                                        "ToggleButton:checked:disabled,\n"
-                                        "ToggleToolButton:checked:disabled {\n"
-                                        "    color: rgba(255, 255, 255, 0.9);\n"
-                                        "    background-color: rgb(205, 205, 205);\n"
-                                        "    border: 1px solid rgb(205, 205, 205);\n"
-                                        "}")
-        self.button_input.setObjectName("button_input")
-        self.input_text = LineEdit(self.CardWidget)
-        self.input_text.setMinimumWidth(231)
-        self.input_text.setGeometry(QtCore.QRect(10, 520, 231, 40))
-        self.input_text.setText("")
-        self.input_text.setReadOnly(False)
-        self.input_text.setObjectName("input_text")
+        self.StrongBodyLabel_17 = StrongBodyLabel(self.CardWidget)
+        self.StrongBodyLabel_17.setObjectName("StrongBodyLabel_17")
+        self.product = LineEdit(self.CardWidget)
+        self.product.setReadOnly(True)
+        self.product.setObjectName("product")
+
         self.button_cmd = PrimaryPushButton(self.CardWidget)
         self.button_cmd.setGeometry(QtCore.QRect(100, 550, 91, 31))
         self.button_cmd.setFixedSize(91, 31)
@@ -433,11 +369,13 @@ class Ui_Form(object):
         self.show_3.setObjectName("show_3")
 
         layout = QHBoxLayout(Form)
-        self.CardWidget.setFixedWidth(410)
+        self.CardWidget.setFixedWidth(500)
         subLayout_1 = QVBoxLayout(self.CardWidget)
         vsubLayout = QFormLayout()
         vsubLayout.setContentsMargins(5, 10, 10,5)
         vsubLayout.addRow(self.StrongBodyLabel, self.model)
+        vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        vsubLayout.addRow(self.StrongBodyLabel_17, self.product)
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         vsubLayout.addRow(self.StrongBodyLabel_2, self.brand)
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
@@ -446,6 +384,8 @@ class Ui_Form(object):
         vsubLayout.addRow(self.StrongBodyLabel_8, self.sn)
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         vsubLayout.addRow(self.StrongBodyLabel_9, self.mac)
+        vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        vsubLayout.addRow(self.StrongBodyLabel_16, self.wlanMac)
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         vsubLayout.addRow(self.StrongBodyLabel_6, self.fingerprint)
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
@@ -457,9 +397,9 @@ class Ui_Form(object):
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         vsubLayout.addRow(self.search_prop, self.output_prop)
         vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
-        vsubLayout.addRow(self.input_text, self.button_input)
-        vsubLayout.setAlignment(self.button_input, Qt.AlignmentFlag.AlignCenter)
-        vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        # vsubLayout.addRow(self.input_text, self.button_input)
+        # vsubLayout.setAlignment(self.button_input, Qt.AlignmentFlag.AlignCenter)
+        # vsubLayout.addItem(QSpacerItem(10, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         hsubLayout2 = QHBoxLayout()
         hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
@@ -502,14 +442,16 @@ class Ui_Form(object):
         self.StrongBodyLabel_8.setText(_translate("Form", "Serial Number"))
         self.sn.setText(_translate("Form", "UnKnown"))
         self.mac.setText(_translate("Form", "UnKnown"))
-        self.StrongBodyLabel_9.setText(_translate("Form", "MAC"))
+        self.StrongBodyLabel_9.setText(_translate("Form", "Eth MAC"))
         self.StrongBodyLabel_4.setText(_translate("Form", "Software Version"))
         self.hw.setText(_translate("Form", "UnKnown"))
         self.StrongBodyLabel_5.setText(_translate("Form", "Hardware Version"))
         self.sw.setText(_translate("Form", "UnKnown"))
-        self.button_input.setText(_translate("Form", "Input"))
-        self.input_text.setPlaceholderText(_translate("Form", "Input Text"))
         self.button_cmd.setText(_translate("Form", "CMD"))
+        self.StrongBodyLabel_16.setText(_translate("Form", "Wlan MAC"))
+        self.wlanMac.setText(_translate("Form", "UnKnown"))
+        self.StrongBodyLabel_17.setText(_translate("Form", "Product"))
+        self.product.setText(_translate("Form", "unKnown"))
         # self.button_remount.setText(_translate("Form", "remount"))
         self.StrongBodyLabel_15.setText(_translate("Form", "活动堆栈："))
         self.StrongBodyLabel_14.setText(_translate("Form", "上次活动："))

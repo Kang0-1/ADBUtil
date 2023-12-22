@@ -2978,6 +2978,83 @@ class Ui_centralwidget(QWidget):
                                               "    border: 1px solid rgb(205, 205, 205);\n"
                                               "}")
         self.button_logcat_stop.setObjectName("button_logcat_stop")
+        self.button_input = PrimaryPushButton(self.CardWidget_3)
+        self.button_input.setFixedSize(91, 31)
+        self.button_input.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                        "    color: black;\n"
+                                        "    background: rgba(255, 255, 255, 0.7);\n"
+                                        "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                        "    border-radius: 15px;\n"
+                                        "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                        "    padding: 5px 12px 6px 12px;\n"
+                                        "    font-size: 13px;\n"
+                                        "    font-weight:bold;\n"
+                                        "    outline: none;\n"
+                                        "}\n"
+                                        "PushButton[hasIcon=false] {\n"
+                                        "    padding: 5px 12px 6px 12px;\n"
+                                        "}\n"
+                                        "PushButton[hasIcon=true] {\n"
+                                        "    padding: 5px 12px 6px 36px;\n"
+                                        "}\n"
+                                        "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                        "    background: rgba(249, 249, 249, 0.5);\n"
+                                        "}\n"
+                                        "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                        "    color: rgba(0, 0, 0, 0.63);\n"
+                                        "    background: rgba(249, 249, 249, 0.3);\n"
+                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                        "}\n"
+                                        "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                        "    color: rgba(0, 0, 0, 0.36);\n"
+                                        "    background: rgba(249, 249, 249, 0.3);\n"
+                                        "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                        "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                        "}\n"
+                                        "PrimaryPushButton,\n"
+                                        "PrimaryToolButton,\n"
+                                        "ToggleButton:checked,\n"
+                                        "ToggleToolButton:checked {\n"
+                                        "    color: white;\n"
+                                        "    background-color: #009faa;\n"
+                                        "    border: 1px solid #00a7b3;\n"
+                                        "    border-bottom: 1px solid #007780;\n"
+                                        "}\n"
+                                        "PrimaryPushButton:hover,\n"
+                                        "PrimaryToolButton:hover,\n"
+                                        "ToggleButton:checked:hover,\n"
+                                        "ToggleToolButton:checked:hover {\n"
+                                        "    background-color: #00a7b3;\n"
+                                        "    border: 1px solid #2daab3;\n"
+                                        "    border-bottom: 1px solid #007780;\n"
+                                        "}\n"
+                                        "PrimaryPushButton:pressed,\n"
+                                        "PrimaryToolButton:pressed,\n"
+                                        "ToggleButton:checked:pressed,\n"
+                                        "ToggleToolButton:checked:pressed {\n"
+                                        "    color: rgba(255, 255, 255, 0.63);\n"
+                                        "    background-color: #3eabb3;\n"
+                                        "    border: 1px solid #3eabb3;\n"
+                                        "}\n"
+                                        "PrimaryPushButton:disabled,\n"
+                                        "PrimaryToolButton:disabled,\n"
+                                        "ToggleButton:checked:disabled,\n"
+                                        "ToggleToolButton:checked:disabled {\n"
+                                        "    color: rgba(255, 255, 255, 0.9);\n"
+                                        "    background-color: rgb(205, 205, 205);\n"
+                                        "    border: 1px solid rgb(205, 205, 205);\n"
+                                        "}")
+        self.button_input.setObjectName("button_input")
+        self.input_text = LineEdit(self.CardWidget_3)
+        self.input_text.setMinimumWidth(231)
+        self.input_text.setText("")
+        self.input_text.setReadOnly(False)
+        self.input_text.setObjectName("input_text")
+        self.VerticalSeparator_3 = VerticalSeparator(self.CardWidget_3)
+        self.VerticalSeparator_3.setMinimumSize(QtCore.QSize(10, 0))
+        self.VerticalSeparator_3.setMaximumSize(QtCore.QSize(13, 16777215))
+        self.VerticalSeparator_3.setObjectName("VerticalSeparator_3")
 
         self.input_keycode = InputLineEdit(self.CardWidget_4)
         self.input_keycode.setPlaceholderText("输入按键值")
@@ -3072,6 +3149,12 @@ class Ui_centralwidget(QWidget):
         card3_layout.addWidget(self.button_recording)
         card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
         card3_layout.addWidget(self.button_recording_stop)
+        card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card3_layout.addWidget(self.VerticalSeparator_3)
+        card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card3_layout.addWidget(self.input_text)
+        card3_layout.addItem(QSpacerItem(5, 1, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card3_layout.addWidget(self.button_input)
         card3_layout.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
 
         main_layout = QHBoxLayout(centralwidget)
@@ -3109,6 +3192,8 @@ class Ui_centralwidget(QWidget):
         self.button_num_0.setText(_translate("centralwidget", "0"))
         self.button_logcat.setText(_translate("centralwidget", "LogCat"))
         self.button_logcat_stop.setText(_translate("centralwidget", "Stop"))
+        self.button_input.setText(_translate("Form", "Input"))
+        self.input_text.setPlaceholderText(_translate("Form", "Input Text"))
 
 
 class InputLineEdit(LineEdit):

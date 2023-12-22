@@ -56,6 +56,7 @@ class ScrcpyInterface(QWidget):
         self.snapShot_finished_signal.connect(self.show_info_bar)
         self.adb_connect_finished_signal.connect(self.show_info_bar)
         self.adb_connect_showMsg_signal.connect(self.show_message)
+
         self.logcat = None  # 存储logcat的数据
         self.logcat_file_path = None  # 存储logcat的log路径
 
@@ -76,6 +77,7 @@ class ScrcpyInterface(QWidget):
         # Bind config
         self.ui.combo_device.currentTextChanged.connect(self.choose_device)
         self.ui.flip.stateChanged.connect(self.on_flip)
+
 
         # 设置 QLabel 的尺寸策略
         # self.ui.label.setScaledContents(True)  # 确保内容缩放以适应 QLabel 的大小
@@ -104,6 +106,9 @@ class ScrcpyInterface(QWidget):
         # Keyboard event
         self.keyPressEvent = self.on_key_event(scrcpy.ACTION_DOWN)
         self.keyReleaseEvent = self.on_key_event(scrcpy.ACTION_UP)
+        #input text
+        self.ui.button_input.clicked.connect(self.on_input_button_clicked)
+        self.ui.input_text.returnPressed.connect(self.on_input_button_clicked)
 
     def emit_device_serial(self, value):
         self.device_serial.emit(value)
@@ -614,6 +619,21 @@ class ScrcpyInterface(QWidget):
     def closeEvent(self, _):
         self.client.stop()
         self.alive = False
+
+    def on_input_button_clicked(self):
+        if not self.device:
+            self.show_info_bar("未连接设备，请检查", "error")
+            return
+        input_text = self.ui.input_text.text().strip()
+        if not input_text:
+            self.show_info_bar("请输入文本内容", "info")
+            return
+        try:
+            self.device.shell(f"input text '{input_text}'")
+            self.show_info_bar("文本已发送", "success")
+            self.ui.input_text.clear()
+        except Exception as e:
+            self.show_info_bar("未连接设备，请检查:" + str(e), "error")
 
 
 def run():

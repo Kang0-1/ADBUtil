@@ -36,7 +36,7 @@ class ToolsInterface(QWidget):
         self.ui.setupUi(self)
         self.deviceReady.connect(self.onDeviceReady)
         self.setSearchPropUI()
-        self.setInputTextUI()
+        # self.setInputTextUI()
         self.ui.button_cmd.clicked.connect(self.on_openCMD)
         # self.ui.button_remount.clicked.connect(self.on_remount)
         self.ui.button_refresh.setIcon(QIcon(':/resources/刷新.png'))
@@ -80,6 +80,8 @@ class ToolsInterface(QWidget):
         self.ui.ipv4.setText("UnKnown")
         self.ui.sw.setText("UnKnown")
         self.ui.hw.setText("UnKnown")
+        self.ui.product.setText("Unknown")
+        self.ui.wlanMac.setText("Unknown")
 
     def getBaseInfo(self):
         try:
@@ -91,6 +93,7 @@ class ToolsInterface(QWidget):
             self.ui.android_version.setText(device.prop.get("ro.build.version.release"))
             self.ui.sn.setText(device.prop.get("ro.serialno"))
             self.ui.mac.setText(device.prop.get("ro.boot.mac"))
+            self.ui.product.setText((device.prop.get("ro.build.product")))
             fingerprint = device.prop.get("ro.build.fingerprint")
             self.ui.fingerprint.setText(fingerprint)
             self.ui.ipv4.setText(getIP(device))
@@ -178,24 +181,24 @@ class ToolsInterface(QWidget):
         print("prop_value:" + prop_value)
         self.ui.output_prop.setText(prop_value)
 
-    def setInputTextUI(self):
-        self.ui.button_input.clicked.connect(self.on_input_button_clicked)
-        self.ui.input_text.returnPressed.connect(self.on_input_button_clicked)
+    # def setInputTextUI(self):
+    #     self.ui.button_input.clicked.connect(self.on_input_button_clicked)
+    #     self.ui.input_text.returnPressed.connect(self.on_input_button_clicked)
 
-    def on_input_button_clicked(self):
-        if not self.device:
-            self.show_info_bar("未连接设备，请检查", "error", 2)
-            return
-        input_text = self.ui.input_text.text().strip()
-        if not input_text:
-            self.show_info_bar("请输入文本内容", "info", 2)
-            return
-        try:
-            self.device.shell(f"input text '{input_text}'")
-            self.show_info_bar("文本已发送", "success", 2)
-            self.ui.input_text.clear()
-        except Exception as e:
-            self.show_info_bar("未连接设备，请检查:" + str(e), "error", 2)
+    # def on_input_button_clicked(self):
+    #     if not self.device:
+    #         self.show_info_bar("未连接设备，请检查", "error", 2)
+    #         return
+    #     input_text = self.ui.input_text.text().strip()
+    #     if not input_text:
+    #         self.show_info_bar("请输入文本内容", "info", 2)
+    #         return
+    #     try:
+    #         self.device.shell(f"input text '{input_text}'")
+    #         self.show_info_bar("文本已发送", "success", 2)
+    #         self.ui.input_text.clear()
+    #     except Exception as e:
+    #         self.show_info_bar("未连接设备，请检查:" + str(e), "error", 2)
 
     def on_openCMD(self):
         current_time = time.time()
