@@ -8,4 +8,7 @@ ADB_BOX工具
 6. 设备属性、信息、当前运行APP信息实时获取
 7. 应用定位、应用包名、版本号等信息实时获取
 8. 设备文件管理（查看、上传、下载）
-![image](https://github.com/Kang0-1/ADBUtil/assets/57867692/dae8c5f9-2df2-4a31-8b06-54a6ab0f5e46)
+
+
+
+![image](https://github.com/Kang0-1/ADBUtil/assets/57867692/9eb46aba-4145-424a-8861-5bedb0b4b054)
