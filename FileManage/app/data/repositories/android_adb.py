@@ -79,10 +79,12 @@ class FileRepository:
         return response.OutputData, response.ErrorData
 
     @classmethod
-    def delete(cls, file: File) -> (str, str):
-        args = [adb.ShellCommand.RM, file.path.replace(' ', r'\ ')]
+    def delete(cls, progress_callback: callable, file: File) -> (str, str):
+        args = [adb.ShellCommand.RM, file.path.replace(' ', r'\ ').replace('(', "\(").replace(')',"\)").replace('\'', "\\'")]
+        print(args)
         if file.isdir:
-            args = adb.ShellCommand.RM_DIR_FORCE + [file.path.replace(' ', r'\ ')]
+            args = adb.ShellCommand.RM_DIR_FORCE + ["\"" + file.path.replace(' ', r'\ ') + "\""]
+            print(args)
         response = adb.shell(ADBManager.get_device().id, args)
         if not response.IsSuccessful or response.OutputData:
             return None, response.ErrorData or response.OutputData

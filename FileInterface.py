@@ -20,6 +20,7 @@ class FileInterface(QWidget):
     FILES_WORKER_ID = 300
     DOWNLOAD_WORKER_ID = 399
     UPLOAD_WORKER_ID = 398
+    DELETE_WORKER_ID = 301
 
     def __init__(self, parent=None):
         super(FileInterface, self).__init__(parent)
@@ -197,6 +198,13 @@ class FileInterface(QWidget):
         else:
             self.show_info_bar("文件下载成功，下载路径为" + str(data), "success")
 
+    def delete_response(self, data, error):
+        Global.communicate.files__refresh.emit()
+        if error:
+            self.show_info_bar("文件删除失败", "error")
+        else:
+            self.show_info_bar("文件删除成功", "success")
+
     def rename(self):
         self.ui.list.edit(self.ui.list.currentIndex())
 
@@ -215,15 +223,23 @@ class FileInterface(QWidget):
 
     def delete(self):
         file_names = ', '.join(map(lambda f: f.name, self.files))
+        print(file_names)
         w = Dialog('Delete', "确认删除吗？( %s)" % file_names)
         if w.exec():
             for file in self.files:
-                data, error = FileRepository.delete(file)
-                if error:
-                    self.show_info_bar("文件删除失败", "error")
-                else:
-                    self.show_info_bar("文件删除成功", "success")
-            Global.communicate.files__refresh.emit()
+                print(file)
+                helper = ProgressCallbackHelper()
+                worker = AsyncRepositoryWorker(
+                    worker_id=self.DOWNLOAD_WORKER_ID,
+                    name="Delete",
+                    repository_method=FileRepository.delete,
+                    response_callback=self.delete_response,
+                    arguments=(helper.progress_callback.emit, file)
+                )
+                if Adb.worker().work(worker):
+                    helper.setup(worker, worker.update_loading_widget)
+                    worker.start()
+
 
     def download_to(self):
         dir_name = QFileDialog.getExistingDirectory(self, 'Download to', '~')
@@ -297,6 +313,7 @@ class FileInterface(QWidget):
         properties.exec_()
 
     def upload_response(self, data, error):
+        Global().communicate.files__refresh.emit()
         self.close_state_info()
         if error:
             self.show_info_bar("文件上传失败", "error")
@@ -342,4 +359,4 @@ class FileInterface(QWidget):
             if Adb.worker().work(worker):
                 self.show_state_info("正在上传文件···")
                 worker.start()
-        Global().communicate.files__refresh.emit()
+            Global().communicate.files__refresh.emit()
