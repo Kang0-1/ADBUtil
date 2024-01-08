@@ -35,6 +35,9 @@
     <file>resources/icons/download.png</file>
     <file>resources/icons/properties.png</file>
     <file>resources/disconnect.png</file>
+    <file>resources/回车.png</file>
+    <file>resources/设置.png</file>
+    <file>resources/蓝牙配对.png</file>
     <!-- 添加更多资源文件 -->
 </qresource>
 </RCC>
