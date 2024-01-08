@@ -158,10 +158,9 @@ class AppManageInterface(QWidget):
                 self.ui.allAppInterface.addItem(QListWidgetItem(packageName))
 
     def clear_search(self):
-        print(1)
         search_text = self.ui.searchLineEdit.text().strip()
         if not search_text:
-            self.show_info_bar("请输入文本内容", "info", 2)
+            self.show_info_bar("请输入搜索内容", "info", 2)
         self.ui.allAppInterface.clear()
         self.ui.SegmentedWidget.widget('All_App').setText('全部')
         for packageName in self.AllPackageNameList:

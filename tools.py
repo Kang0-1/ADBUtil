@@ -447,7 +447,7 @@ class Ui_Form(object):
         self.hw.setText(_translate("Form", "UnKnown"))
         self.StrongBodyLabel_5.setText(_translate("Form", "Hardware Version"))
         self.sw.setText(_translate("Form", "UnKnown"))
-        self.button_cmd.setText(_translate("Form", "CMD"))
+        self.button_cmd.setText(_translate("Form", "Shell"))
         self.StrongBodyLabel_16.setText(_translate("Form", "Wlan MAC"))
         self.wlanMac.setText(_translate("Form", "UnKnown"))
         self.StrongBodyLabel_17.setText(_translate("Form", "Product"))

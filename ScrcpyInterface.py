@@ -1,5 +1,8 @@
 import os
 import re
+import subprocess
+import sys
+
 import resources_rc
 from PySide6.QtGui import QIcon, QMouseEvent, QKeyEvent, QImage, QPixmap
 import threading
@@ -12,7 +15,8 @@ from PySide6.QtWidgets import *
 from PySide6.QtWidgets import QApplication
 from argparse import ArgumentParser
 from adbutils import adb, AdbTimeout
-from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition, SearchLineEdit, LineEditButton, LineEdit
+from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition, SearchLineEdit, LineEditButton, LineEdit, InfoBarIcon, \
+    PushButton
 
 import scrcpy
 
@@ -26,11 +30,11 @@ else:
 
 class ScrcpyInterface(QWidget):
     # 用信号和槽机制来实现线程安全的UI更新
-    recording_finished_signal = Signal(str, str)
+    recording_finished_signal = Signal(str, str, str)
     recording_hide_stop_button_signal = Signal(object)
-    logcat_finished_signal = Signal(str, str)
+    logcat_finished_signal = Signal(str, str, str)
     logcat_hide_stop_button_signal = Signal(object)
-    snapShot_finished_signal = Signal(str, str)
+    snapShot_finished_signal = Signal(str, str, str)
     adb_connect_finished_signal = Signal(str, str)
     adb_connect_showMsg_signal = Signal(str, str)
     # 用信号和槽来改变device
@@ -49,16 +53,15 @@ class ScrcpyInterface(QWidget):
         self.logcat_thread = None
         self.record_stop_event = threading.Event()  # 用于控制录屏停止的事件
         self.logcat_stop_event = threading.Event()  # 用于控制log停止的事件
-        self.recording_finished_signal.connect(self.show_info_bar)
+        self.recording_finished_signal.connect(self.show_info_bar_2path)
         self.recording_hide_stop_button_signal.connect(self.hide_stop_button)
-        self.logcat_finished_signal.connect(self.show_info_bar)
+        self.logcat_finished_signal.connect(self.show_info_bar_2path)
         self.logcat_hide_stop_button_signal.connect(self.hide_stop_button)
-        self.snapShot_finished_signal.connect(self.show_info_bar)
+        self.snapShot_finished_signal.connect(self.show_info_bar_2path)
         self.adb_connect_finished_signal.connect(self.show_info_bar)
         self.adb_connect_showMsg_signal.connect(self.show_message)
 
         self.logcat = None  # 存储logcat的数据
-        self.logcat_file_path = None  # 存储logcat的log路径
 
         self.ui = Ui_centralwidget()
         self.ui.setupUi(self)
@@ -77,7 +80,6 @@ class ScrcpyInterface(QWidget):
         # Bind config
         self.ui.combo_device.currentTextChanged.connect(self.choose_device)
         self.ui.flip.stateChanged.connect(self.on_flip)
-
 
         # 设置 QLabel 的尺寸策略
         # self.ui.label.setScaledContents(True)  # 确保内容缩放以适应 QLabel 的大小
@@ -106,7 +108,7 @@ class ScrcpyInterface(QWidget):
         # Keyboard event
         self.keyPressEvent = self.on_key_event(scrcpy.ACTION_DOWN)
         self.keyReleaseEvent = self.on_key_event(scrcpy.ACTION_UP)
-        #input text
+        # input text
         self.ui.button_input.clicked.connect(self.on_input_button_clicked)
         self.ui.input_text.returnPressed.connect(self.on_input_button_clicked)
 
@@ -202,7 +204,7 @@ class ScrcpyInterface(QWidget):
                 self.adb_connect_finished_signal.emit("连接失败!", "error")
                 print("连接失败")
         except AdbTimeout as e:
-            self.logcat_finished_signal.emit("连接过程出现错误:" + str(e), "success")
+            self.adb_connect_finished_signal.emit("连接过程出现错误:" + str(e), "success")
             print(e)
 
     def show_message(self, title, message):
@@ -424,19 +426,22 @@ class ScrcpyInterface(QWidget):
 
     def perform_logcat(self, device):
         try:
-            folder_name = f"AdbUtilFiles/{self.device.serial}/Logs"
+            device_path = device.serial
+            if ':' in device.serial:
+                sn=device.prop.get("ro.serialno")
+                device_path = sn+"-wifi"
+            folder_name = f"AdbUtilFiles/{device_path}/Logs"
             desktop_path = Path(
                 os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')) / folder_name
             desktop_path.mkdir(parents=True, exist_ok=True)
             logcat_file = desktop_path / f"{time.strftime('%Y_%m_%d-%H_%M_%S')}.log"
             self.logcat = device.logcat(logcat_file, clear=True, re_filter=None, command="logcat -v time")
-            self.logcat_file_path = logcat_file
             self.logcat_stop_event.wait(timeout=None)
             self.logcat.stop(timeout=3)
             print("logcat完成，文件保存在: " + str(logcat_file))
-            self.logcat_finished_signal.emit("Log保存成功,目录位于:" + str(logcat_file), "success")
+            self.logcat_finished_signal.emit("Log保存成功", "success", str(logcat_file))
         except Exception as e:
-            self.logcat_finished_signal.emit("Logcat失败," + str(e), "error")
+            self.logcat_finished_signal.emit("Logcat失败," + str(e), "error", "")
         finally:
             self.logcat_thread = None
             self.logcat_hide_stop_button_signal.emit(self.ui.button_logcat_stop)  # 无论如何都隐藏停止按钮
@@ -453,20 +458,22 @@ class ScrcpyInterface(QWidget):
     def perform_snapShot(self):
         try:
             device = adb.device(serial=self.device.serial)
+            device_path = device.serial
+            if ':' in device.serial:
+                sn = device.prop.get("ro.serialno")
+                device_path = sn + "-wifi"
             p = device.screenshot()
-            folder_name = f"AdbUtilFiles/{self.device.serial}/截图"
+            folder_name = f"AdbUtilFiles/{device_path}/截图"
             desktop_path = Path(
                 os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')) / folder_name
             desktop_path.mkdir(parents=True, exist_ok=True)
             screenshot_file = desktop_path / f"{time.time_ns()}.png"
             p.save(screenshot_file)
             print("屏幕截取成功，文件保存在: " + str(screenshot_file))
-            self.snapShot_finished_signal.emit("屏幕截取成功，截图保存在: " + str(screenshot_file), "success")
-            # self.show_info_bar("屏幕截取成功，截图保存在: " + str(screenshot_file), "success")
+            self.snapShot_finished_signal.emit("屏幕截取成功，截图已保存", "success", str(screenshot_file))
         except Exception as e:
             print("截图失败: " + str(e))
-            self.snapShot_finished_signal.emit("屏幕截取失败! " + str(e), "error")
-            # self.show_info_bar("屏幕截取失败! " + str(e), "error")
+            self.snapShot_finished_signal.emit("屏幕截取失败! " + str(e), "error", "")
 
     def on_click_recording_start(self):
         if not self.device:
@@ -484,7 +491,11 @@ class ScrcpyInterface(QWidget):
 
     def perform_recording(self, device):
         try:
-            folder_name = f"AdbUtilFiles/{self.device.serial}/录屏"
+            device_path = device.serial
+            if ':' in device.serial:
+                sn = device.prop.get("ro.serialno")
+                device_path = sn + "-wifi"
+            folder_name = f"AdbUtilFiles/{device_path}/录屏"
             desktop_path = Path(os.path.join(os.environ['USERPROFILE'], 'Desktop')) / folder_name
             desktop_path.mkdir(parents=True, exist_ok=True)
             recording_file = desktop_path / f"{time.time_ns()}.mp4"
@@ -495,9 +506,9 @@ class ScrcpyInterface(QWidget):
 
             device.stop_recording()
             print("录屏成功，文件保存在: " + str(recording_file))
-            self.recording_finished_signal.emit("录制完成，视频保存在" + str(recording_file), "success")
+            self.recording_finished_signal.emit("录制完成，视频已保存", "success", str(recording_file))
         except Exception as e:
-            self.recording_finished_signal.emit("录制失败," + str(e), "error")
+            self.recording_finished_signal.emit("录制失败," + str(e), "error", "")
         finally:
             self.recording_thread = None
             self.recording_hide_stop_button_signal.emit(self.ui.button_recording_stop)  # 无论如何都隐藏停止按钮
@@ -516,6 +527,47 @@ class ScrcpyInterface(QWidget):
             InfoBar.error("Error", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
         else:
             print("未知的信息类型")
+
+    def show_info_bar_2path(self, message, type, path):
+        dirPath = os.path.dirname(path)
+        goFileButton = PushButton("Open File")
+        goDirButton = PushButton("Open Dir")
+        goFileButton.clicked.connect(lambda: self.openDirectory(path))
+        goDirButton.clicked.connect(lambda: self.openDirectory(dirPath))
+        mIcon = None
+        if type == "info":
+            mIcon = InfoBarIcon.INFORMATION
+        elif type == "success":
+            mIcon = InfoBarIcon.SUCCESS
+        elif type == "warning":
+            mIcon = InfoBarIcon.WARNING
+        elif type == "error":
+            mIcon = InfoBarIcon.ERROR
+        w = InfoBar(
+            icon=mIcon,
+            title='',
+            content=message,
+            orient=Qt.Horizontal,  # vertical layout
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=6000,
+            parent=self
+        )
+        if path:
+            w.addWidget(goFileButton)
+            w.addWidget(goDirButton)
+        w.show()
+
+    def openDirectory(self,path):
+        try:
+            if sys.platform == 'win32':
+                os.startfile(path)
+            elif sys.platform == 'darwin':  # macOS
+                subprocess.run(['open', path])
+            else:  # linux variants
+                subprocess.run(['xdg-open', path])
+        except Exception as e:
+            self.show_info_bar(f"Failed to open directory: {path}. Error: {e}","error")
 
     def hide_stop_button(self, button):
         button.setVisible(False)
