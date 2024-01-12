@@ -345,7 +345,7 @@ class ScrcpyInterface(QWidget):
         self.ui.button_mute.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_VOLUME_MUTE))
 
-        self.ui.button_enter.clicked.connect(
+        self.ui.button_OK.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_CENTER))
 
         self.ui.button_up.setIcon(QIcon(':/resources/向上箭头.png'))
@@ -386,6 +386,17 @@ class ScrcpyInterface(QWidget):
         self.ui.button_delete.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_delete.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DEL))
+        self.ui.button_enterkey.setIcon(QIcon(':/resources/回车.png'))
+        self.ui.button_enterkey.setIconSize(QtCore.QSize(25, 25))
+        self.ui.button_enterkey.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_ENTER))
+
+        self.ui.button_setting.setIcon(QIcon(':/resources/设置.png'))
+        self.ui.button_setting.setIconSize(QtCore.QSize(25, 25))
+        self.ui.button_setting.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_SETTINGS))
+
+        self.ui.button_pairing.setIcon(QIcon(':/resources/蓝牙配对.png'))
+        self.ui.button_pairing.setIconSize(QtCore.QSize(25,25))
+        self.ui.button_pairing.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_PAIRING))
 
         self.ui.button_num_0.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_0))
         self.ui.button_num_1.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_1))

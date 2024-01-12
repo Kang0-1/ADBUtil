@@ -405,6 +405,8 @@ class Ui_Form(object):
         hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         hsubLayout2.addWidget(self.button_cmd)
         hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        hsubLayout2.addWidget(self.button_refresh)
+        hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         # hsubLayout2.addWidget(self.button_remount)
         # hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         subLayout_1.addLayout(vsubLayout)
@@ -418,7 +420,7 @@ class Ui_Form(object):
         subLayout_2.addRow(self.StrongBodyLabel_13, self.show_4)
         subLayout_2.addRow(self.StrongBodyLabel_14, self.show_5)
         subLayout_2.addRow(self.StrongBodyLabel_15, self.show_6)
-        subLayout_2.addRow(self.button_refresh)
+        # subLayout_2.addRow(self.button_refresh)
 
         layout.addWidget(self.CardWidget_2, 1)
 

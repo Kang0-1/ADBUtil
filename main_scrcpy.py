@@ -1051,11 +1051,11 @@ class Ui_centralwidget(QWidget):
         self.CardWidget_4.setGeometry(QtCore.QRect(800, 0, 221, 581))
         self.CardWidget_4.setObjectName("CardWidget_4")
         self.CardWidget_4.setMinimumWidth(221)
-        self.button_enter = PrimaryPushButton(self.CardWidget_4)
-        self.button_enter.setGeometry(QtCore.QRect(85, 130, 50, 50))
-        self.button_enter.setMinimumSize(QtCore.QSize(50, 50))
-        self.button_enter.setMaximumSize(QtCore.QSize(50, 50))
-        self.button_enter.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+        self.button_OK = PrimaryPushButton(self.CardWidget_4)
+        self.button_OK.setGeometry(QtCore.QRect(85, 130, 50, 50))
+        self.button_OK.setMinimumSize(QtCore.QSize(50, 50))
+        self.button_OK.setMaximumSize(QtCore.QSize(50, 50))
+        self.button_OK.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                         "    color: black;\n"
                                         "    background: rgba(255, 255, 255, 0.7);\n"
                                         "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
@@ -1120,7 +1120,7 @@ class Ui_centralwidget(QWidget):
                                         "    background-color: rgb(205, 205, 205);\n"
                                         "    border: 1px solid rgb(205, 205, 205);\n"
                                         "}")
-        self.button_enter.setObjectName("button_enter")
+        self.button_OK.setObjectName("button_OK")
         self.button_menu = PrimaryPushButton(self.CardWidget_4)
         self.button_menu.setGeometry(QtCore.QRect(30, 450, 41, 32))
         self.button_menu.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
@@ -2620,6 +2620,209 @@ class Ui_centralwidget(QWidget):
                                         "    border: 1px solid rgb(205, 205, 205);\n"
                                         "}")
         self.button_volUp.setObjectName("button_volUp")
+        self.button_enterkey = PrimaryPushButton(self.CardWidget_4)
+        self.button_enterkey.setFixedSize(41, 32)
+        self.button_enterkey.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                          "    color: black;\n"
+                                          "    background: rgba(255, 255, 255, 0.7);\n"
+                                          "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                          "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                          "    border-radius: 10px;\n"
+                                          "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                          "    padding: 5px 12px 6px 12px;\n"
+                                          "    font-size: 1px;\n"
+                                          "    outline: none;\n"
+                                          "}\n"
+                                          "PushButton[hasIcon=false] {\n"
+                                          "    padding: 5px 12px 6px 12px;\n"
+                                          "}\n"
+                                          "PushButton[hasIcon=true] {\n"
+                                          "    padding: 5px 12px 6px 30px;\n"
+                                          "}\n"
+                                          "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                          "    background: rgba(249, 249, 249, 0.5);\n"
+                                          "}\n"
+                                          "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                          "    color: rgba(0, 0, 0, 0.63);\n"
+                                          "    background: rgba(249, 249, 249, 0.3);\n"
+                                          "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                          "}\n"
+                                          "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                          "    color: rgba(0, 0, 0, 0.36);\n"
+                                          "    background: rgba(249, 249, 249, 0.3);\n"
+                                          "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                          "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                          "}\n"
+                                          "PrimaryPushButton,\n"
+                                          "PrimaryToolButton,\n"
+                                          "ToggleButton:checked,\n"
+                                          "ToggleToolButton:checked {\n"
+                                          "    color: white;\n"
+                                          "    background-color: #009faa;\n"
+                                          "    border: 1px solid #00a7b3;\n"
+                                          "    border-bottom: 1px solid #007780;\n"
+                                          "}\n"
+                                          "PrimaryPushButton:hover,\n"
+                                          "PrimaryToolButton:hover,\n"
+                                          "ToggleButton:checked:hover,\n"
+                                          "ToggleToolButton:checked:hover {\n"
+                                          "    background-color: #00a7b3;\n"
+                                          "    border: 1px solid #2daab3;\n"
+                                          "    border-bottom: 1px solid #007780;\n"
+                                          "}\n"
+                                          "PrimaryPushButton:pressed,\n"
+                                          "PrimaryToolButton:pressed,\n"
+                                          "ToggleButton:checked:pressed,\n"
+                                          "ToggleToolButton:checked:pressed {\n"
+                                          "    color: rgba(255, 255, 255, 0.63);\n"
+                                          "    background-color: #3eabb3;\n"
+                                          "    border: 1px solid #3eabb3;\n"
+                                          "}\n"
+                                          "PrimaryPushButton:disabled,\n"
+                                          "PrimaryToolButton:disabled,\n"
+                                          "ToggleButton:checked:disabled,\n"
+                                          "ToggleToolButton:checked:disabled {\n"
+                                          "    color: rgba(255, 255, 255, 0.9);\n"
+                                          "    background-color: rgb(205, 205, 205);\n"
+                                          "    border: 1px solid rgb(205, 205, 205);\n"
+                                          "}")
+        self.button_enterkey.setObjectName("button_enterkey")
+        self.button_setting = PrimaryPushButton(self.CardWidget_4)
+        self.button_setting.setFixedSize(41,32)
+        self.button_setting.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                           "    color: black;\n"
+                                           "    background: rgba(255, 255, 255, 0.7);\n"
+                                           "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                           "    border-radius: 10px;\n"
+                                           "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                           "    padding: 5px 12px 6px 12px;\n"
+                                           "    font-size: 1px;\n"
+                                           "    outline: none;\n"
+                                           "}\n"
+                                           "PushButton[hasIcon=false] {\n"
+                                           "    padding: 5px 12px 6px 12px;\n"
+                                           "}\n"
+                                           "PushButton[hasIcon=true] {\n"
+                                           "    padding: 5px 12px 6px 30px;\n"
+                                           "}\n"
+                                           "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                           "    background: rgba(249, 249, 249, 0.5);\n"
+                                           "}\n"
+                                           "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                           "    color: rgba(0, 0, 0, 0.63);\n"
+                                           "    background: rgba(249, 249, 249, 0.3);\n"
+                                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                           "}\n"
+                                           "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                           "    color: rgba(0, 0, 0, 0.36);\n"
+                                           "    background: rgba(249, 249, 249, 0.3);\n"
+                                           "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                           "}\n"
+                                           "PrimaryPushButton,\n"
+                                           "PrimaryToolButton,\n"
+                                           "ToggleButton:checked,\n"
+                                           "ToggleToolButton:checked {\n"
+                                           "    color: white;\n"
+                                           "    background-color: #009faa;\n"
+                                           "    border: 1px solid #00a7b3;\n"
+                                           "    border-bottom: 1px solid #007780;\n"
+                                           "}\n"
+                                           "PrimaryPushButton:hover,\n"
+                                           "PrimaryToolButton:hover,\n"
+                                           "ToggleButton:checked:hover,\n"
+                                           "ToggleToolButton:checked:hover {\n"
+                                           "    background-color: #00a7b3;\n"
+                                           "    border: 1px solid #2daab3;\n"
+                                           "    border-bottom: 1px solid #007780;\n"
+                                           "}\n"
+                                           "PrimaryPushButton:pressed,\n"
+                                           "PrimaryToolButton:pressed,\n"
+                                           "ToggleButton:checked:pressed,\n"
+                                           "ToggleToolButton:checked:pressed {\n"
+                                           "    color: rgba(255, 255, 255, 0.63);\n"
+                                           "    background-color: #3eabb3;\n"
+                                           "    border: 1px solid #3eabb3;\n"
+                                           "}\n"
+                                           "PrimaryPushButton:disabled,\n"
+                                           "PrimaryToolButton:disabled,\n"
+                                           "ToggleButton:checked:disabled,\n"
+                                           "ToggleToolButton:checked:disabled {\n"
+                                           "    color: rgba(255, 255, 255, 0.9);\n"
+                                           "    background-color: rgb(205, 205, 205);\n"
+                                           "    border: 1px solid rgb(205, 205, 205);\n"
+                                           "}")
+        self.button_setting.setObjectName("button_setting")
+        self.button_pairing = PrimaryPushButton(self.CardWidget_4)
+        self.button_pairing.setFixedSize(41,32)
+        self.button_pairing.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                           "    color: black;\n"
+                                           "    background: rgba(255, 255, 255, 0.7);\n"
+                                           "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                           "    border-radius: 10px;\n"
+                                           "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                           "    padding: 5px 12px 6px 12px;\n"
+                                           "    font-size: 1px;\n"
+                                           "    outline: none;\n"
+                                           "}\n"
+                                           "PushButton[hasIcon=false] {\n"
+                                           "    padding: 5px 12px 6px 12px;\n"
+                                           "}\n"
+                                           "PushButton[hasIcon=true] {\n"
+                                           "    padding: 5px 12px 6px 30px;\n"
+                                           "}\n"
+                                           "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                           "    background: rgba(249, 249, 249, 0.5);\n"
+                                           "}\n"
+                                           "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                           "    color: rgba(0, 0, 0, 0.63);\n"
+                                           "    background: rgba(249, 249, 249, 0.3);\n"
+                                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                           "}\n"
+                                           "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                           "    color: rgba(0, 0, 0, 0.36);\n"
+                                           "    background: rgba(249, 249, 249, 0.3);\n"
+                                           "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                           "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                           "}\n"
+                                           "PrimaryPushButton,\n"
+                                           "PrimaryToolButton,\n"
+                                           "ToggleButton:checked,\n"
+                                           "ToggleToolButton:checked {\n"
+                                           "    color: white;\n"
+                                           "    background-color: #009faa;\n"
+                                           "    border: 1px solid #00a7b3;\n"
+                                           "    border-bottom: 1px solid #007780;\n"
+                                           "}\n"
+                                           "PrimaryPushButton:hover,\n"
+                                           "PrimaryToolButton:hover,\n"
+                                           "ToggleButton:checked:hover,\n"
+                                           "ToggleToolButton:checked:hover {\n"
+                                           "    background-color: #00a7b3;\n"
+                                           "    border: 1px solid #2daab3;\n"
+                                           "    border-bottom: 1px solid #007780;\n"
+                                           "}\n"
+                                           "PrimaryPushButton:pressed,\n"
+                                           "PrimaryToolButton:pressed,\n"
+                                           "ToggleButton:checked:pressed,\n"
+                                           "ToggleToolButton:checked:pressed {\n"
+                                           "    color: rgba(255, 255, 255, 0.63);\n"
+                                           "    background-color: #3eabb3;\n"
+                                           "    border: 1px solid #3eabb3;\n"
+                                           "}\n"
+                                           "PrimaryPushButton:disabled,\n"
+                                           "PrimaryToolButton:disabled,\n"
+                                           "ToggleButton:checked:disabled,\n"
+                                           "ToggleToolButton:checked:disabled {\n"
+                                           "    color: rgba(255, 255, 255, 0.9);\n"
+                                           "    background-color: rgb(205, 205, 205);\n"
+                                           "    border: 1px solid rgb(205, 205, 205);\n"
+                                           "}")
+        self.button_pairing.setObjectName("button_pairring")
+
+
         self.CardWidget_3 = CardWidget(centralwidget)
         self.CardWidget_3.setGeometry(QtCore.QRect(0, 530, 801, 51))
         self.CardWidget_3.setObjectName("CardWidget_3")
@@ -3083,7 +3286,7 @@ class Ui_centralwidget(QWidget):
         card4_layout_1.addWidget(self.button_mute, 0, 2)
         card4_layout_1.addWidget(self.button_up, 1, 1)
         card4_layout_1.addWidget(self.button_left, 2, 0)
-        card4_layout_1.addWidget(self.button_enter, 2, 1)
+        card4_layout_1.addWidget(self.button_OK, 2, 1)
         card4_layout_1.addWidget(self.button_right, 2, 2)
         card4_layout_1.addWidget(self.button_down, 3, 1)
         card4_layout_1.setAlignment(self.button_up, Qt.AlignmentFlag.AlignCenter)
@@ -3115,6 +3318,9 @@ class Ui_centralwidget(QWidget):
         card4_layout_3.addWidget(self.button_menu, 3, 0)
         card4_layout_3.addWidget(self.button_num_0, 3, 1)
         card4_layout_3.addWidget(self.button_delete, 3, 2)
+        card4_layout_3.addWidget(self.button_setting, 4, 0)
+        card4_layout_3.addWidget(self.button_pairing, 4, 1)
+        card4_layout_3.addWidget(self.button_enterkey, 4, 2)
         # card4_layout_3.addWidget(self.input_keycode, 4, 0, 1, 3)
         card4_layout.addLayout(card4_layout_3)
         card4_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
@@ -3179,7 +3385,7 @@ class Ui_centralwidget(QWidget):
         self.ipInput.setPlaceholderText(_translate("centralwidget", "ip:port"))
         self.BodyLabel_2.setText(_translate("centralwidget", "ADB WIFI:"))
         self.button_connect.setText(_translate("centralwidget", "Connect"))
-        self.button_enter.setText(_translate("centralwidget", "OK"))
+        self.button_OK.setText(_translate("centralwidget", "OK"))
         self.button_num_1.setText(_translate("centralwidget", "1"))
         self.button_num_2.setText(_translate("centralwidget", "2"))
         self.button_num_3.setText(_translate("centralwidget", "3"))
