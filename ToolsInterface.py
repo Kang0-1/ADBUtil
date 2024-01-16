@@ -88,7 +88,7 @@ class ToolsInterface(QWidget):
                 self.show_info_bar("当前无设备连接，请检查", "error", 2)
             device = self.device
             self.ui.model.setText(device.prop.model)
-            self.ui.product.setText((device.prop.get("ro.build.product")))
+            self.ui.product.setText((device.prop.get("ro.product.name")))
             self.ui.brand.setText(device.prop.get("ro.product.brand"))
             self.ui.android_version.setText(device.prop.get("ro.build.version.release"))
             self.ui.sn.setText(device.prop.get("ro.serialno"))

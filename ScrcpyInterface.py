@@ -61,6 +61,14 @@ class ScrcpyInterface(QWidget):
         self.adb_connect_finished_signal.connect(self.show_info_bar)
         self.adb_connect_showMsg_signal.connect(self.show_message)
 
+        # 长按标记
+        self.longPressOccurred_Button_Home = False
+
+        self.buttonHomeTimer = QTimer(self)
+        self.buttonHomeTimer.setInterval(1000)  # 长按时间
+        self.buttonHomeTimer.setSingleShot(True)
+        self.buttonHomeTimer.timeout.connect(self.onLongPressButton_Home)
+
         self.logcat = None  # 存储logcat的数据
 
         self.ui = Ui_centralwidget()
@@ -216,7 +224,9 @@ class ScrcpyInterface(QWidget):
     def click_refresh(self):
         self.devices = self.list_devices()
         if self.devices:
+            print(str(self.devices))
             if self.ui.combo_device.currentText():
+                print(str(self.ui.combo_device.currentText()))
                 self.device = adb.device(serial=self.ui.combo_device.currentText())
                 self.device_serial.emit(self.device.serial)
         else:
@@ -224,12 +234,16 @@ class ScrcpyInterface(QWidget):
             self.device_serial.emit(None)
 
     def click_start(self):
-        # print("click_start" + self.device.serial)
         if self.device:
+            # 检查当前设备是否已经在投屏
+            if self.client and self.client.device.serial == self.device.serial:
+                # 当前设备已经在投屏，不需要重新启动
+                print("当前设备已经在投屏，不需要重新启动")
+                return
             self.ui.progressRing.setVisible(False)
             self.ui.label.setVisible(True)
             self.device_serial.emit(self.device.serial)
-            # 停止当前 scrcpy 客户端，如果它正在运行
+            # 停止当前 scrcpy 客户端，如果要切换设备投屏且当前设备正在投屏
             if self.client:
                 self.client.stop()
                 self.client = None
@@ -253,7 +267,6 @@ class ScrcpyInterface(QWidget):
         self.ui.label.setVisible(False)
         self.ui.progressRing.setVisible(True)
         self.click_refresh()
-        # print(1)
         # self.show_info_bar("设备断连~","error")
 
     def choose_device(self, device):
@@ -294,9 +307,12 @@ class ScrcpyInterface(QWidget):
             self.client.start(True, True)
 
     def list_devices(self):
+        current_device = self.ui.combo_device.currentText()
         self.ui.combo_device.clear()
         items = [i.serial for i in adb.device_list()]
         self.ui.combo_device.addItems(items)
+        if current_device in items:
+            self.ui.combo_device.setCurrentText(current_device)
         return items
 
     def on_flip(self, _):
@@ -305,7 +321,10 @@ class ScrcpyInterface(QWidget):
     def bindControllers(self):
         self.ui.button_home.setIcon(QIcon(':/resources/主页.png'))
         self.ui.button_home.setIconSize(QtCore.QSize(30, 30))
-        self.ui.button_home.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_HOME))
+        self.ui.button_home.clicked.connect(self.onShortPress_Button_Home)
+        self.ui.button_home.pressed.connect(self.startLongPressTimer_Home)
+        self.ui.button_home.released.connect(self.stopLongPressTimer_Home)
+        # self.ui.button_home.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_HOME))
         # 四种方式
         # adb.device(serial=self.device.serial).shell("input keyevent 3")
         # adb.device(serial=self.device.serial).shell(['input', 'keyevent', str(scrcpy.KEYCODE_HOME)])
@@ -315,8 +334,6 @@ class ScrcpyInterface(QWidget):
         self.ui.button_back.setIcon(QIcon(':/resources/系统返回.png'))
         self.ui.button_back.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_back.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_BACK))
-        # self.client.control.back_or_turn_screen_on(scrcpy.ACTION_DOWN)
-        # self.client.control.back_or_turn_screen_on(scrcpy.ACTION_UP)
 
         self.ui.button_logcat.clicked.connect(self.on_click_logcat_start)
         self.ui.button_logcat_stop.setVisible(False)
@@ -352,31 +369,37 @@ class ScrcpyInterface(QWidget):
         self.ui.button_up.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_up.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_UP))
+        self.ui.button_up.setAutoRepeat(True)
 
         self.ui.button_down.setIcon(QIcon(':/resources/向下箭头.png'))
         self.ui.button_down.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_down.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_DOWN))
+        self.ui.button_down.setAutoRepeat(True)
 
         self.ui.button_left.setIcon(QIcon(':/resources/向左箭头.png'))
         self.ui.button_left.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_left.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_LEFT))
+        self.ui.button_left.setAutoRepeat(True)
 
         self.ui.button_right.setIcon(QIcon(':/resources/向右箭头.png'))
         self.ui.button_right.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_right.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DPAD_RIGHT))
+        self.ui.button_right.setAutoRepeat(True)
 
         self.ui.button_volUp.setIcon(QIcon(':/resources/音量加.png'))
         self.ui.button_volUp.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_volUp.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_VOLUME_UP))
+        self.ui.button_volUp.setAutoRepeat(True)
 
         self.ui.button_volDown.setIcon(QIcon(':/resources/音量减.png'))
         self.ui.button_volDown.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_volDown.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_VOLUME_DOWN))
+        self.ui.button_volDown.setAutoRepeat(True)
 
         self.ui.button_menu.setIcon(QIcon(':/resources/菜单.png'))
         self.ui.button_menu.setIconSize(QtCore.QSize(30, 30))
@@ -386,6 +409,7 @@ class ScrcpyInterface(QWidget):
         self.ui.button_delete.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_delete.clicked.connect(
             lambda: self.general_button_handler(scrcpy.KEYCODE_DEL))
+        self.ui.button_delete.setAutoRepeat(True)
         self.ui.button_enterkey.setIcon(QIcon(':/resources/回车.png'))
         self.ui.button_enterkey.setIconSize(QtCore.QSize(25, 25))
         self.ui.button_enterkey.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_ENTER))
@@ -399,15 +423,42 @@ class ScrcpyInterface(QWidget):
         self.ui.button_pairing.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_PAIRING))
 
         self.ui.button_num_0.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_0))
+        self.ui.button_num_0.setAutoRepeat(True)
         self.ui.button_num_1.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_1))
+        self.ui.button_num_1.setAutoRepeat(True)
         self.ui.button_num_2.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_2))
+        self.ui.button_num_2.setAutoRepeat(True)
         self.ui.button_num_3.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_3))
+        self.ui.button_num_3.setAutoRepeat(True)
         self.ui.button_num_4.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_4))
+        self.ui.button_num_4.setAutoRepeat(True)
         self.ui.button_num_5.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_5))
+        self.ui.button_num_5.setAutoRepeat(True)
         self.ui.button_num_6.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_6))
+        self.ui.button_num_6.setAutoRepeat(True)
         self.ui.button_num_7.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_7))
+        self.ui.button_num_7.setAutoRepeat(True)
         self.ui.button_num_8.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_8))
+        self.ui.button_num_8.setAutoRepeat(True)
         self.ui.button_num_9.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_9))
+        self.ui.button_num_9.setAutoRepeat(True)
+
+    def onShortPress_Button_Home(self):
+        if not self.longPressOccurred_Button_Home:
+            self.general_button_handler(scrcpy.KEYCODE_HOME)
+
+    def startLongPressTimer_Home(self):
+        self.buttonHomeTimer.start()
+        self.longPressOccurred_Button_Home = False
+
+    def stopLongPressTimer_Home(self):
+        if self.buttonHomeTimer.isActive():
+            self.buttonHomeTimer.stop()
+
+    def onLongPressButton_Home(self):
+        self.longPressOccurred_Button_Home = True
+        self.device.shell("am start -n com.google.android.tvlauncher/.appsview.AppsViewActivity")
+        print("长按home键")
 
     def general_button_handler(self, keycode):
         if not self.device:
@@ -441,7 +492,7 @@ class ScrcpyInterface(QWidget):
             if ':' in device.serial:
                 sn=device.prop.get("ro.serialno")
                 device_path = sn+"-wifi"
-            folder_name = f"AdbUtilFiles/{device_path}/Logs"
+            folder_name = f"ADB_Box/Files/{device_path}/Logs"
             desktop_path = Path(
                 os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')) / folder_name
             desktop_path.mkdir(parents=True, exist_ok=True)
@@ -474,7 +525,7 @@ class ScrcpyInterface(QWidget):
                 sn = device.prop.get("ro.serialno")
                 device_path = sn + "-wifi"
             p = device.screenshot()
-            folder_name = f"AdbUtilFiles/{device_path}/截图"
+            folder_name = f"ADB_Box/Files/{device_path}/截图"
             desktop_path = Path(
                 os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')) / folder_name
             desktop_path.mkdir(parents=True, exist_ok=True)
@@ -506,7 +557,7 @@ class ScrcpyInterface(QWidget):
             if ':' in device.serial:
                 sn = device.prop.get("ro.serialno")
                 device_path = sn + "-wifi"
-            folder_name = f"AdbUtilFiles/{device_path}/录屏"
+            folder_name = f"ADB_Box/Files/{device_path}/录屏"
             desktop_path = Path(os.path.join(os.environ['USERPROFILE'], 'Desktop')) / folder_name
             desktop_path.mkdir(parents=True, exist_ok=True)
             recording_file = desktop_path / f"{time.time_ns()}.mp4"
@@ -535,7 +586,7 @@ class ScrcpyInterface(QWidget):
         elif type == "warning":
             InfoBar.warning("Warning", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
         elif type == "error":
-            InfoBar.error("Error", message, self, True, 3000, InfoBarPosition.BOTTOM, self).show()
+            InfoBar.error("Error", message, self, True, 5000, InfoBarPosition.BOTTOM, self).show()
         else:
             print("未知的信息类型")
 
@@ -543,8 +594,8 @@ class ScrcpyInterface(QWidget):
         dirPath = os.path.dirname(path)
         goFileButton = PushButton("Open File")
         goDirButton = PushButton("Open Dir")
-        goFileButton.clicked.connect(lambda: self.openDirectory(path))
-        goDirButton.clicked.connect(lambda: self.openDirectory(dirPath))
+        goFileButton.clicked.connect(lambda: self.openDirectory(path,False))
+        goDirButton.clicked.connect(lambda: self.openDirectory(path,True))
         mIcon = None
         if type == "info":
             mIcon = InfoBarIcon.INFORMATION
@@ -569,10 +620,15 @@ class ScrcpyInterface(QWidget):
             w.addWidget(goDirButton)
         w.show()
 
-    def openDirectory(self,path):
+    def openDirectory(self,path,isDir):
         try:
             if sys.platform == 'win32':
-                os.startfile(path)
+                if not isDir:
+                    # 如果路径是文件，则直接打开文件
+                    os.startfile(path)
+                else:
+                    subprocess.run(['explorer', '/select,', os.path.normpath(path)])
+                # os.startfile(path)
             elif sys.platform == 'darwin':  # macOS
                 subprocess.run(['open', path])
             else:  # linux variants

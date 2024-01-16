@@ -1,7 +1,9 @@
 import os
 import re
 import subprocess
+import sys
 import threading
+from pathlib import Path
 
 import config
 import resources_rc
@@ -10,7 +12,7 @@ from PySide6.QtCore import Slot, Signal, QSize, Qt
 from PySide6.QtGui import QIcon, QFontMetrics
 from PySide6.QtWidgets import *
 from adbutils import adb
-from qfluentwidgets import InfoBar, InfoBarPosition, MessageBox
+from qfluentwidgets import InfoBar, InfoBarPosition, MessageBox, PushButton, InfoBarIcon
 
 from appmanager import Ui_manage
 
@@ -32,7 +34,7 @@ class AppDesc:
 
 class AppManageInterface(QWidget):
     deviceReady = Signal()
-    pull_app_finished_signal = Signal(str, str, int)
+    pull_app_finished_signal = Signal(str, str, str)
     install_app_finished_signal = Signal(str, str, int)
 
     @Slot(str)
@@ -55,7 +57,7 @@ class AppManageInterface(QWidget):
         self.FilterPackageNameList = None
         self.currentApp = None
         self.deviceReady.connect(self.onDeviceReady)
-        self.pull_app_finished_signal.connect(self.show_info_bar)
+        self.pull_app_finished_signal.connect(self.show_info_bar_2path)
         self.install_app_finished_signal.connect(self.show_info_bar)
         self.install_app_finished_signal.connect(self.refreshPackageNameList)
         self.ui.allAppInterface.itemClicked.connect(self.onItemClicked)
@@ -176,8 +178,12 @@ class AppManageInterface(QWidget):
         if not self.currentApp:
             self.show_info_bar("请选择要提取的包名", "warning", 2)
             return
-        desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
-        export_apk_name = os.path.join(desktop, f"{self.currentApp.packageName}.apk")
+        # desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
+        folder_name = "ADB_Box/Apks"
+        desktop_path = Path(os.path.join(os.environ['USERPROFILE'], 'Desktop')) / folder_name
+        desktop_path.mkdir(parents=True, exist_ok=True)
+        export_apk_name = os.path.join(desktop_path, f"{self.currentApp.packageName}.apk")
+        print("export_apk_name:"+export_apk_name)
         app_install_path = self.currentApp.installedPath.split('\n')[0]
         # 构建命令
         command = [
@@ -203,9 +209,10 @@ class AppManageInterface(QWidget):
             # 解析速度和时间 (根据实际输出调整正则表达式)
             speed_str = regex_find(success, r"skipped\.\s(.*?)/s")
             time_str = regex_find(success, r"in (.*?)s")
-            self.pull_app_finished_signal.emit(f"导出成功! 速度:{speed_str}/s, 耗时:{time_str}s", "success", 2)
+            self.pull_app_finished_signal.emit(f"导出成功! 速度:{speed_str}/s, 耗时:{time_str}s", "success",
+                                               str(export_apk_name))
         else:
-            self.pull_app_finished_signal.emit("导出失败!", "error", 2)
+            self.pull_app_finished_signal.emit("导出失败!", "error", False)
 
     def uninstall_app(self):
         if not self.device:
@@ -417,6 +424,48 @@ class AppManageInterface(QWidget):
             InfoBar.error("Error", message, self, True, 1000 * second, InfoBarPosition.BOTTOM, self).show()
         else:
             print("未知的信息类型")
+
+    def show_info_bar_2path(self, message, type, path):
+        goDirButton = PushButton("Open Dir")
+        goDirButton.clicked.connect(lambda: self.openDirectory(path, True))
+        mIcon = None
+        if type == "info":
+            mIcon = InfoBarIcon.INFORMATION
+        elif type == "success":
+            mIcon = InfoBarIcon.SUCCESS
+        elif type == "warning":
+            mIcon = InfoBarIcon.WARNING
+        elif type == "error":
+            mIcon = InfoBarIcon.ERROR
+        w = InfoBar(
+            icon=mIcon,
+            title='',
+            content=message,
+            orient=Qt.Horizontal,  # vertical layout
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=6000,
+            parent=self
+        )
+        if path:
+            w.addWidget(goDirButton)
+        w.show()
+
+    def openDirectory(self, path, isDir):
+        try:
+            if sys.platform == 'win32':
+                if not isDir:
+                    # 如果路径是文件，则直接打开文件
+                    os.startfile(path)
+                else:
+                    subprocess.run(['explorer', '/select,', os.path.normpath(path)])
+                # os.startfile(path)
+            elif sys.platform == 'darwin':  # macOS
+                subprocess.run(['open', path])
+            else:  # linux variants
+                subprocess.run(['xdg-open', path])
+        except Exception as e:
+            self.show_info_bar(f"Failed to open directory: {path}. Error: {e}", "error")
 
 
 def convert_string(input_str):
