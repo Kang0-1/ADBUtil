@@ -5,19 +5,21 @@ import threading
 import time
 import resources_rc
 from PySide6 import QtCore
-from PySide6.QtCore import Slot, Signal, QSize
+from PySide6.QtCore import Slot, Signal, QSize, QTimer
 from PySide6.QtGui import QIcon, QFontMetrics
 from PySide6.QtWidgets import *
 from adbutils import adb
 from qfluentwidgets import InfoBar, InfoBarPosition
 import config
 from tools import Ui_Form
+import scrcpy
 
 
 class ToolsInterface(QWidget):
     deviceReady = Signal()
     deviceRoot = Signal(str, str)
     updateActivityInfo_signal = Signal(object, object)
+    sign_finished_signal = Signal(str, str, int)
 
     @Slot(str)
     def getDeviceFromSignal(self, device_serial):
@@ -37,10 +39,16 @@ class ToolsInterface(QWidget):
         self.deviceReady.connect(self.onDeviceReady)
         self.setSearchPropUI()
         self.ui.button_cmd.clicked.connect(self.on_openCMD)
+        self.ui.button_sign.clicked.connect(self.on_sign)
+        self.sign_finished_signal.connect(self.show_info_bar)
         # self.ui.button_remount.clicked.connect(self.on_remount)
         self.ui.button_refresh.setIcon(QIcon(':/resources/刷新.png'))
         self.ui.button_refresh.setIconSize(QtCore.QSize(30, 30))
         self.ui.button_refresh.clicked.connect(lambda: (self.getActivityInfo(), self.getBaseInfo()))
+        # 设置定时器
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.refresh)
+        self.timer.start(8000)  # 设置时间间隔为 8000 毫秒（8秒）
         self.updateActivityInfo_signal.connect(self.update_text_edit)
 
     @Slot()
@@ -100,7 +108,7 @@ class ToolsInterface(QWidget):
             self.ui.fingerprint.setText(fingerprint)
             self.ui.ipv4.setText(getIP(device))
             build_version = identify_version(fingerprint)
-            print(build_version)
+            print("当前设备版本:"+build_version)
             if build_version == "user":
                 self.ui.sw.setText("设备不能root")
                 self.ui.hw.setText("设备不能root")
@@ -109,6 +117,13 @@ class ToolsInterface(QWidget):
                 self.ui.hw.setText(device.prop.get("ro.odm.changhong.hw.ver"))
         except AttributeError as e:
             print(e)
+
+    def refresh(self):
+        # 执行刷新操作
+        if self.device:
+            print("执行刷新操作")
+            self.getActivityInfo()
+            self.getBaseInfo()
 
     def getActivityInfo(self):
         threading.Thread(target=self._getActivityInfoThread).start()
@@ -183,25 +198,6 @@ class ToolsInterface(QWidget):
         print("prop_value:" + prop_value)
         self.ui.output_prop.setText(prop_value)
 
-    # def setInputTextUI(self):
-    #     self.ui.button_input.clicked.connect(self.on_input_button_clicked)
-    #     self.ui.input_text.returnPressed.connect(self.on_input_button_clicked)
-
-    # def on_input_button_clicked(self):
-    #     if not self.device:
-    #         self.show_info_bar("未连接设备，请检查", "error", 2)
-    #         return
-    #     input_text = self.ui.input_text.text().strip()
-    #     if not input_text:
-    #         self.show_info_bar("请输入文本内容", "info", 2)
-    #         return
-    #     try:
-    #         self.device.shell(f"input text '{input_text}'")
-    #         self.show_info_bar("文本已发送", "success", 2)
-    #         self.ui.input_text.clear()
-    #     except Exception as e:
-    #         self.show_info_bar("未连接设备，请检查:" + str(e), "error", 2)
-
     def on_openCMD(self):
         current_time = time.time()
         if current_time - self.last_clicked >= self.click_interval:
@@ -216,6 +212,32 @@ class ToolsInterface(QWidget):
         else:
             self.show_info_bar("点击过快，请3s后再试", "info", 1)
             print("Please wait before opening another CMD window.")
+
+    def on_sign(self):
+        if not self.device:
+            self.show_info_bar("未连接设备，请检查", "error",2)
+            return
+        if self.ui.ipv4.text() == "未连接":
+            self.show_info_bar("未连接网络，请检查", "warning",2)
+            return
+        threading.Thread(target=self.perform_signGoogle).start()
+
+    def perform_signGoogle(self):
+        try:
+            device = self.device
+            device.shell(
+                "am start com.google.android.tungsten.setupwraith/com.google.android.tvsetup.app.AddAccountActivity")
+            time.sleep(1)
+            device.keyevent(scrcpy.KEYCODE_DPAD_CENTER)
+            time.sleep(5)
+            device.shell("input text testchwl@gmail.com")
+            device.keyevent(scrcpy.KEYCODE_ENTER)
+            time.sleep(5)
+            device.shell("input text chwl12234")
+            device.keyevent(scrcpy.KEYCODE_ENTER)
+            self.sign_finished_signal.emit("登录成功","success",3)
+        except Exception as e:
+            self.sign_finished_signal.emit("登录失败," + str(e), "error", 3)
 
     def on_remount(self):
         # TODO remount 功能

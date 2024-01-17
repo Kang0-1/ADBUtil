@@ -105,7 +105,7 @@ class Ui_Form(object):
 
         self.button_cmd = PrimaryPushButton(self.CardWidget)
         self.button_cmd.setGeometry(QtCore.QRect(100, 550, 91, 31))
-        self.button_cmd.setFixedSize(91, 31)
+        self.button_cmd.setFixedSize(81, 31)
         self.button_cmd.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
                                       "    color: black;\n"
                                       "    background: rgba(255, 255, 255, 0.7);\n"
@@ -172,6 +172,75 @@ class Ui_Form(object):
                                       "    border: 1px solid rgb(205, 205, 205);\n"
                                       "}")
         self.button_cmd.setObjectName("button_cmd")
+        self.button_sign = PrimaryPushButton(self.CardWidget)
+        self.button_sign.setGeometry(QtCore.QRect(100, 550, 91, 31))
+        self.button_sign.setFixedSize(101, 31)
+        self.button_sign.setStyleSheet("PushButton, ToolButton, ToggleButton, ToggleToolButton {\n"
+                                      "    color: black;\n"
+                                      "    background: rgba(255, 255, 255, 0.7);\n"
+                                      "    border: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                      "    border-bottom: 1px solid rgba(0, 0, 0, 0.183);\n"
+                                      "    border-radius: 15px;\n"
+                                      "    /* font: 14px \'Segoe UI\', \'Microsoft YaHei\'; */\n"
+                                      "    padding: 5px 12px 6px 12px;\n"
+                                      "    font-size: 13px;\n"
+                                      "    font-weight:bold;\n"
+                                      "    outline: none;\n"
+                                      "}\n"
+                                      "PushButton[hasIcon=false] {\n"
+                                      "    padding: 5px 12px 6px 12px;\n"
+                                      "}\n"
+                                      "PushButton[hasIcon=true] {\n"
+                                      "    padding: 5px 12px 6px 36px;\n"
+                                      "}\n"
+                                      "PushButton:hover, ToolButton:hover, ToggleButton:hover, ToggleToolButton:hover {\n"
+                                      "    background: rgba(249, 249, 249, 0.5);\n"
+                                      "}\n"
+                                      "PushButton:pressed, ToolButton:pressed, ToggleButton:pressed, ToggleToolButton:pressed {\n"
+                                      "    color: rgba(0, 0, 0, 0.63);\n"
+                                      "    background: rgba(249, 249, 249, 0.3);\n"
+                                      "    border-bottom: 1px solid rgba(0, 0, 0, 0.073);\n"
+                                      "}\n"
+                                      "PushButton:disabled, ToolButton:disabled, ToggleButton:disabled, ToggleToolButton:disabled {\n"
+                                      "    color: rgba(0, 0, 0, 0.36);\n"
+                                      "    background: rgba(249, 249, 249, 0.3);\n"
+                                      "    border: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                      "    border-bottom: 1px solid rgba(0, 0, 0, 0.06);\n"
+                                      "}\n"
+                                      "PrimaryPushButton,\n"
+                                      "PrimaryToolButton,\n"
+                                      "ToggleButton:checked,\n"
+                                      "ToggleToolButton:checked {\n"
+                                      "    color: white;\n"
+                                      "    background-color: #009faa;\n"
+                                      "    border: 1px solid #00a7b3;\n"
+                                      "    border-bottom: 1px solid #007780;\n"
+                                      "}\n"
+                                      "PrimaryPushButton:hover,\n"
+                                      "PrimaryToolButton:hover,\n"
+                                      "ToggleButton:checked:hover,\n"
+                                      "ToggleToolButton:checked:hover {\n"
+                                      "    background-color: #00a7b3;\n"
+                                      "    border: 1px solid #2daab3;\n"
+                                      "    border-bottom: 1px solid #007780;\n"
+                                      "}\n"
+                                      "PrimaryPushButton:pressed,\n"
+                                      "PrimaryToolButton:pressed,\n"
+                                      "ToggleButton:checked:pressed,\n"
+                                      "ToggleToolButton:checked:pressed {\n"
+                                      "    color: rgba(255, 255, 255, 0.63);\n"
+                                      "    background-color: #3eabb3;\n"
+                                      "    border: 1px solid #3eabb3;\n"
+                                      "}\n"
+                                      "PrimaryPushButton:disabled,\n"
+                                      "PrimaryToolButton:disabled,\n"
+                                      "ToggleButton:checked:disabled,\n"
+                                      "ToggleToolButton:checked:disabled {\n"
+                                      "    color: rgba(255, 255, 255, 0.9);\n"
+                                      "    background-color: rgb(205, 205, 205);\n"
+                                      "    border: 1px solid rgb(205, 205, 205);\n"
+                                      "}")
+        self.button_sign.setObjectName("button_sign")
         # self.button_remount = PrimaryPushButton(self.CardWidget)
         # self.button_remount.setGeometry(QtCore.QRect(220, 550, 91, 31))
         # self.button_remount.setFixedSize(91, 31)
@@ -403,7 +472,10 @@ class Ui_Form(object):
 
         hsubLayout2 = QHBoxLayout()
         hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+
         hsubLayout2.addWidget(self.button_cmd)
+        hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        hsubLayout2.addWidget(self.button_sign)
         hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         hsubLayout2.addWidget(self.button_refresh)
         hsubLayout2.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
@@ -450,6 +522,7 @@ class Ui_Form(object):
         self.StrongBodyLabel_5.setText(_translate("Form", "Hardware Version"))
         self.sw.setText(_translate("Form", "UnKnown"))
         self.button_cmd.setText(_translate("Form", "Shell"))
+        self.button_sign.setText(_translate("Form", "Google Sign"))
         self.StrongBodyLabel_16.setText(_translate("Form", "Wlan MAC"))
         self.wlanMac.setText(_translate("Form", "UnKnown"))
         self.StrongBodyLabel_17.setText(_translate("Form", "Product"))
