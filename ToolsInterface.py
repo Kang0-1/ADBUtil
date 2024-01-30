@@ -202,8 +202,10 @@ class ToolsInterface(QWidget):
         current_time = time.time()
         if current_time - self.last_clicked >= self.click_interval:
             if self.device:
+                path = os.path.dirname(config.adb_path)
                 # /k 参数使得CMD窗口在执行完adb shell命令后保持开启状态
-                cmd = f"start cmd /k adb -s {self.device.serial} shell"
+                # cmd = f"start cmd /k adb -s {self.device.serial} shell"
+                cmd = f"start cmd /k \"cd /d {path} && adb -s {self.device.serial} shell\""
                 subprocess.Popen(cmd, shell=True)
                 # subprocess.Popen("start cmd", shell=True)
                 self.last_clicked = current_time
@@ -229,10 +231,10 @@ class ToolsInterface(QWidget):
                 "am start com.google.android.tungsten.setupwraith/com.google.android.tvsetup.app.AddAccountActivity")
             time.sleep(1)
             device.keyevent(scrcpy.KEYCODE_DPAD_CENTER)
-            time.sleep(5)
+            time.sleep(8)
             device.shell("input text testchwl@gmail.com")
             device.keyevent(scrcpy.KEYCODE_ENTER)
-            time.sleep(5)
+            time.sleep(8)
             device.shell("input text chwl12234")
             device.keyevent(scrcpy.KEYCODE_ENTER)
             self.sign_finished_signal.emit("登录成功","success",3)
