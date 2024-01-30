@@ -1,19 +1,19 @@
 import os
-import sys
-from PySide6.QtGui import QIcon, QGuiApplication, QDesktopServices
-from PySide6.QtWidgets import QApplication, QWidget, QFrame, QHBoxLayout
 
-from qfluentwidgets import FluentWindow, SubtitleLabel, setFont, SplitFluentWindow, MSFluentWindow, setTheme, Theme, \
-    NavigationAvatarWidget, NavigationItemPosition, MessageBox
-from qfluentwidgets import FluentIcon as FIF
+from PySide6.QtCore import Qt, QUrl
+from PySide6.QtGui import QIcon, QGuiApplication, QDesktopServices
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QFrame, QHBoxLayout
+from qfluentwidgets import FluentIcon as FIF, TeachingTipView, PushButton
+from qfluentwidgets import MSFluentWindow
+from qfluentwidgets import SubtitleLabel, setFont, NavigationAvatarWidget, NavigationItemPosition, InfoBarIcon, \
+    TeachingTip, \
+    TeachingTipTailPosition
 
 import config
 from AppManageInterface import AppManageInterface
 from FileInterface import FileInterface
 from ScrcpyInterface import ScrcpyInterface
-from PySide6.QtCore import Qt, QUrl
-from PySide6.QtWidgets import QApplication
-from qfluentwidgets import MSFluentWindow
 from ToolsInterface import ToolsInterface
 
 
@@ -67,18 +67,67 @@ class Window(MSFluentWindow):
         )
 
     def onSupport(self):
-        w = MessageBox(
-            'About',
-            'ADB Box V1.1',
-            self
+        # TeachingTip.create(
+        #     target=self.navigationInterface.widget('avatar'),
+        #     icon=InfoBarIcon.INFORMATION,
+        #     title='关于',
+        #     content=self.tr("With respect, let's advance towards a new stage of the spin."),
+        #     isClosable=True,
+        #     tailPosition=TeachingTipTailPosition.BOTTOM_LEFT,
+        #     duration=-1,
+        #     parent=self
+        # )
+
+        # w = MessageBox(
+        #     'About',
+        #     'ADB Box V1.1',
+        #     self
+        # )
+        # w.yesButton.setText('Git')
+        # w.cancelButton.setText('使用指南')
+        # # 为 yesButton 设置点击事件
+        # w.yesButton.clicked.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/Kang0-1/ADBUtil")))
+        # # 为 cancelButton 设置点击事件
+        # w.cancelButton.clicked.connect(self.openLocalFile)
+        # w.exec()
+
+        pos = TeachingTipTailPosition.BOTTOM_LEFT
+        view = TeachingTipView(
+            icon=None,
+            title='关于本应用',
+            content=self.tr("\n\nADB Box V1.2\n\n 联系方式: \n"),
+            isClosable=True,
+            tailPosition=pos,
         )
-        w.yesButton.setText('Git')
-        w.cancelButton.setText('使用指南')
-        # 为 yesButton 设置点击事件
-        w.yesButton.clicked.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/Kang0-1/ADBUtil")))
-        # 为 cancelButton 设置点击事件
-        w.cancelButton.clicked.connect(self.openLocalFile)
-        w.exec()
+        v_layout = QVBoxLayout()
+        # 创建并添加第一个邮箱链接
+        email_label_1 = QLabel('<a href="mailto:weijia.kang@changhong.com">weijia.kang@changhong.com</a>')
+        email_label_1.setTextFormat(Qt.RichText)
+        email_label_1.setOpenExternalLinks(True)
+        v_layout.addWidget(email_label_1)
+        # 创建并添加第二个邮箱链接
+        email_label_2 = QLabel('<a href="mailto:lin5.yang@changhong.com">lin5.yang@changhong.com</a>')
+        email_label_2.setTextFormat(Qt.RichText)
+        email_label_2.setOpenExternalLinks(True)
+        v_layout.addWidget(email_label_2)
+        container_widget_email = QWidget()
+        container_widget_email.setLayout(v_layout)
+        view.addWidget(container_widget_email, stretch=0, align=Qt.AlignLeft)
+        h_layout = QHBoxLayout()
+        button_github = PushButton('GitHub')
+        button_github.clicked.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/Kang0-1/ADBUtil")))
+        button_github.setFixedWidth(120)
+        h_layout.addWidget(button_github)
+        button_guidance = PushButton('使用指南')
+        button_guidance.setFixedWidth(120)
+        button_guidance.clicked.connect(self.openLocalFile)
+        h_layout.addWidget(button_guidance)
+        container_widget = QWidget()
+        container_widget.setLayout(h_layout)
+        view.addWidget(container_widget, stretch=0, align=Qt.AlignLeft)
+
+        t = TeachingTip.make(view, self.navigationInterface.widget('avatar'), 3000, pos, self)
+        view.closed.connect(t.close)
 
     def openLocalFile(self):
         word_document_path = config.get_word_document_path()
