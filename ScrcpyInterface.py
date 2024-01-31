@@ -189,11 +189,12 @@ class ScrcpyInterface(QWidget):
         self.ui.ipInput.clear()
 
     def perform_connect(self, ip):
-        print(ip)
         if not ip:
-            # w = Dialog("Connect Info", "请输入ip:port", self)
-            self.adb_connect_showMsg_signal.emit("Tips", "请输入 ip:port！")
+            # w = Dialog("Connect Info", "请输入ip", self)
+            self.adb_connect_showMsg_signal.emit("Tips", "请输入 ip！")
             return
+        if ':' not in ip:
+            ip += ':5555'
         pattern = r'^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$'
         if not re.match(pattern, ip):
             self.adb_connect_showMsg_signal.emit("Tips", "输入格式有误！")
@@ -202,17 +203,15 @@ class ScrcpyInterface(QWidget):
             self.adb_connect_showMsg_signal.emit("Tips", "已经连接该设备！")
             print("已经连接该设备!")
             return
+        print(ip)
         try:
             output = adb.connect(ip)
             if "connected to" in output:
                 print(output)
                 self.adb_connect_finished_signal.emit("连接成功!", "success")
                 self.click_refresh()
-            else:
-                self.adb_connect_finished_signal.emit("连接失败!", "error")
-                print("连接失败")
         except AdbTimeout as e:
-            self.adb_connect_finished_signal.emit("连接过程出现错误:" + str(e), "success")
+            self.adb_connect_finished_signal.emit("连接过程出现错误:" + str(e), "error")
             print(e)
 
     def show_message(self, title, message):
@@ -267,6 +266,7 @@ class ScrcpyInterface(QWidget):
         self.ui.label.setVisible(False)
         self.ui.progressRing.setVisible(True)
         self.click_refresh()
+        self.client = None
         # self.show_info_bar("设备断连~","error")
 
     def choose_device(self, device):
@@ -497,7 +497,8 @@ class ScrcpyInterface(QWidget):
                 os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')) / folder_name
             desktop_path.mkdir(parents=True, exist_ok=True)
             logcat_file = desktop_path / f"{time.strftime('%Y_%m_%d-%H_%M_%S')}.log"
-            self.logcat = device.logcat(logcat_file, clear=True, re_filter=None, command="logcat -v time")
+            # TODO 考虑加入 adb logcat -G50M 来增大日志缓冲区
+            self.logcat = device.logcat(logcat_file, clear=True, re_filter=None, command="logcat -v threadtime")
             self.logcat_stop_event.wait(timeout=None)
             self.logcat.stop(timeout=3)
             print("logcat完成，文件保存在: " + str(logcat_file))
