@@ -13,7 +13,7 @@ from PySide6.QtGui import *  # type: ignore
 from PySide6.QtWidgets import *  # type: ignore
 from PySide6 import QtCore, QtWidgets
 from qfluentwidgets import BodyLabel, CardWidget, CheckBox, ComboBox, IndeterminateProgressRing, LineEdit, \
-    PrimaryPushButton, VerticalSeparator, LineEditButton
+    PrimaryPushButton, VerticalSeparator, LineEditButton, PushButton
 from qfluentwidgets import FluentIcon as FIF
 
 
@@ -3260,8 +3260,13 @@ class Ui_centralwidget(QWidget):
         self.VerticalSeparator_3.setObjectName("VerticalSeparator_3")
 
         self.input_keycode = InputLineEdit(self.CardWidget_4)
+        self.input_keycode.setEnabled(True)
         self.input_keycode.setPlaceholderText("输入按键值")
         self.input_keycode.setGeometry(QtCore.QRect(30, 490, 161, 33))
+
+        self.moreButton = PushButton(self.CardWidget_4)
+        self.moreButton.setText("更多按键")
+        self.moreButton.setGeometry(QtCore.QRect(60, 620, 100, 35))
 
         self.CardWidget_2.setFixedHeight(75)
         self.CardWidget_2.setMinimumWidth(810)
@@ -3326,7 +3331,10 @@ class Ui_centralwidget(QWidget):
         card4_layout.addItem(QSpacerItem(20, 15, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
         card4_layout.addWidget(self.input_keycode)
         card4_layout.setAlignment(self.input_keycode, Qt.AlignmentFlag.AlignCenter)
-        card4_layout.addItem(QSpacerItem(20, 50, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.MinimumExpanding))
+        card4_layout.addItem(QSpacerItem(20, 5, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed))
+        card4_layout.addWidget(self.moreButton)
+        card4_layout.setAlignment(self.moreButton, Qt.AlignmentFlag.AlignCenter)
+        card4_layout.addItem(QSpacerItem(20, 5, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.MinimumExpanding))
 
         card2_layout = QHBoxLayout(self.CardWidget_2)
         card2_layout.addItem(QSpacerItem(1, 1, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))

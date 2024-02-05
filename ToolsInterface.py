@@ -20,6 +20,8 @@ class ToolsInterface(QWidget):
     deviceRoot = Signal(str, str)
     updateActivityInfo_signal = Signal(object, object)
     sign_finished_signal = Signal(str, str, int)
+    cpu_occupied_signal = Signal(float)
+    mem_occupied_signal = Signal(float)
 
     @Slot(str)
     def getDeviceFromSignal(self, device_serial):
@@ -48,16 +50,19 @@ class ToolsInterface(QWidget):
         # 设置定时器
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.refresh)
-        self.timer.start(8000)  # 设置时间间隔为 8000 毫秒（8秒）
+        self.timer.start(10000)  # 设置时间间隔为 10000 毫秒（10秒）
         self.updateActivityInfo_signal.connect(self.update_text_edit)
+
+        self.cpu_occupied_signal.connect(self.onCpuOccupyResult)
+        self.mem_occupied_signal.connect(self.onMemoryUsageResult)
 
     @Slot()
     def onDeviceReady(self):
         # 这里执行所有依赖于设备的UI更新操作
         self.getBaseInfo()
         self.getActivityInfo()
-        self.ui.mem_occupied.setValue(self.getMemoryUsage())
-        self.ui.cpu_occupied.setValue(self.getCpuOccupy())
+        self.getCpuOccupy()
+        self.getMemoryUsage()
 
     def initDevice(self, device_serial):
         print("工具页：" + device_serial)
@@ -91,6 +96,8 @@ class ToolsInterface(QWidget):
         self.ui.hw.setText("UnKnown")
         self.ui.product.setText("Unknown")
         self.ui.wlanMac.setText("Unknown")
+        self.ui.mem_occupied.setValue(0)
+        self.ui.cpu_occupied.setValue(0)
 
     def getBaseInfo(self):
         try:
@@ -122,24 +129,38 @@ class ToolsInterface(QWidget):
 
     def getCpuOccupy(self):
         if self.device:
-            try:
-                cmd = ["adb", "shell", "dumpsys", "cpuinfo"]
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
-                # 执行命令
-                process = subprocess.run(cmd, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
-                output = process.stdout
-                match = re.search(r"TOTAL:\s+(\d+)%", output)
-                if match:
-                    return float(match.group(1))
-                else:
-                    return 0
-            except subprocess.CalledProcessError:
-                pass
+            threading.Thread(target=self.perform_getCpuOccupy).start()
         else:
-            return 0
+            self.show_info_bar("当前无设备连接，请检查", "error", 2)
+
+    def onCpuOccupyResult(self, cpu_occupy):
+        self.ui.cpu_occupied.setValue(cpu_occupy)
+
+    def perform_getCpuOccupy(self):
+        try:
+            cmd = [config.adb_path,
+                   '-s', self.device.serial,
+                   'shell', 'dumpsys', 'cpuinfo']
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = subprocess.SW_HIDE  # 设置窗口隐藏
+            # 执行命令
+            process = subprocess.run(cmd, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+            output = process.stdout
+            # 使用正则表达式查找输出字符串中，以一个或多个数字（\d+）紧跟一个百分号（%）和空格，然后是 "TOTAL" 的模式
+            # 如果找到匹配项，则返回第一个匹配结果的 Match 对象；否则返回 None
+            match = re.search(r"(\d+)% TOTAL", output)
+            if match:
+                cpu_occupation = float(match.group(1).strip())
+                print("CPU Occupation:", cpu_occupation, "%")
+            else:
+                cpu_occupation = 0
+            self.cpu_occupied_signal.emit(cpu_occupation)  # 使用信号发射结果
+        except subprocess.CalledProcessError as e:
+            # 可以添加日志记录异常信息
+            print(f"Error executing ADB command: {e}")
+            self.cpu_occupied_signal.emit(0)  # 发射默认值或错误值
 
     def getMemoryUsage(self):
         """
@@ -147,33 +168,42 @@ class ToolsInterface(QWidget):
         :return: 内存使用率，以百分比表示
         """
         if self.device:
-            try:
-                cmd = ["adb", "shell", "dumpsys", "meminfo"]  # 定义获取总内存的命令
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                startupinfo.wShowWindow = subprocess.SW_HIDE
-                # 执行命令
-                process_1 = subprocess.run(cmd, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,
-                                         stderr=subprocess.PIPE)  # 执行获取总内存的命令
-                output = process_1.stdout  # 获取命令输出
-                match_total = re.search(r"Total RAM:\s+([\d,]+)K", output)  # 匹配总内存信息
-                print("total space:", match_total)
-                if match_total:
-                    total_memory_kb = float(match_total.group(1).replace(',',''))  # 获取总内存大小（以千字节为单位）
-                    match_free = re.search(r"Free RAM:\s+([\d,]+)K", output)  # 匹配空闲内存信息
-                    print("free space:", match_free)
-                    if match_free:
-                        free_memory_kb = float(match_free.group(1).replace(',',''))  # 获取空闲内存大小（以千字节为单位）
-                        memory_usage_percentage = ((total_memory_kb - free_memory_kb) / total_memory_kb) * 100  # 计算内存使用率
-                        return memory_usage_percentage  # 返回内存使用率
-                    else:
-                        return 0
-                else:
-                    return 0
-            except subprocess.CalledProcessError:
-                pass
+            threading.Thread(target=self.perform_getMemoryUsage).start()
         else:
-            return 0
+            self.show_info_bar("当前无设备连接，请检查", "error", 2)
+
+    def onMemoryUsageResult(self, memory_occupy):
+        self.ui.mem_occupied.setValue(memory_occupy)
+
+    def perform_getMemoryUsage(self):
+        try:
+            cmd = [config.adb_path,
+                   '-s', self.device.serial,
+                   'shell', 'dumpsys', 'meminfo']
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = subprocess.SW_HIDE
+            # 执行命令
+            process_1 = subprocess.run(cmd, startupinfo=startupinfo, text=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)  # 执行获取总内存的命令
+            output = process_1.stdout  # 获取命令输出
+            match_total = re.search(r"Total RAM:\s+([\d,]+)K", output)  # 匹配总内存信息
+            # print("total space:", match_total)
+            if match_total:
+                total_memory_kb = float(match_total.group(1).replace(',', ''))  # 获取总内存大小（以千字节为单位）
+                match_free = re.search(r"Free RAM:\s+([\d,]+)K", output)  # 匹配空闲内存信息
+                # print("free space:", match_free)
+                if match_free:
+                    free_memory_kb = float(match_free.group(1).replace(',', ''))  # 获取空闲内存大小（以千字节为单位）
+                    memory_usage_percentage = ((total_memory_kb - free_memory_kb) / total_memory_kb) * 100  # 计算内存使用率
+                    memoryOccupy =  memory_usage_percentage  # 返回内存使用率
+                else:
+                    memoryOccupy = 0
+            else:
+                memoryOccupy = 0
+            self.mem_occupied_signal.emit(memoryOccupy)
+        except subprocess.CalledProcessError:
+            pass
+            self.mem_occupied_signal.emit(0)
 
     def refresh(self):
         # 执行刷新操作
@@ -181,8 +211,8 @@ class ToolsInterface(QWidget):
             print("执行刷新操作")
             self.getActivityInfo()
             self.getBaseInfo()
-            self.ui.mem_occupied.setValue(self.getMemoryUsage())
-            self.ui.cpu_occupied.setValue(self.getCpuOccupy())
+            self.getCpuOccupy()
+            self.getMemoryUsage()
 
     def getActivityInfo(self):
         threading.Thread(target=self._getActivityInfoThread).start()

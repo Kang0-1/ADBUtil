@@ -16,7 +16,7 @@ from PySide6.QtWidgets import QApplication
 from argparse import ArgumentParser
 from adbutils import adb, AdbTimeout
 from qfluentwidgets import MessageBox, InfoBar, InfoBarPosition, SearchLineEdit, LineEditButton, LineEdit, InfoBarIcon, \
-    PushButton
+    PushButton,FlyoutView,Flyout,FlyoutAnimationType
 
 import scrcpy
 
@@ -108,6 +108,8 @@ class ScrcpyInterface(QWidget):
         self.ui.input_keycode.setValidator(validator)
         self.ui.input_keycode.returnPressed.connect(self.on_input_keycode)
         self.ui.input_keycode.searchSignal.connect(self.on_input_keycode)
+
+        self.ui.moreButton.clicked.connect(self.on_more)
 
         self.ui.button_refresh.clicked.connect(self.click_refresh)
 
@@ -249,8 +251,7 @@ class ScrcpyInterface(QWidget):
             # Setup client
             self.client = scrcpy.Client(
                 device=self.device,
-                flip=self.ui.flip.isChecked(),
-                bitrate=1000000000
+                flip=self.ui.flip.isChecked()
             )
             self.client.add_listener(scrcpy.EVENT_FRAME, self.on_frame)
             self.client.add_listener(scrcpy.EVENT_DISCONNECT, self.on_disconnect)
@@ -299,8 +300,7 @@ class ScrcpyInterface(QWidget):
             # 初始化并启动 scrcpy 客户端
             self.client = scrcpy.Client(
                 device=self.device,
-                flip=self.ui.flip.isChecked(),
-                bitrate=1000000000
+                flip=self.ui.flip.isChecked()
             )
             self.client.add_listener(scrcpy.EVENT_FRAME, self.on_frame)
             self.client.add_listener(scrcpy.EVENT_DISCONNECT, self.on_disconnect)
@@ -472,6 +472,65 @@ class ScrcpyInterface(QWidget):
         if keycode:
             self.general_button_handler(keycode)
 
+    def on_more(self):
+        view = FlyoutView(
+            title=self.tr('更多按键'),
+            content=self.tr(""),
+        )
+        # add button to view
+        layout = QGridLayout()
+        button_1 = PushButton('CH ↑')
+        button_1.setFixedWidth(80)
+        button_1.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_CHANNEL_UP))
+        layout.addWidget(button_1,0,0)
+
+        button_2 = PushButton('CH ↓')
+        button_2.setFixedWidth(80)
+        button_2.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_CHANNEL_DOWN))
+        layout.addWidget(button_2, 0, 1)
+
+        button_3 = PushButton('INFO')
+        button_3.setFixedWidth(80)
+        button_3.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_INFO))
+        layout.addWidget(button_3, 1,0)
+
+        button_4 = PushButton('EPG')
+        button_4.setFixedWidth(80)
+        button_4.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_GUIDE))
+        layout.addWidget(button_4, 1,1)
+
+        button_5 = PushButton('Red')
+        button_5.setFixedWidth(80)
+        button_5.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_PROG_RED))
+        layout.addWidget(button_5, 2,0)
+
+        button_6 = PushButton('Green')
+        button_6.setFixedWidth(80)
+        button_6.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_PROG_GREEN))
+        layout.addWidget(button_6, 2,1)
+
+        button_7 = PushButton('Yellow')
+        button_7.setFixedWidth(80)
+        button_7.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_PROG_YELLOW))
+        layout.addWidget(button_7, 3,0)
+
+        button_8 = PushButton('Blue')
+        button_8.setFixedWidth(80)
+        button_8.clicked.connect(lambda: self.general_button_handler(scrcpy.KEYCODE_PROG_BLUE))
+        layout.addWidget(button_8, 3,1)
+
+        container_widget = QWidget()
+        container_widget.setLayout(layout)
+        view.addWidget(container_widget, align=Qt.AlignRight)
+
+        # adjust layout (optional)
+        view.widgetLayout.insertSpacing(1, 5)
+        view.widgetLayout.insertSpacing(0, 5)
+        view.widgetLayout.addSpacing(5)
+
+        # show view
+        Flyout.make(view, self.ui.moreButton, self.window(), FlyoutAnimationType.DROP_DOWN)
+
     def on_click_logcat_start(self):
         if not self.device:
             self.show_info_bar("未连接设备，请检查", "error")
@@ -641,43 +700,58 @@ class ScrcpyInterface(QWidget):
         button.setVisible(False)
 
     def on_mouse_event(self, action=scrcpy.ACTION_DOWN):
+        """
+            适配拉伸UI后，不支持拖动屏幕滑动
+        """
         def handler(evt: QMouseEvent):
+            # 如果当前正在进行滑动操作，则不处理该事件
             if self.is_swiping:
                 return
             focused_widget = QApplication.focusWidget()
             if focused_widget is not None:
                 focused_widget.clearFocus()
+
+            # 处理鼠标左键点击事件
             if evt.button() == Qt.LeftButton:
+                # 确保已经有一个客户端连接
                 if self.client:
-                    image_size = self.client.resolution  # 实际图像的分辨率
+                    # 获取实际图像的分辨率
+                    image_size = self.client.resolution
+                    # 计算图像的宽高比
                     image_ratio = image_size[0] / image_size[1]
+                    # 计算显示区域（窗口）的宽高比
                     window_ratio = self.ui.label.width() / self.ui.label.height()
+
+                    # 检查图像是否大于显示区域
                     if image_size[0] > self.ui.label.width() or image_size[1] > self.ui.label.height():
+                        # 如果图像的宽高比大于窗口的宽高比，则以宽度为基准计算缩放比例
                         if image_ratio > window_ratio:
                             self.ratio = self.ui.label.width() / image_size[0]
+                        # 否则，以高度为基准计算缩放比例
                         else:
                             self.ratio = self.ui.label.height() / image_size[1]
                     else:
+                        # 如果图像小于等于显示区域，则不需要缩放
                         self.ratio = 1
 
-                    # 调整点击坐标
-                    x = (evt.position().x() - (
-                            self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
-                    y = (evt.position().y() - (
-                            self.ui.label.height() - self.ui.label.image_label.height()) / 2) / self.ratio
-                    # print(x, y)
+                    # 根据缩放比例和可能的中心偏移调整点击坐标
+                    x = (evt.position().x() - (self.ui.label.width() - self.ui.label.image_label.width()) / 2) / self.ratio
+                    y = (evt.position().y() - (self.ui.label.height() - self.ui.label.image_label.height()) / 2) / self.ratio
 
-                    # 处理点击事件
+                    # 使用调整后的坐标发送触摸事件到客户端
                     self.client.control.touch(x, y, action)
                 else:
+                    # 如果没有客户端连接，显示提示信息
                     self.show_info_bar("点击start开始投屏", "info")
+
+            # 处理鼠标右键点击事件（模拟Android返回操作）
             elif evt.button() == Qt.RightButton:
-                # 处理鼠标右键点击（返回操作）
+                # 发送返回按键事件（模拟按下和释放）
                 if action == scrcpy.ACTION_DOWN:
-                    # 发送返回命令
                     self.client.control.keycode(scrcpy.KEYCODE_BACK, scrcpy.ACTION_DOWN)
                     self.client.control.keycode(scrcpy.KEYCODE_BACK, scrcpy.ACTION_UP)
 
+        # 返回内部函数作为事件处理器
         return handler
 
     def on_key_event(self, action=scrcpy.ACTION_DOWN):
@@ -694,12 +768,11 @@ class ScrcpyInterface(QWidget):
     def map_code(self, code):
         """
         Map qt keycode ti android keycode
-
         Args:
             code: qt keycode
             android keycode, -1 if not founded
         """
-
+        print(code)
         if code == -1:
             return -1
         if 48 <= code <= 57:
@@ -711,11 +784,17 @@ class ScrcpyInterface(QWidget):
 
         hard_code = {
             32: scrcpy.KEYCODE_SPACE,
+            16777216: scrcpy.KEYCODE_BACK,
+            16777221: scrcpy.KEYCODE_ALT_LEFT,
+            16777224: scrcpy.KEYCODE_FORWARD_DEL,
             16777219: scrcpy.KEYCODE_DEL,
-            16777248: scrcpy.KEYCODE_SHIFT_LEFT,
             16777220: scrcpy.KEYCODE_ENTER,
             16777217: scrcpy.KEYCODE_TAB,
             16777249: scrcpy.KEYCODE_CTRL_LEFT,
+            16777235: scrcpy.KEYCODE_DPAD_UP,
+            16777237: scrcpy.KEYCODE_DPAD_DOWN,
+            16777234: scrcpy.KEYCODE_DPAD_LEFT,
+            16777236: scrcpy.KEYCODE_DPAD_RIGHT,
         }
         if code in hard_code:
             return hard_code[code]
@@ -731,7 +810,7 @@ class ScrcpyInterface(QWidget):
                 frame.shape[1],
                 frame.shape[0],
                 frame.shape[1] * 3,
-                QImage.Format.Format_BGR888,
+                QImage.Format_BGR888,
             )
             pix = QPixmap(image)
             self.ui.label.set_image(pix)

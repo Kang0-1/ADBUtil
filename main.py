@@ -115,7 +115,7 @@ class Window(MSFluentWindow):
         view.addWidget(container_widget_email, stretch=0, align=Qt.AlignLeft)
         h_layout = QHBoxLayout()
         button_github = PushButton('GitHub')
-        button_github.clicked.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/Kang0-1/ADBUtil")))
+        button_github.clicked.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/Kang0-1/ADBUtil/releases")))
         button_github.setFixedWidth(120)
         h_layout.addWidget(button_github)
         button_guidance = PushButton('使用指南')
