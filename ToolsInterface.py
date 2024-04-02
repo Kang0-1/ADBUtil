@@ -320,7 +320,7 @@ class ToolsInterface(QWidget):
                 "am start com.google.android.tungsten.setupwraith/com.google.android.tvsetup.app.AddAccountActivity")
             time.sleep(1)
             device.keyevent(scrcpy.KEYCODE_DPAD_CENTER)
-            time.sleep(8)
+            time.sleep(12)
             device.shell("input text testchwl@gmail.com")
             device.keyevent(scrcpy.KEYCODE_ENTER)
             time.sleep(8)
