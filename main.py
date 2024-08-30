@@ -101,12 +101,12 @@ class Window(MSFluentWindow):
         )
         v_layout = QVBoxLayout()
         # 创建并添加第一个邮箱链接
-        email_label_1 = QLabel('<a href="mailto:weijia.kang@changhong.com">weijia.kang@changhong.com</a>')
+        email_label_1 = QLabel('<a href="mailto:weijia.kang@changhong.com">康维佳: weijia.kang@changhong.com</a>')
         email_label_1.setTextFormat(Qt.RichText)
         email_label_1.setOpenExternalLinks(True)
         v_layout.addWidget(email_label_1)
         # 创建并添加第二个邮箱链接
-        email_label_2 = QLabel('<a href="mailto:lin5.yang@changhong.com">lin5.yang@changhong.com</a>')
+        email_label_2 = QLabel('<a href="mailto:lin5.yang@changhong.com">杨琳: lin5.yang@changhong.com</a>')
         email_label_2.setTextFormat(Qt.RichText)
         email_label_2.setOpenExternalLinks(True)
         v_layout.addWidget(email_label_2)

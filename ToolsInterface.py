@@ -324,7 +324,7 @@ class ToolsInterface(QWidget):
             device.shell("input text testchwl@gmail.com")
             device.keyevent(scrcpy.KEYCODE_ENTER)
             time.sleep(8)
-            device.shell("input text chwl12234")
+            device.shell("input text chwl1234")
             device.keyevent(scrcpy.KEYCODE_ENTER)
             self.sign_finished_signal.emit("登录成功","success",3)
         except Exception as e:
